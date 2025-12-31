@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fantinal Pro - Grand Ultimate Edition</title>
+    <title>Fantinal Pro - Premium Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -12,90 +12,113 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
         
         :root {
-            --primary: #3b82f6; --secondary: #8b5cf6; --bg: #020617; --card: rgba(30, 41, 59, 0.7); --text: #f1f5f9;
+            --primary: #60a5fa; --secondary: #c084fc; --bg: #030712; --card: rgba(15, 23, 42, 0.7); --text: #f8fafc;
         }
         .light-mode {
-            --bg: #f8fafc; --card: rgba(255, 255, 255, 0.9); --text: #0f172a;
+            --bg: #f1f5f9; --card: rgba(255, 255, 255, 0.9); --text: #0f172a;
         }
-        body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.3s; overflow-x: hidden; }
+        body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow-x: hidden; }
         
-        .glass { background: var(--card); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 28px; }
-        .light-mode .glass { border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
+        /* Premium Glass Effect */
+        .glass { 
+            background: var(--card); 
+            backdrop-filter: blur(25px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 32px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        .light-mode .glass { border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 10px 40px rgba(0,0,0,0.06); }
         
-        .sidebar { position: fixed; left: -100%; top: 0; width: 85%; height: 100%; background: var(--bg); z-index: 1000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-right: 2px solid var(--primary); }
+        .sidebar { position: fixed; left: -100%; top: 0; width: 85%; height: 100%; background: var(--bg); z-index: 1000; transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1); border-right: 1px solid rgba(255,255,255,0.1); }
         .sidebar.active { left: 0; }
         
-        .btn-grad { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; transition: 0.3s; }
-        .btn-grad:active { transform: scale(0.95); }
+        .btn-grad { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; transition: 0.3s ease; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); }
+        .btn-grad:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(59, 130, 246, 0.4); }
+        .btn-grad:active { transform: scale(0.96); }
         
-        .cat-tab { padding: 10px 22px; border-radius: 50px; font-size: 11px; font-weight: 800; white-space: nowrap; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
-        .cat-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .cat-tab { padding: 12px 24px; border-radius: 50px; font-size: 12px; font-weight: 800; white-space: nowrap; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        .cat-tab.active { background: #3b82f6; color: white; border-color: #3b82f6; box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); }
 
-        .noti-toast { position: fixed; top: 20px; right: 20px; z-index: 9999; animation: slideIn 0.5s ease; border-radius: 20px; border-left: 6px solid var(--primary); }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .noti-toast { position: fixed; top: 25px; right: 25px; z-index: 9999; animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 24px; }
+        @keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
 
-        input, select, textarea { width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 18px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: inherit; outline: none; }
-        .light-mode input, .light-mode select, .light-mode textarea { background: white; border-color: #ddd; }
+        input, select, textarea { width: 100%; padding: 18px; margin-bottom: 14px; border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: inherit; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); background: rgba(255,255,255,0.06); }
         
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* QR Card Styles */
+        .qr-card { background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.1); }
     </style>
 </head>
 <body>
     <div id="notiBox" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3"></div>
-    <div id="overlay" class="fixed inset-0 bg-black/60 hidden z-[900] backdrop-blur-sm" onclick="toggleMenu()"></div>
+    <div id="overlay" class="fixed inset-0 bg-black/80 hidden z-[900] backdrop-blur-md" onclick="toggleMenu()"></div>
 
     <div id="sidebar" class="sidebar p-8 overflow-y-auto no-scrollbar">
-        <div class="flex justify-between items-center mb-10">
-            <h2 class="text-2xl font-black italic tracking-tighter">PREMIUM</h2>
-            <button onclick="toggleMenu()" class="p-3 bg-red-500/10 text-red-500 rounded-full">✕</button>
-        </div>
-        <div class="glass p-6 mb-8 border-blue-500/20">
-            <p id="userEmail" class="text-[10px] text-blue-400 font-bold mb-4 truncate italic">loading...</p>
-            <div class="grid grid-cols-2 gap-4">
-                <div><p class="text-[9px] uppercase font-black opacity-50">Coins</p><p id="uBalance" class="text-2xl font-black text-yellow-500">0 C</p></div>
-                <div><p class="text-[9px] uppercase font-black opacity-50 text-right">Spent</p><p id="uSpent" class="text-2xl font-black text-red-400 text-right">0 C</p></div>
+        <div class="flex justify-between items-center mb-12">
+            <div>
+                <h2 class="text-3xl font-black italic tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">LUXURY</h2>
+                <p class="text-[10px] font-bold opacity-40">MEMBERSHIP PRIVILEGE</p>
             </div>
-            <button onclick="showSection('historySection')" class="w-full mt-6 py-3 bg-white/5 rounded-xl text-[10px] font-black uppercase">Usage History</button>
+            <button onclick="toggleMenu()" class="p-4 bg-red-500/10 text-red-500 rounded-full hover:bg-red-500/20 transition">✕</button>
+        </div>
+        <div class="glass p-8 mb-10 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 blur-3xl"></div>
+            <p id="userEmail" class="text-xs text-blue-400 font-bold mb-6 truncate italic tracking-tight">loading...</p>
+            <div class="grid grid-cols-2 gap-6">
+                <div><p class="text-[10px] uppercase font-black opacity-40 mb-1">Available</p><p id="uBalance" class="text-3xl font-black text-yellow-500 tracking-tighter">0 C</p></div>
+                <div><p class="text-[10px] uppercase font-black opacity-40 mb-1 text-right">Lifetime Spent</p><p id="uSpent" class="text-3xl font-black text-red-400 text-right tracking-tighter">0 C</p></div>
+            </div>
+            <button onclick="showSection('historySection')" class="w-full mt-8 py-4 bg-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-white/5 hover:bg-white/10 transition">View Billing History</button>
         </div>
         <div class="space-y-4">
-            <button onclick="showSection('depositSection')" class="w-full btn-grad py-4 rounded-2xl font-black text-sm shadow-lg shadow-blue-500/20">DEPOSIT COINS</button>
-            <button onclick="showSection('giftRedeemSection')" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-black text-sm">REDEEM GIFT</button>
-            <button onclick="toggleTheme()" class="w-full bg-blue-500/10 text-blue-500 py-3 rounded-xl font-bold text-xs mt-10">THEME: DARK/LIGHT</button>
-            <button onclick="auth.signOut()" class="w-full py-4 text-red-500 font-bold text-xs">LOGOUT SESSION</button>
+            <button onclick="showSection('depositSection')" class="w-full btn-grad py-5 rounded-3xl font-black text-sm tracking-widest">DEPOSIT COINS</button>
+            <button onclick="showSection('giftRedeemSection')" class="w-full bg-slate-800/50 border border-white/5 text-white py-5 rounded-3xl font-black text-sm tracking-widest">REDEEM GIFT</button>
+            <div class="pt-10 space-y-3">
+                <button onclick="toggleTheme()" class="w-full bg-blue-500/5 text-blue-400 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest border border-blue-500/10">Switch Appearance</button>
+                <button onclick="auth.signOut()" class="w-full py-4 text-red-500/60 font-black text-[10px] uppercase tracking-[0.2em]">Logout Session</button>
+            </div>
         </div>
     </div>
 
-    <nav class="sticky top-0 z-50 p-5 bg-inherit backdrop-blur-xl border-b border-white/5 flex justify-between items-center">
-        <div class="flex items-center gap-4">
-            <button onclick="toggleMenu()" class="p-3 glass rounded-2xl">☰</button>
-            <h1 class="text-2xl font-black italic bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500" onclick="location.reload()">FANTINAL</h1>
+    <nav class="sticky top-0 z-50 px-6 py-5 bg-inherit backdrop-blur-2xl border-b border-white/5 flex justify-between items-center">
+        <div class="flex items-center gap-5">
+            <button onclick="toggleMenu()" class="p-4 glass rounded-2xl hover:bg-white/5 transition">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+            </button>
+            <h1 class="text-2xl font-black italic tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500" onclick="location.reload()">FANTINAL</h1>
         </div>
-        <div id="adminBadge" class="hidden px-4 py-1.5 bg-red-500 text-white rounded-full text-[10px] font-black uppercase shadow-lg shadow-red-500/30 animate-pulse">Admin</div>
+        <div id="adminBadge" class="hidden px-5 py-2 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-full text-[9px] font-black uppercase shadow-xl shadow-red-500/20 animate-pulse tracking-tighter">Admin Control</div>
     </nav>
 
     <main class="max-w-md mx-auto p-6 pb-40">
-        <div id="authSection" class="hidden">
-            <div class="flex gap-2 bg-slate-900/40 p-1.5 rounded-2xl mb-8">
-                <button onclick="switchAuth('login')" id="btnLog" class="flex-1 py-3 rounded-xl font-black text-xs bg-blue-600">LOGIN</button>
-                <button onclick="switchAuth('reg')" id="btnReg" class="flex-1 py-3 rounded-xl font-black text-xs">JOIN US</button>
+        <div id="authSection" class="hidden py-10">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-black mb-2 tracking-tighter">Welcome Back</h2>
+                <p class="text-sm opacity-50 font-bold">Sign in to continue your journey</p>
             </div>
-            <div id="loginForm" class="glass p-8">
+            <div class="flex gap-2 bg-slate-900/60 p-2 rounded-3xl mb-10 border border-white/5">
+                <button onclick="switchAuth('login')" id="btnLog" class="flex-1 py-4 rounded-2xl font-black text-xs transition-all duration-500 bg-blue-600 shadow-lg shadow-blue-500/20">LOGIN</button>
+                <button onclick="switchAuth('reg')" id="btnReg" class="flex-1 py-4 rounded-2xl font-black text-xs transition-all duration-500">JOIN US</button>
+            </div>
+            <div id="loginForm" class="glass p-10">
                 <input type="email" id="lEmail" placeholder="Email Address">
                 <input type="password" id="lPass" placeholder="Password">
-                <button onclick="login()" class="w-full btn-grad py-4 rounded-2xl font-black">SIGN IN</button>
+                <button onclick="login()" class="w-full btn-grad py-5 rounded-2xl font-black mt-4 uppercase tracking-widest text-xs">Authorize Entry</button>
             </div>
-            <div id="regForm" class="glass p-8 hidden">
-                <input type="email" id="rEmail" placeholder="Email Address">
-                <input type="password" id="rPass" placeholder="Password">
-                <button onclick="register()" class="w-full btn-grad py-4 rounded-2xl font-black">CREATE ACCOUNT</button>
+            <div id="regForm" class="glass p-10 hidden">
+                <input type="email" id="rEmail" placeholder="New Email Address">
+                <input type="password" id="rPass" placeholder="Secure Password">
+                <button onclick="register()" class="w-full btn-grad py-5 rounded-2xl font-black mt-4 uppercase tracking-widest text-xs">Create Identity</button>
             </div>
         </div>
 
         <div id="homeSection" class="hidden">
-            <div id="adSlider" class="flex overflow-x-auto gap-4 mb-10 no-scrollbar h-52 rounded-[35px] shadow-2xl"></div>
+            <div id="adSlider" class="flex overflow-x-auto gap-4 mb-12 no-scrollbar h-60 rounded-[40px] shadow-2xl"></div>
             
-            <div class="flex overflow-x-auto no-scrollbar gap-3 mb-8">
-                <button onclick="filterBooks('All')" class="cat-tab active">All</button>
+            <div class="flex overflow-x-auto no-scrollbar gap-3 mb-10 pb-2">
+                <button onclick="filterBooks('All')" class="cat-tab active">All Library</button>
                 <button onclick="filterBooks('Fan Fiction')" class="cat-tab">Fan Fiction</button>
                 <button onclick="filterBooks('Life')" class="cat-tab">Life</button>
                 <button onclick="filterBooks('True Story')" class="cat-tab">True Story</button>
@@ -103,154 +126,196 @@
             </div>
 
             <div id="bookGrid" class="grid grid-cols-2 gap-6"></div>
-            <div id="adminBtn" class="hidden mt-12"><button onclick="showSection('adminDashboard')" class="w-full py-5 glass border-red-500/20 text-red-500 font-black text-[10px] uppercase tracking-widest">Open Admin Dashboard</button></div>
+            <div id="adminBtn" class="hidden mt-16"><button onclick="showSection('adminDashboard')" class="w-full py-6 glass border-red-500/30 text-red-500 font-black text-[10px] uppercase tracking-[0.3em] hover:bg-red-500/5 transition">Administrator Management</button></div>
         </div>
 
         <div id="historySection" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-blue-400 mb-8 font-black text-xs tracking-widest uppercase">← Library</button>
-            <h2 class="text-2xl font-black mb-6">Activity Logs</h2>
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase flex items-center gap-2">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Library
+            </button>
+            <h2 class="text-3xl font-black mb-8 tracking-tighter italic">Activity Logs</h2>
             <div id="historyList" class="space-y-4"></div>
         </div>
 
         <div id="depositSection" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-blue-400 mb-8 font-black text-xs tracking-widest uppercase">← Library</button>
-            <div class="glass p-8">
-                <h2 class="text-2xl font-black mb-8 italic text-blue-400">Add Coins</h2>
-                <div class="p-6 bg-blue-600/10 border border-blue-500/20 rounded-3xl text-center mb-8">
-                    <p class="text-xl font-black mb-1">09759731746</p>
-                    <p class="text-[10px] font-bold uppercase opacity-60">Kpay / Wave (THU KHA AUNG)</p>
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase flex items-center gap-2">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Return
+            </button>
+            <div class="glass p-10">
+                <h2 class="text-3xl font-black mb-2 italic tracking-tighter text-blue-400">Add Wealth</h2>
+                <p class="text-[10px] font-bold opacity-40 uppercase mb-10 tracking-widest">Select your package</p>
+                
+                <div class="grid grid-cols-1 gap-4 mb-10">
+                    <div class="qr-card p-6 rounded-[30px] text-center">
+                        <img src="https://raw.githubusercontent.com/xztka49-bit/fantinal-resources/main/kbz_qr.png" alt="KPay" class="w-40 h-40 mx-auto mb-4 rounded-3xl shadow-2xl border-4 border-white/5">
+                        <p class="text-[11px] font-black tracking-widest text-blue-400">KBZ PAY QR</p>
+                        <p class="text-[9px] font-bold opacity-50 mt-1 uppercase">THU KHA AUNG (***1746)</p>
+                    </div>
+                    <div class="qr-card p-6 rounded-[30px] text-center">
+                        <img src="https://raw.githubusercontent.com/xztka49-bit/fantinal-resources/main/wave_qr.png" alt="Wave" class="w-40 h-40 mx-auto mb-4 rounded-3xl shadow-2xl border-4 border-white/5">
+                        <p class="text-[11px] font-black tracking-widest text-yellow-500">WAVEPAY QR</p>
+                        <p class="text-[9px] font-bold opacity-50 mt-1 uppercase">THU KHA AUNG (09759731746)</p>
+                    </div>
                 </div>
-                <select id="coinPackage">
-                    <option value="1000">1,000 MMK (1,000 C)</option>
-                    <option value="5000">5,000 MMK (5,000 C)</option>
-                    <option value="10000">10,000 MMK (10,000 C)</option>
-                </select>
-                <input type="text" id="payName" placeholder="Payer Name">
-                <input type="text" id="payTid" placeholder="Transaction Last 6 Digits">
-                <button onclick="submitDeposit()" class="w-full btn-grad py-4 rounded-2xl font-black">SEND REQUEST</button>
+
+                <div class="space-y-2">
+                    <select id="coinPackage" class="font-bold">
+                        <option value="1000">1,000 MMK (1,000 C)</option>
+                        <option value="5000">5,000 MMK (5,000 C)</option>
+                        <option value="10000">10,000 MMK (10,000 C)</option>
+                        <option value="30000">30,000 MMK (30,000 C)</option>
+                    </select>
+                    <input type="text" id="payName" placeholder="Payer Name (လွှဲသူအမည်)">
+                    <input type="text" id="payTid" placeholder="Transaction ID (Last 6 Digits)">
+                    <button onclick="submitDeposit()" class="w-full btn-grad py-5 rounded-2xl font-black text-xs uppercase tracking-widest mt-4 shadow-blue-500/40">Confirm Transfer</button>
+                </div>
             </div>
         </div>
 
         <div id="giftRedeemSection" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-blue-400 mb-8 font-black text-xs tracking-widest uppercase">← Library</button>
-            <div class="glass p-10 text-center">
-                <h2 class="text-3xl font-black mb-10 text-purple-400">GIFT CODE</h2>
-                <input type="text" id="gCodeInput" placeholder="Enter Code Here" class="text-center font-black tracking-widest uppercase">
-                <button onclick="redeemGift()" class="w-full btn-grad py-4 rounded-2xl font-black mt-4">REDEEM</button>
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase flex items-center gap-2">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Return
+            </button>
+            <div class="glass p-12 text-center relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-purple-500/10 blur-[80px]"></div>
+                <h2 class="text-4xl font-black mb-2 text-purple-400 italic tracking-tighter">GIFT CARD</h2>
+                <p class="text-[9px] font-bold opacity-40 uppercase tracking-[0.3em] mb-12">Enter your exclusive code</p>
+                <input type="text" id="gCodeInput" placeholder="XXXX-XXXX-XXXX" class="text-center font-black tracking-[0.3em] uppercase py-6 text-xl bg-white/5 border-purple-500/20 text-purple-300">
+                <button onclick="redeemGift()" class="w-full btn-grad py-5 rounded-2xl font-black mt-6 uppercase tracking-widest text-xs shadow-purple-500/20">REDEEM VOUCHER</button>
             </div>
         </div>
 
         <div id="adminDashboard" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-blue-400 mb-8 font-black text-xs tracking-widest uppercase">← Exit Admin</button>
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase">← System Exit</button>
             
-            <div class="flex overflow-x-auto no-scrollbar gap-2 mb-8 bg-slate-900/40 p-1.5 rounded-2xl">
-                <button onclick="setAdminTab('req')" class="adm-t flex-1 py-2.5 rounded-xl text-[10px] font-black bg-blue-600">Requests</button>
-                <button onclick="setAdminTab('nov')" class="adm-t flex-1 py-2.5 rounded-xl text-[10px] font-black">Novels</button>
-                <button onclick="setAdminTab('usr')" class="adm-t flex-1 py-2.5 rounded-xl text-[10px] font-black">Users</button>
-                <button onclick="setAdminTab('gft')" class="adm-t flex-1 py-2.5 rounded-xl text-[10px] font-black">Gifts</button>
-                <button onclick="setAdminTab('ads')" class="adm-t flex-1 py-2.5 rounded-xl text-[10px] font-black">Ads</button>
-                <button onclick="setAdminTab('fin')" class="adm-t flex-1 py-2.5 rounded-xl text-[10px] font-black">Finance</button>
+            <div class="flex overflow-x-auto no-scrollbar gap-2 mb-10 bg-slate-900/60 p-2 rounded-[25px] border border-white/5">
+                <button onclick="setAdminTab('req')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition bg-blue-600">Requests</button>
+                <button onclick="setAdminTab('nov')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition">Novels</button>
+                <button onclick="setAdminTab('usr')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition">Users</button>
+                <button onclick="setAdminTab('gft')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition">Gifts</button>
+                <button onclick="setAdminTab('ads')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition">Ads</button>
+                <button onclick="setAdminTab('fin')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition">Finance</button>
             </div>
 
             <div id="tab-req" class="space-y-4"></div>
 
             <div id="tab-nov" class="hidden">
-                <button onclick="openNovelForm()" class="w-full btn-grad py-4 rounded-2xl font-black mb-8">+ UPLOAD NOVEL</button>
+                <button onclick="openNovelForm()" class="w-full btn-grad py-5 rounded-3xl font-black text-[10px] tracking-[0.2em] mb-10 shadow-lg">+ REGISTER NEW NOVEL</button>
                 <div id="admNovelList" class="space-y-4"></div>
             </div>
 
             <div id="tab-usr" class="hidden">
-                <div class="glass p-6 mb-6 text-center">
-                    <p class="text-[10px] font-black opacity-50 uppercase mb-1">Total Members</p>
-                    <h2 id="totalU" class="text-3xl font-black">0</h2>
+                <div class="glass p-8 mb-8 text-center border-blue-500/20">
+                    <p class="text-[9px] font-black opacity-40 uppercase tracking-[0.2em] mb-2">Network Strength</p>
+                    <h2 id="totalU" class="text-5xl font-black tracking-tighter">0</h2>
+                    <p class="text-[10px] font-bold text-blue-400 mt-2">Active Entities</p>
                 </div>
                 <div id="admUserList" class="space-y-3"></div>
             </div>
 
             <div id="tab-gft" class="hidden">
-                <div class="glass p-8 mb-6">
-                    <input type="number" id="genAmt" placeholder="Coin Amount">
-                    <button onclick="generateGift()" class="w-full bg-purple-600 py-3 rounded-xl font-black text-xs">GENERATE CODE</button>
+                <div class="glass p-10 mb-8 border-purple-500/20">
+                    <input type="number" id="genAmt" placeholder="Coin Denomination">
+                    <button onclick="generateGift()" class="w-full bg-purple-600 py-4 rounded-2xl font-black text-[10px] tracking-widest uppercase">Forge Gift Code</button>
                 </div>
                 <div id="admGiftList" class="space-y-3"></div>
             </div>
 
             <div id="tab-ads" class="hidden">
-                <div class="glass p-6 space-y-4">
-                    <input type="text" id="adU1" placeholder="Slider URL 1">
-                    <input type="text" id="adU2" placeholder="Slider URL 2">
-                    <input type="text" id="adU3" placeholder="Slider URL 3">
-                    <input type="text" id="adU4" placeholder="Slider URL 4">
-                    <button onclick="updateAds()" class="w-full btn-grad py-3 rounded-xl font-black text-xs">SAVE SLIDERS</button>
+                <div class="glass p-8 space-y-4">
+                    <h3 class="text-xs font-black uppercase mb-4 opacity-50 tracking-widest">Slider Assets (URLs)</h3>
+                    <input type="text" id="adU1" placeholder="Asset URL 1">
+                    <input type="text" id="adU2" placeholder="Asset URL 2">
+                    <input type="text" id="adU3" placeholder="Asset URL 3">
+                    <input type="text" id="adU4" placeholder="Asset URL 4">
+                    <button onclick="updateAds()" class="w-full btn-grad py-4 rounded-2xl font-black text-[10px] tracking-widest">Update Visuals</button>
                 </div>
             </div>
 
             <div id="tab-fin" class="hidden">
-                <div class="glass p-6 text-center border-green-500/20 mb-6">
-                    <p class="text-[10px] font-black uppercase text-green-500 mb-1">Total Revenue</p>
-                    <h2 id="totalFinance" class="text-3xl font-black">0 MMK</h2>
+                <div class="glass p-10 text-center border-green-500/30 mb-8 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-green-500/20"></div>
+                    <p class="text-[10px] font-black uppercase text-green-500 mb-2 tracking-widest">Gross Revenue</p>
+                    <h2 id="totalFinance" class="text-4xl font-black tracking-tighter">0 MMK</h2>
                 </div>
                 <input type="date" id="searchDate" class="mb-4">
-                <button onclick="filterFinance()" class="w-full bg-slate-800 py-3 rounded-xl font-black text-xs">FILTER DEPOSITS</button>
-                <div id="finLogs" class="mt-6 space-y-2"></div>
+                <button onclick="filterFinance()" class="w-full bg-slate-800 py-4 rounded-2xl font-black text-[10px] tracking-widest">Audit Transactions</button>
+                <div id="finLogs" class="mt-8 space-y-3"></div>
             </div>
         </div>
 
         <div id="novelFormSection" class="hidden">
-            <h2 id="nFormTitle" class="text-2xl font-black mb-8">Manage Novel</h2>
-            <input type="text" id="nTitle" placeholder="Title">
+            <h2 id="nFormTitle" class="text-3xl font-black mb-10 italic">Modify Asset</h2>
+            <input type="text" id="nTitle" placeholder="Asset Title">
             <input type="text" id="nCover" placeholder="Cover Image URL">
-            <select id="nGenre">
+            <select id="nGenre" class="font-bold">
                 <option value="Fan Fiction">Fan Fiction</option>
                 <option value="Life">Life</option>
                 <option value="True Story">True Story</option>
                 <option value="Mega">Mega</option>
             </select>
-            <button onclick="saveNovel()" class="w-full btn-grad py-4 rounded-2xl font-black">SAVE NOVEL</button>
-            <button onclick="showSection('adminDashboard')" class="w-full py-4 text-gray-500 font-bold">CANCEL</button>
+            <button onclick="saveNovel()" class="w-full btn-grad py-5 rounded-2xl font-black uppercase tracking-widest text-xs">Commit Changes</button>
+            <button onclick="showSection('adminDashboard')" class="w-full py-5 text-gray-500 font-bold text-[10px] uppercase tracking-widest mt-2">Abort Session</button>
         </div>
 
         <div id="chapterView" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-blue-400 mb-8 font-black text-xs tracking-widest uppercase">← Back</button>
-            <div class="glass p-8 mb-8 border-yellow-500/30">
-                <div class="flex justify-between items-center">
-                    <div><p class="text-[10px] font-black uppercase opacity-50 mb-1">Lifetime VIP</p><h3 id="vipPriceTag" class="text-3xl font-black text-yellow-500">0 C</h3></div>
-                    <button id="vipBtn" onclick="buyVip()" class="bg-yellow-600 text-black px-8 py-3 rounded-2xl text-[10px] font-black">GET VIP</button>
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase">← Back to Gallery</button>
+            <div class="glass p-10 mb-10 border-yellow-500/20 relative overflow-hidden">
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-yellow-500/5 blur-[50px]"></div>
+                <div class="flex justify-between items-center relative z-10">
+                    <div>
+                        <p class="text-[9px] font-black uppercase opacity-40 mb-1 tracking-widest">Lifetime Access</p>
+                        <h3 id="vipPriceTag" class="text-4xl font-black text-yellow-500 tracking-tighter">0 C</h3>
+                    </div>
+                    <button id="vipBtn" onclick="buyVip()" class="bg-gradient-to-br from-yellow-500 to-amber-700 text-white px-10 py-4 rounded-[20px] text-[10px] font-black uppercase shadow-xl shadow-yellow-500/20">Elevate to VIP</button>
                 </div>
-                <div id="admVipEdit" class="hidden mt-6 pt-6 border-t border-white/5 flex gap-2">
-                    <input type="number" id="newVipP" class="mb-0 text-xs" placeholder="Price">
-                    <button onclick="updateVipPrice()" class="bg-blue-600 px-5 rounded-xl font-black text-[10px]">SET</button>
+                <div id="admVipEdit" class="hidden mt-8 pt-8 border-t border-white/5 flex gap-3">
+                    <input type="number" id="newVipP" class="mb-0 text-xs font-bold bg-white/5" placeholder="New Price">
+                    <button onclick="updateVipPrice()" class="bg-blue-600 px-6 rounded-2xl font-black text-[10px] uppercase">Set</button>
                 </div>
             </div>
             
-            <div id="admBookInfo" class="hidden glass p-6 mb-8 border-green-500/30">
-                <div class="flex justify-between items-center mb-4">
-                    <h4 class="text-xs font-black uppercase text-green-500">Book Analytics</h4>
-                    <p id="admSalesCount" class="text-sm font-black text-blue-400">Sales: 0 C</p>
+            <div id="admBookInfo" class="hidden glass p-8 mb-10 border-green-500/20">
+                <div class="flex justify-between items-center mb-6">
+                    <h4 class="text-[10px] font-black uppercase text-green-500 tracking-widest">Asset Analytics</h4>
+                    <p id="admSalesCount" class="text-sm font-black text-blue-400">Yield: 0 C</p>
                 </div>
-                <p class="text-[10px] font-black opacity-50 uppercase mb-2">Recent Viewers</p>
-                <div id="admViewersList" class="space-y-1 max-h-32 overflow-y-auto no-scrollbar text-[10px] font-bold opacity-80 italic"></div>
+                <p class="text-[9px] font-black opacity-30 uppercase mb-3">Audience Trace</p>
+                <div id="admViewersList" class="space-y-2 max-h-40 overflow-y-auto no-scrollbar text-[10px] font-bold opacity-70 italic"></div>
             </div>
 
-            <div id="admChapAdd" class="hidden mb-8"><button onclick="showSection('chapterForm')" class="w-full py-4 glass text-blue-400 font-black text-xs">+ ADD NEW CHAPTER</button></div>
+            <div id="admChapAdd" class="hidden mb-10"><button onclick="showSection('chapterForm')" class="w-full py-5 glass border-blue-500/20 text-blue-400 font-black text-[10px] tracking-widest uppercase">+ Append New Chapter</button></div>
             <div id="chapterList" class="space-y-4"></div>
         </div>
 
         <div id="chapterForm" class="hidden">
-            <input type="text" id="cTitle" placeholder="Chapter Title">
-            <textarea id="cContent" rows="18" placeholder="Start writing..."></textarea>
-            <input type="number" id="cPrice" placeholder="Price (0 = Free)">
-            <button onclick="saveChapter()" class="w-full btn-grad py-4 rounded-2xl font-black">PUBLISH CHAPTER</button>
-            <button onclick="showSection('chapterView')" class="w-full py-4 text-gray-500 font-bold">BACK</button>
+            <input type="text" id="cTitle" placeholder="Segment Title" class="font-black">
+            <textarea id="cContent" rows="18" placeholder="Draft your content here..." class="text-lg leading-relaxed"></textarea>
+            <div class="flex gap-4">
+                <input type="number" id="cPrice" placeholder="Value (0 = Free)" class="flex-1">
+                <button onclick="saveChapter()" class="flex-[2] btn-grad py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest h-[58px]">Authorize Publication</button>
+            </div>
+            <button onclick="showSection('chapterView')" class="w-full py-6 text-gray-500 font-bold text-[10px] uppercase tracking-widest">Discard Draft</button>
         </div>
 
-        <div id="readerSection" class="hidden fixed inset-0 bg-inherit z-[2000] p-6 overflow-y-auto no-scrollbar">
-            <div class="max-w-md mx-auto">
-                <button onclick="showSection('chapterView')" class="mb-10 p-4 bg-red-500/10 text-red-500 rounded-full">✕</button>
-                <div id="readerBody" class="whitespace-pre-wrap leading-[2.3] text-xl font-serif opacity-90 pb-20"></div>
-                <div class="fixed bottom-0 left-0 right-0 p-6 bg-inherit border-t border-white/5 flex gap-4 max-w-md mx-auto">
-                    <button id="pBtn" class="flex-1 glass py-4 font-black text-xs">PREV</button>
-                    <button id="nBtn" class="flex-1 btn-grad py-4 rounded-2xl font-black text-xs">NEXT</button>
+        <div id="readerSection" class="hidden fixed inset-0 bg-inherit z-[2000] p-8 overflow-y-auto no-scrollbar">
+            <div class="max-w-md mx-auto relative">
+                <div class="flex justify-between items-center mb-12">
+                    <button onclick="showSection('chapterView')" class="p-5 bg-white/5 text-red-500 rounded-full hover:bg-red-500/10 transition">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </button>
+                    <div class="text-right">
+                        <p class="text-[8px] font-black opacity-30 uppercase tracking-[0.3em]">Reading Mode</p>
+                        <p class="text-[10px] font-bold text-blue-400">FANTINAL PREMIUM</p>
+                    </div>
+                </div>
+                <div id="readerBody" class="whitespace-pre-wrap leading-[2.5] text-xl font-medium opacity-90 pb-32 text-justify"></div>
+                <div class="fixed bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)] to-transparent flex gap-4 max-w-md mx-auto z-10">
+                    <button id="pBtn" class="flex-1 glass py-5 font-black text-[10px] tracking-widest uppercase border-white/5 hover:bg-white/10">Back</button>
+                    <button id="nBtn" class="flex-1 btn-grad py-5 rounded-3xl font-black text-[10px] tracking-widest uppercase shadow-lg shadow-blue-500/20">Forward</button>
                 </div>
             </div>
         </div>
@@ -298,9 +363,9 @@
         // HISTORY UI
         function loadHistory(h) {
             document.getElementById('historyList').innerHTML = h.reverse().map(i => `
-                <div class="glass p-5 flex justify-between items-center">
-                    <div><p class="text-xs font-black uppercase text-blue-400">${i.type}</p><p class="text-[10px] opacity-60">${i.date}</p></div>
-                    <p class="font-black text-sm ${i.type==='Deposit'?'text-green-500':'text-red-400'}">${i.amt} C</p>
+                <div class="glass p-6 flex justify-between items-center border-white/5">
+                    <div><p class="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-1">${i.type}</p><p class="text-[9px] opacity-40 font-bold uppercase">${i.date}</p></div>
+                    <p class="font-black text-sm tracking-tighter ${i.type==='Deposit' || i.type==='Gift Redeem'?'text-green-500':'text-red-400'}">${i.amt} C</p>
                 </div>`).join('');
         }
 
@@ -310,8 +375,8 @@
                 snap.docChanges().forEach(ch => { if(ch.type === "added") {
                     const d = ch.doc.data();
                     const div = document.createElement('div');
-                    div.className = "noti-toast glass p-4 bg-blue-600 text-white shadow-2xl";
-                    div.innerHTML = `<p class="text-[9px] font-black uppercase">Deposit Req</p><p class="text-xs font-bold">${d.buyerName} - ${d.amt} MMK</p>`;
+                    div.className = "noti-toast glass p-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-2xl border-none";
+                    div.innerHTML = `<p class="text-[8px] font-black uppercase tracking-widest opacity-80 mb-1">Incoming Transaction</p><p class="text-xs font-black">${d.buyerName} • ${d.amt} MMK</p>`;
                     document.getElementById('notiBox').appendChild(div);
                     setTimeout(() => div.remove(), 6000);
                 }});
@@ -320,19 +385,20 @@
 
         async function submitDeposit() {
             const amt = parseInt(document.getElementById('coinPackage').value), name = document.getElementById('payName').value, tid = document.getElementById('payTid').value;
-            if(!name || tid.length < 5) return alert("Fill details!");
+            if(!name || tid.length < 5) return alert("Security Validation Failed: Please fill all details correctly.");
             await db.collection('coinRequests').add({ uid: auth.currentUser.uid, email: auth.currentUser.email, amt, buyerName: name, transId: tid, status: 'pending', date: new Date() });
-            alert("Sent!"); showSection('homeSection');
+            alert("Success: Deposit Request Sent for Review."); showSection('homeSection');
         }
 
         function loadAdminReqs() {
             db.collection('coinRequests').where('status','==','pending').onSnapshot(snap => {
                 document.getElementById('tab-req').innerHTML = snap.docs.map(doc => `
-                    <div class="glass p-6 border-blue-500/20">
-                        <div class="flex justify-between mb-4"><div><p class="font-black text-sm">${doc.data().buyerName}</p><p class="text-[10px] opacity-60">${doc.data().email}</p></div><p class="text-blue-400 font-black">${doc.data().amt} MMK</p></div>
-                        <div class="flex gap-2"><button onclick="approveDep('${doc.id}', '${doc.data().uid}', ${doc.data().amt}, 'approved')" class="flex-1 bg-blue-600 py-3 rounded-xl font-black text-[10px]">APPROVE</button>
-                        <button onclick="approveDep('${doc.id}', '', 0, 'rejected')" class="flex-1 bg-red-500/10 text-red-500 py-3 rounded-xl font-black text-[10px]">REJECT</button></div>
-                    </div>`).join('') || "<p class='text-center py-20 opacity-30'>No Requests</p>";
+                    <div class="glass p-8 border-white/5 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                        <div class="flex justify-between mb-6"><div><p class="font-black text-sm tracking-tight">${doc.data().buyerName}</p><p class="text-[10px] opacity-40 font-bold">${doc.data().email}</p><p class="text-[10px] text-blue-400 font-bold mt-1">ID: ${doc.data().transId}</p></div><p class="text-blue-400 font-black text-lg tracking-tighter">${doc.data().amt} MMK</p></div>
+                        <div class="flex gap-3"><button onclick="approveDep('${doc.id}', '${doc.data().uid}', ${doc.data().amt}, 'approved')" class="flex-1 bg-blue-600 py-4 rounded-2xl font-black text-[9px] uppercase tracking-widest">Authorize</button>
+                        <button onclick="approveDep('${doc.id}', '', 0, 'rejected')" class="flex-1 bg-red-500/10 text-red-500 py-4 rounded-2xl font-black text-[9px] uppercase tracking-widest">Decline</button></div>
+                    </div>`).join('') || "<p class='text-center py-24 opacity-20 font-black tracking-[0.3em] text-[10px]'>SYSTEM CLEAR: NO PENDING TASKS</p>";
             });
         }
 
@@ -350,14 +416,15 @@
         // NOVELS & ANALYTICS
         async function filterBooks(cat) {
             document.querySelectorAll('.cat-tab').forEach(b => {
-                b.classList.remove('active'); if(b.innerText === cat) b.classList.add('active');
+                b.classList.remove('active'); if(b.innerText.includes(cat)) b.classList.add('active');
             });
             const snap = (cat === 'All') ? await db.collection('books').get() : await db.collection('books').where('genre','==',cat).get();
             document.getElementById('bookGrid').innerHTML = snap.docs.map(doc => `
-                <div class="glass overflow-hidden" onclick="openBook('${doc.id}')">
-                    <img src="${doc.data().cover}" class="h-44 w-full object-cover">
-                    <div class="p-4"><p class="font-black text-[11px] truncate mb-1">${doc.data().title}</p>
-                    <div class="flex justify-between items-center opacity-60"><p class="text-[9px] font-bold">${doc.data().genre}</p><p class="text-[9px]">👁️ ${doc.data().views || 0}</p></div></div>
+                <div class="glass overflow-hidden group relative" onclick="openBook('${doc.id}')">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+                    <img src="${doc.data().cover}" class="h-56 w-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="p-5 relative z-20"><p class="font-black text-[12px] truncate mb-1 tracking-tight">${doc.data().title}</p>
+                    <div class="flex justify-between items-center opacity-40"><p class="text-[9px] font-black uppercase tracking-widest">${doc.data().genre}</p><p class="text-[9px] font-bold">👁️ ${doc.data().views || 0}</p></div></div>
                 </div>`).join('');
         }
 
@@ -365,7 +432,6 @@
             curB = id; showSection('chapterView');
             const isAdmin = auth.currentUser.email === 'xztka49@gmail.com';
             
-            // Track Viewer
             await db.collection('books').doc(id).update({ 
                 views: firebase.firestore.FieldValue.increment(1),
                 viewers: firebase.firestore.FieldValue.arrayUnion(`${auth.currentUser.email} (${new Date().toLocaleDateString()})`)
@@ -375,9 +441,9 @@
                 const d = doc.data();
                 document.getElementById('vipPriceTag').innerText = (d.vipPrice || 5000) + " C"; 
                 if(isAdmin) {
-                    document.getElementById('admSalesCount').innerText = `Sales: ${d.sales || 0} C`;
+                    document.getElementById('admSalesCount').innerText = `Yield: ${d.sales || 0} C`;
                     if(d.viewers) {
-                        document.getElementById('admViewersList').innerHTML = d.viewers.reverse().slice(0, 30).map(v => `<p>• ${v}</p>`).join('');
+                        document.getElementById('admViewersList').innerHTML = d.viewers.reverse().slice(0, 30).map(v => `<p class="border-b border-white/5 pb-1">• ${v}</p>`).join('');
                     }
                 }
             });
@@ -390,9 +456,9 @@
             const bRef = db.collection('books').doc(curB);
             const uDoc = await uRef.get(), bDoc = await bRef.get();
             const price = bDoc.data().vipPrice || 5000;
-            if((uDoc.data().vips || []).includes(curB)) return alert("Already VIP!");
-            if(uDoc.data().coins < price) return alert("Not enough coins!");
-            if(!confirm(`Unlock VIP for ${price} C?`)) return;
+            if((uDoc.data().vips || []).includes(curB)) return alert("Access Granted: You are already a VIP member of this title.");
+            if(uDoc.data().coins < price) return alert("Transaction Declined: Insufficient coin balance.");
+            if(!confirm(`Authorize ${price} Coins for Lifetime VIP access?`)) return;
             
             await uRef.update({ 
                 coins: firebase.firestore.FieldValue.increment(-price), 
@@ -401,13 +467,14 @@
                 history: firebase.firestore.FieldValue.arrayUnion({type:'VIP Unlock', title: bDoc.data().title, amt: price, date: new Date().toLocaleString()})
             });
             await bRef.update({ sales: firebase.firestore.FieldValue.increment(price) });
-            alert("VIP Active!"); loadChaps();
+            alert("Success: VIP Status Activated."); loadChaps();
         }
 
         async function updateVipPrice() {
             const p = parseInt(document.getElementById('newVipP').value);
+            if(!p) return;
             await db.collection('books').doc(curB).update({ vipPrice: p });
-            alert("VIP Price Updated!");
+            alert("System: VIP Pricing Updated.");
         }
 
         // CHAPTERS & READER
@@ -418,14 +485,14 @@
             allC = snap.docs.map(d => ({id: d.id, ...d.data()}));
             
             const vBtn = document.getElementById('vipBtn');
-            if(isVip) { vBtn.innerText = "VIP ACTIVE"; vBtn.classList.replace('bg-yellow-600','bg-green-600'); vBtn.disabled = true; }
-            else { vBtn.innerText = "GET VIP"; vBtn.classList.replace('bg-green-600','bg-yellow-600'); vBtn.disabled = false; }
+            if(isVip) { vBtn.innerText = "VIP ACTIVE"; vBtn.classList.replace('from-yellow-500','from-green-600'); vBtn.disabled = true; }
+            else { vBtn.innerText = "ELEVATE TO VIP"; vBtn.classList.replace('from-green-600','from-yellow-500'); vBtn.disabled = false; }
 
             document.getElementById('chapterList').innerHTML = allC.map((c, i) => {
                 const can = c.price === 0 || isVip || bought.includes(c.id);
-                return `<div class="glass p-5 flex justify-between items-center">
-                    <p class="text-xs font-bold truncate w-40">${c.title}</p>
-                    <button onclick="readC(${i}, ${can})" class="${can?'bg-blue-600':'bg-slate-700'} px-6 py-2 rounded-xl text-[10px] font-black">${can?'READ':'BUY ('+c.price+' C)'}</button>
+                return `<div class="glass p-6 flex justify-between items-center border-white/5">
+                    <div class="w-3/5"><p class="text-[9px] font-black opacity-30 uppercase tracking-[0.2em] mb-1">Chapter ${i+1}</p><p class="text-xs font-black truncate tracking-tight">${c.title}</p></div>
+                    <button onclick="readC(${i}, ${can})" class="${can?'bg-blue-600':'bg-white/5 border border-white/10'} px-8 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all">${can?'READ':'BUY ('+c.price+' C)'}</button>
                 </div>`;
             }).join('');
         }
@@ -435,8 +502,8 @@
             if(!can) {
                 const uRef = db.collection('users').doc(auth.currentUser.uid);
                 const uDoc = await uRef.get();
-                if(uDoc.data().coins < c.price) return alert("Low Coins!");
-                if(!confirm("Buy this chapter?")) return;
+                if(uDoc.data().coins < c.price) return alert("Balance Low!");
+                if(!confirm("Authorize purchase for this segment?")) return;
                 await uRef.update({ 
                     coins: firebase.firestore.FieldValue.increment(-c.price), 
                     spent: firebase.firestore.FieldValue.increment(c.price),
@@ -452,18 +519,19 @@
 
         async function saveChapter() {
             const t = document.getElementById('cTitle').value, c = document.getElementById('cContent').value, p = parseInt(document.getElementById('cPrice').value);
-            await db.collection('books').doc(curB).collection('chapters').add({ title: t, content: c, price: p, date: new Date() });
-            alert("Published!"); showSection('chapterView'); loadChaps();
+            if(!t || !c) return alert("Field Required.");
+            await db.collection('books').doc(curB).collection('chapters').add({ title: t, content: c, price: p || 0, date: new Date() });
+            alert("System: Chapter Published Successfully."); showSection('chapterView'); loadChaps();
         }
 
         // NOVEL ADMIN
         async function loadAdmNovels() {
             const snap = await db.collection('books').get();
             document.getElementById('admNovelList').innerHTML = snap.docs.map(doc => `
-                <div class="glass p-4 flex justify-between items-center">
-                    <div class="flex items-center gap-3"><img src="${doc.data().cover}" class="w-10 h-10 rounded-lg object-cover"><p class="text-[11px] font-black">${doc.data().title}</p></div>
-                    <div class="flex gap-2"><button onclick="openNovelForm('${doc.id}')" class="bg-blue-600 px-4 py-2 rounded-lg text-[9px] font-black">EDIT</button>
-                    <button onclick="deleteNovel('${doc.id}')" class="bg-red-500/10 text-red-500 px-4 py-2 rounded-lg text-[9px] font-black">DEL</button></div>
+                <div class="glass p-5 flex justify-between items-center border-white/5">
+                    <div class="flex items-center gap-4"><img src="${doc.data().cover}" class="w-12 h-12 rounded-2xl object-cover border border-white/10 shadow-lg"><p class="text-[11px] font-black tracking-tight">${doc.data().title}</p></div>
+                    <div class="flex gap-2"><button onclick="openNovelForm('${doc.id}')" class="bg-blue-600/20 text-blue-400 px-5 py-3 rounded-xl text-[9px] font-black">EDIT</button>
+                    <button onclick="deleteNovel('${doc.id}')" class="bg-red-500/10 text-red-500 px-5 py-3 rounded-xl text-[9px] font-black">DEL</button></div>
                 </div>`).join('');
         }
 
@@ -484,48 +552,48 @@
             showSection('adminDashboard'); filterBooks('All');
         }
 
-        // GIFTS (WITH COPY BUTTON)
         async function generateGift() {
             const amt = parseInt(document.getElementById('genAmt').value);
-            const code = "GIFT-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+            if(!amt) return;
+            const code = "FTN-" + Math.random().toString(36).substring(2, 8).toUpperCase();
             await db.collection('giftCodes').doc(code).set({ code, amount: amt, status: 'unused', createdAt: new Date() });
-            alert("Generated: " + code); loadGifts();
+            alert("Gift Forge Complete: " + code); loadGifts();
         }
 
         async function loadGifts() {
             const snap = await db.collection('giftCodes').orderBy('createdAt','desc').get();
             document.getElementById('admGiftList').innerHTML = snap.docs.map(doc => `
-                <div class="glass p-4 flex justify-between items-center">
-                    <div><p class="text-xs font-black text-purple-400">${doc.data().code}</p><p class="text-[8px] opacity-40 uppercase">${doc.data().status}</p></div>
-                    <div class="flex items-center gap-3">
-                        <p class="font-black">${doc.data().amount} C</p>
-                        <button onclick="navigator.clipboard.writeText('${doc.data().code}');alert('Copied!')" class="p-2 bg-white/5 rounded-lg text-xs">📋</button>
+                <div class="glass p-5 flex justify-between items-center border-white/5">
+                    <div><p class="text-xs font-black text-purple-400 tracking-widest">${doc.data().code}</p><p class="text-[8px] opacity-40 uppercase font-bold mt-1">${doc.data().status}</p></div>
+                    <div class="flex items-center gap-4">
+                        <p class="font-black text-sm tracking-tighter">${doc.data().amount} C</p>
+                        <button onclick="navigator.clipboard.writeText('${doc.data().code}');alert('Identity Copied')" class="p-3 bg-white/5 rounded-xl hover:bg-white/10 transition">📋</button>
                     </div>
                 </div>`).join('');
         }
 
-        // OTHERS
         async function redeemGift() {
             const code = document.getElementById('gCodeInput').value.trim();
+            if(!code) return;
             const ref = db.collection('giftCodes').doc(code), doc = await ref.get();
-            if(!doc.exists || doc.data().status !== 'unused') return alert("Invalid Code");
+            if(!doc.exists || doc.data().status !== 'unused') return alert("Validation Error: Voucher Invalid or Expired.");
             await db.collection('users').doc(auth.currentUser.uid).update({ 
                 coins: firebase.firestore.FieldValue.increment(doc.data().amount),
                 history: firebase.firestore.FieldValue.arrayUnion({type:'Gift Redeem', amt: doc.data().amount, date: new Date().toLocaleString()})
             });
             await ref.update({ status: 'used', usedBy: auth.currentUser.email });
-            alert("Success!"); showSection('homeSection');
+            alert("Voucher Authorized: Coins Added to your wallet."); showSection('homeSection');
         }
 
         async function loadFinance() {
             const d = await db.collection('admin').doc('fin').get();
-            document.getElementById('totalFinance').innerText = (d.exists ? d.data().total : 0) + " MMK";
+            document.getElementById('totalFinance').innerText = (d.exists ? d.data().total.toLocaleString() : 0) + " MMK";
         }
 
         async function loadUsers() {
             const snap = await db.collection('users').get();
             document.getElementById('totalU').innerText = snap.size;
-            document.getElementById('admUserList').innerHTML = snap.docs.map(doc => `<div class="glass p-4 flex justify-between items-center"><p class="text-[10px] font-bold truncate w-40">${doc.data().email}</p><p class="text-yellow-500 font-black text-xs">${doc.data().coins} C</p></div>`).join('');
+            document.getElementById('admUserList').innerHTML = snap.docs.map(doc => `<div class="glass p-5 flex justify-between items-center border-white/5"><p class="text-[10px] font-bold truncate w-40 opacity-70">${doc.data().email}</p><p class="text-yellow-500 font-black text-xs tracking-tighter">${doc.data().coins} C</p></div>`).join('');
         }
 
         async function loadAds() {
@@ -535,7 +603,7 @@
 
         async function updateAds() {
             const images = [document.getElementById('adU1').value, document.getElementById('adU2').value, document.getElementById('adU3').value, document.getElementById('adU4').value];
-            await db.collection('settings').doc('ads').set({ images }); alert("Ads Saved!"); loadAds();
+            await db.collection('settings').doc('ads').set({ images }); alert("System: Assets Synchronized."); loadAds();
         }
 
         async function login() { try { await auth.signInWithEmailAndPassword(document.getElementById('lEmail').value, document.getElementById('lPass').value); } catch(e) { alert(e.message); } }
