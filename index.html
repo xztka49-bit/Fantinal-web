@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantinal Publishing</title>
+    <style>
+        /* CSS ပိုင်း */
+        :root { --bg: #f4f4f9; --card: #ffffff; --text: #333; --primary: #007bff; }
+        body.dark { --bg: #1a1a1a; --card: #2d2d2d; --text: #f4f4f9; --primary: #375a7f; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 0; transition: 0.3s; }
+        .card { background: var(--card); margin: 15px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; background: var(--card); color: var(--text); }
+        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .hidden { display: none; }
+        .theme-btn { position: fixed; top: 15px; right: 15px; width: auto; z-index: 1000; padding: 8px 15px; }
+        .novel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 15px; }
+        .novel-card img { width: 100%; border-radius: 8px; height: 200px; object-fit: cover; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #ddd; }
+        .reader-view { padding: 20px; line-height: 1.8; font-size: 18px; }
+    </style>
+</head>
+<body>
+
+    <button class="theme-btn" onclick="toggleTheme()">🌙 Mode</button>
+
+    <div id="auth-section" class="card" style="margin-top: 80px;">
+        <h2 align="center">Fantinal</h2>
+        <input type="email" id="email" placeholder="Email (ဥပမာ- user@gmail.com)">
+        <input type="password" id="pass" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <button onclick="register()" style="background:#28a745; margin-top:10px;">Register</button>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div style="padding: 15px; display: flex; justify-content: space-between;">
+            <span>Welcome!</span>
+            <b id="coin-status" style="color: orange;">(0 C)</b>
+        </div>
+
+        <div id="home-page">
+            <div id="admin-novel" class="card hidden">
+                <h4>Add New Novel (Admin Only)</h4>
+                <input type="text" id="n-title" placeholder="စာအုပ်အမည်">
+                <input type="text" id="n-img" placeholder="ပုံ Link">
+                <textarea id="n-summary" placeholder="အကျဉ်းချုပ်"></textarea>
+                <button onclick="uploadNovel()">Add Novel</button>
+            </div>
+            <div id="novel-display" class="novel-grid"></div>
+        </div>
+
+        <div id="chapter-page" class="hidden">
+            <button onclick="showPage('home')" style="width:80px; margin:10px;">Back</button>
+            <div id="novel-info"></div>
+            <div id="admin-chapter" class="card hidden">
+                <h4>Add New Chapter</h4>
+                <input type="text" id="c-title" placeholder="အပိုင်းခေါင်းစဉ်">
+                <textarea id="c-body" placeholder="ဇာတ်လမ်းအကြောင်းအရာ" rows="8"></textarea>
+                <button onclick="uploadChapter()">Add Chapter</button>
+            </div>
+            <div id="chapter-list"></div>
+        </div>
+
+        <div id="reader-page" class="hidden">
+            <button onclick="showPage('chapter')" style="width:80px; margin:10px;">Back</button>
+            <div id="reader-content" class="reader-view"></div>
+        </div>
+
+        <div style="height: 80px;"></div>
+        <div class="bottom-nav">
+            <div onclick="showPage('home')">🏠 Home</div>
+            <div onclick="logout()">🚪 Logout</div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <script>
+        // JS ပိုင်း
+        const firebaseConfig = {
+            apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
+            authDomain: "fantinal-publishing-5b960.firebaseapp.com",
+            projectId: "fantinal-publishing-5b960",
+            storageBucket: "fantinal-publishing-5b960.firebasestorage.app",
+            messagingSenderId: "961612304854",
+            appId: "1:961612304854:web:6bf7b03072ed83b58b9477"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        let currentNID = "";
+
+        // UI Functions
+        window.toggleTheme = () => document.body.classList.toggle('dark');
+        
+        window.showPage = (page) => {
+            ['home', 'chapter', 'reader'].forEach(p => document.getElementById(p+'-page').classList.add('hidden'));
+            document.getElementById(page+'-page').classList.remove('hidden');
+            window.scrollTo(0,0);
+        };
+
+        // Auth
+        window.register = () => {
+            const e = document.getElementById('email').value, p = document.getElementById('pass').value;
+            if(!e || !p) return alert("ဖြည့်ပါ");
+            auth.createUserWithEmailAndPassword(e, p)
+                .then(u => db.collection('users').doc(u.user.uid).set({coins:0, email:e}))
+                .then(() => alert("Register အောင်မြင်ပါပြီ"))
+                .catch(err => alert(err.message));
+        };
+
+        window.login = () => {
+            const e = document.getElementById('email').value, p = document.getElementById('pass').value;
+            auth.signInWithEmailAndPassword(e, p).catch(err => alert(err.message));
+        };
+
+        window.logout = () => auth.signOut();
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('auth-section').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                db.collection('users').doc(user.uid).onSnapshot(doc => {
+                    if(doc.exists) document.getElementById('coin-status').innerText = `(${doc.data().coins || 0} C)`;
+                });
+                if(user.email === "xztka49@gmail.com") {
+                    document.getElementById('admin-novel').classList.remove('hidden');
+                    document.getElementById('admin-chapter').classList.remove('hidden');
+                }
+                loadNovels();
+            } else {
+                document.getElementById('auth-section').classList.remove('hidden');
+                document.getElementById('main-ui').classList.add('hidden');
+            }
+        });
+
+        // Content Logic
+        function loadNovels() {
+            db.collection('novels').orderBy('date','desc').onSnapshot(s => {
+                let h = "";
+                s.forEach(doc => {
+                    const n = doc.data();
+                    h += `<div class="card novel-card" onclick="openNovel('${doc.id}', '${n.title}', \`${n.summary}\`)">
+                            <img src="${n.image}"><h4>${n.title}</h4></div>`;
+                });
+                document.getElementById('novel-display').innerHTML = h;
+            });
+        }
+
+        window.openNovel = (id, title, summary) => {
+            currentNID = id;
+            showPage('chapter');
+            document.getElementById('novel-info').innerHTML = `<div class="card"><h3>${title}</h3><p>${summary}</p></div>`;
+            loadChapters(id);
+        };
+
+        function loadChapters(nid) {
+            db.collection('novels').doc(nid).collection('chapters').orderBy('date','asc').onSnapshot(s => {
+                let h = "";
+                s.forEach(doc => {
+                    const c = doc.data();
+                    h += `<div class="card" onclick="readChapter('${c.title}', \`${c.body}\`)">📖 ${c.title}</div>`;
+                });
+                document.getElementById('chapter-list').innerHTML = h || "<p style='padding:20px;'>အပိုင်းများ မရှိသေးပါ။</p>";
+            });
+        }
+
+        window.readChapter = (title, body) => {
+            showPage('reader');
+            document.getElementById('reader-content').innerHTML = `<h3>${title}</h3><hr><p>${body}</p>`;
+        };
+
+        // Admin Uploads
+        window.uploadNovel = () => {
+            const t = document.getElementById('n-title').value, i = document.getElementById('n-img').value, s = document.getElementById('n-summary').value;
+            db.collection('novels').add({ title: t, image: i, summary: s, date: new Date() }).then(() => alert("စာအုပ်တင်ပြီး"));
+        };
+
+        window.uploadChapter = () => {
+            const t = document.getElementById('c-title').value, b = document.getElementById('c-body').value;
+            db.collection('novels').doc(currentNID).collection('chapters').add({ title: t, body: b, date: new Date() }).then(() => alert("အပိုင်းတင်ပြီး"));
+        };
+    </script>
+</body>
+</html>
