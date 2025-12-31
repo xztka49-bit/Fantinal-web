@@ -9,129 +9,207 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <style>
-        .paid-badge { background: #f59e0b; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
-        .free-badge { background: #10b981; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+        :root { --bg: #1a1a1a; --card: #2d2d2d; --text: #f4f4f9; }
+        body { background: var(--bg); color: var(--text); transition: 0.3s; font-family: sans-serif; margin: 0; }
+        .card { background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        input, textarea, select { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #444; background: #333; color: white; }
+        .btn-blue { background: #2563eb; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .hidden { display: none; }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-900">
-    <nav class="bg-white shadow-md p-4 sticky top-0 z-50 flex justify-between items-center">
-        <h1 class="text-xl font-bold text-blue-600">Fantinal</h1>
-        <div id="userInfo" class="flex items-center gap-4">
-            <span id="userCoins" class="font-bold text-orange-500">💰 0 C</span>
-            <button onclick="logout()" class="text-sm text-red-500">Logout</button>
+<body>
+    <nav class="bg-blue-600 text-white p-4 sticky top-0 z-50 flex justify-between items-center shadow-lg">
+        <h1 class="text-xl font-bold">Fantinal</h1>
+        <div id="navInfo" class="hidden flex items-center gap-3">
+            <span id="userCoins" class="font-bold text-yellow-300">💰 0 C</span>
+            <button onclick="showSection('buyCoin')" class="text-xs bg-blue-800 px-2 py-1 rounded">+ Buy</button>
+            <button onclick="logout()" class="text-xs text-red-200">Logout</button>
         </div>
     </nav>
-
-    <div id="authContainer" class="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow-lg hidden">
-        <h2 class="text-2xl font-bold mb-4">Login / Register</h2>
-        <input type="email" id="email" placeholder="Email" class="w-full p-2 mb-2 border rounded">
-        <input type="password" id="password" placeholder="Password" class="w-full p-2 mb-4 border rounded">
-        <button onclick="login()" class="w-full bg-blue-500 text-white p-2 rounded mb-2">Login</button>
-        <button onclick="register()" class="w-full bg-green-500 text-white p-2 rounded">Register</button>
-    </div>
-
-    <main id="mainContent" class="max-w-4xl mx-auto p-4 hidden">
-        <div id="adminPanel" class="hidden bg-white p-6 rounded shadow mb-6">
-            <h2 class="text-xl font-bold mb-4">Add New Chapter</h2>
-            <input type="text" id="novelTitle" placeholder="Novel Name" class="w-full p-2 mb-2 border rounded">
-            <input type="text" id="chapterTitle" placeholder="Chapter (e.g. Chapter 1)" class="w-full p-2 mb-2 border rounded">
-            <textarea id="content" placeholder="Story Content..." class="w-full p-2 mb-2 border rounded h-32"></textarea>
-            <input type="number" id="coinPrice" placeholder="Coins required (0 for Free)" class="w-full p-2 mb-4 border rounded">
-            <button onclick="uploadChapter()" class="bg-blue-600 text-white px-6 py-2 rounded">Publish</button>
+    <main class="max-w-md mx-auto p-4">
+        <div id="authSection" class="card mt-10">
+            <h2 class="text-2xl font-bold mb-4 text-center">Login / Register</h2>
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="login()" class="btn-blue mb-2">Login</button>
+            <button onclick="register()" class="w-full text-blue-400 font-bold text-sm text-center">Create Account (Register)</button>
         </div>
 
-        <div id="chapterList" class="grid gap-4"></div>
-    </main>
+        <div id="buyCoin" class="card hidden">
+            <h2 class="text-lg font-bold mb-4 text-blue-400">💰 Coin ဝယ်ယူရန်</h2>
+            <div class="text-xs bg-blue-900 p-3 rounded mb-4 text-blue-100 leading-5">
+                KPay / Wave: 09759731746 (THU KHA AUNG)<br>ငွေလွှဲပြီးမှ အောက်ပါ Form ဖြည့်ပါ။
+            </div>
+            <input type="text" id="payName" placeholder="ငွေလွှဲသူအမည်">
+            <input type="text" id="payPhone" placeholder="ဖုန်းနံပတ်">
+            <input type="text" id="payLast6" placeholder="ပြေစာနောက်ဆုံး ၆ လုံး">
+            <select id="coinPkg">
+                <option value="1000">1000 Coins - 1000 MMK</option>
+                <option value="5000">5000 Coins - 5000 MMK</option>
+            </select>
+            <button onclick="submitRequest()" class="btn-blue">Request Approval</button>
+            <button onclick="showSection('novelList')" class="w-full mt-4 text-gray-400 text-sm">Back</button>
+        </div>
 
+        <div id="novelList" class="hidden">
+            <div id="adminPanel" class="card hidden border-t-4 border-blue-500">
+                <h3 class="font-bold mb-2">Admin</h3>
+                <div class="flex gap-2">
+                    <button onclick="showSection('adminNovel')" class="bg-green-600 text-white px-3 py-1 rounded text-xs">Add Novel</button>
+                    <button onclick="showSection('adminApprove')" class="bg-orange-600 text-white px-3 py-1 rounded text-xs">Requests (<span id="pendingCount">0</span>)</button>
+                </div>
+            </div>
+            <div id="listDisplay"></div>
+        </div>
+
+        <div id="adminNovel" class="card hidden">
+            <input type="text" id="nTitle" placeholder="စာအုပ်အမည်">
+            <input type="text" id="nChapter" placeholder="အပိုင်း (e.g. အပိုင်း ၁)">
+            <textarea id="nContent" placeholder="ဇာတ်လမ်းစာသား..." class="h-40"></textarea>
+            <input type="number" id="nPrice" placeholder="Coin (0 ဆိုရင် Free)">
+            <button onclick="uploadNovel()" class="btn-blue">Publish</button>
+        </div>
+
+        <div id="adminApprove" class="card hidden">
+            <h2 class="font-bold mb-4">ငွေလွှဲစစ်ဆေးရန်</h2>
+            <div id="requestList"></div>
+            <button onclick="showSection('novelList')" class="w-full mt-4 text-gray-400">Back</button>
+        </div>
+    </main>
     <script>
-        // --- Firebase Configuration (သင့်ရဲ့ Config ကို ဒီမှာ ပြန်ထည့်ပါ) ---
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
+            authDomain: "fantinal-publishing-5b960.firebaseapp.com",
+            projectId: "fantinal-publishing-5b960",
+            storageBucket: "fantinal-publishing-5b960.firebasestorage.app",
+            messagingSenderId: "961612304854",
+            appId: "1:961612304854:web:6bf7b03072ed83b58b9477"
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Check Auth State
+        function showSection(id) {
+            ['authSection', 'buyCoin', 'novelList', 'adminNovel', 'adminApprove'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        }
+
         auth.onAuthStateChanged(user => {
             if (user) {
-                document.getElementById('authContainer').classList.add('hidden');
-                document.getElementById('mainContent').classList.remove('hidden');
-                if (user.email === 'xztka49@gmail.com') document.getElementById('adminPanel').classList.remove('hidden');
-                fetchUserData(user.uid);
-                loadChapters();
-            } else {
-                document.getElementById('authContainer').classList.remove('hidden');
-                document.getElementById('mainContent').classList.add('hidden');
-            }
+                document.getElementById('navInfo').classList.remove('hidden');
+                if (user.email === 'xztka49@gmail.com') {
+                    document.getElementById('adminPanel').classList.remove('hidden');
+                    loadPendingRequests();
+                }
+                syncUserData(user.uid);
+                showSection('novelList');
+                loadNovels();
+            } else { showSection('authSection'); }
         });
 
-        async function fetchUserData(uid) {
-            const doc = await db.collection('users').doc(uid).get();
-            if (doc.exists) {
-                document.getElementById('userCoins').innerText = `💰 ${doc.data().coins || 0} C`;
-            } else {
-                await db.collection('users').doc(uid).set({ coins: 0 });
-            }
+        async function register() {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
+            try {
+                const cred = await auth.createUserWithEmailAndPassword(e, p);
+                await db.collection('users').doc(cred.user.uid).set({ email: e, coins: 0 });
+                alert("Success!");
+            } catch (err) { alert(err.message); }
         }
 
-        async function uploadChapter() {
-            const title = document.getElementById('novelTitle').value;
-            const chapter = document.getElementById('chapterTitle').value;
-            const content = document.getElementById('content').value;
-            const price = parseInt(document.getElementById('coinPrice').value) || 0;
-
-            await db.collection('chapters').add({
-                title, chapter, content, price, createdAt: new Date()
-            });
-            alert('Uploaded!');
-            loadChapters();
+        async function login() {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
+            try { await auth.signInWithEmailAndPassword(e, p); } catch (err) { alert("Error!"); }
         }
 
-        async function loadChapters() {
-            const snapshot = await db.collection('chapters').orderBy('createdAt', 'desc').get();
-            const list = document.getElementById('chapterList');
-            list.innerHTML = '';
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                const isPaid = data.price > 0;
-                list.innerHTML += `
-                    <div class="bg-white p-4 rounded shadow flex justify-between items-center">
-                        <div>
-                            <h3 class="font-bold">${data.title} - ${data.chapter}</h3>
-                            <span class="${isPaid ? 'paid-badge' : 'free-badge'}">${isPaid ? data.price + ' Coins' : 'Free'}</span>
-                        </div>
-                        <button onclick="readChapter('${doc.id}', ${data.price})" class="bg-blue-500 text-white px-4 py-1 rounded">Read</button>
-                    </div>
-                `;
+        function logout() { auth.signOut(); location.reload(); }
+
+        async function syncUserData(uid) {
+            db.collection('users').doc(uid).onSnapshot(doc => {
+                if (doc.exists) document.getElementById('userCoins').innerText = `💰 ${doc.data().coins || 0} C`;
             });
         }
 
-        async function readChapter(id, price) {
+        async function submitRequest() {
+            const data = {
+                uid: auth.currentUser.uid,
+                email: auth.currentUser.email,
+                name: document.getElementById('payName').value,
+                phone: document.getElementById('payPhone').value,
+                last6: document.getElementById('payLast6').value,
+                amount: parseInt(document.getElementById('coinPkg').value),
+                status: 'pending',
+                date: new Date()
+            };
+            await db.collection('coinRequests').add(data);
+            alert("Sent Request!");
+            showSection('novelList');
+        }
+
+        function loadPendingRequests() {
+            db.collection('coinRequests').where('status', '==', 'pending').onSnapshot(snap => {
+                document.getElementById('pendingCount').innerText = snap.size;
+                const list = document.getElementById('requestList');
+                list.innerHTML = "";
+                snap.forEach(doc => {
+                    const req = doc.data();
+                    list.innerHTML += `<div class="border-b border-gray-600 py-3">
+                        <p class="text-sm">User: ${req.email} (${req.amount}C)</p>
+                        <p class="text-xs text-gray-400">Code: ${req.last6}</p>
+                        <button onclick="approveCoin('${doc.id}','${req.uid}',${req.amount})" class="bg-blue-600 px-3 py-1 rounded text-xs mt-2">Approve</button>
+                    </div>`;
+                });
+            });
+        }
+
+        async function approveCoin(rid, uid, amt) {
+            const ref = db.collection('users').doc(uid);
+            const doc = await ref.get();
+            await ref.update({ coins: (doc.data().coins || 0) + amt });
+            await db.collection('coinRequests').doc(rid).update({ status: 'approved' });
+            alert("Approved!");
+        }
+
+        async function uploadNovel() {
+            await db.collection('novels').add({
+                title: document.getElementById('nTitle').value,
+                chapter: document.getElementById('nChapter').value,
+                content: document.getElementById('nContent').value,
+                price: parseInt(document.getElementById('nPrice').value) || 0,
+                createdAt: new Date()
+            });
+            alert("Published!");
+            showSection('novelList');
+        }
+
+        function loadNovels() {
+            db.collection('novels').orderBy('createdAt', 'desc').onSnapshot(snap => {
+                const list = document.getElementById('listDisplay');
+                list.innerHTML = "";
+                snap.forEach(doc => {
+                    const n = doc.data();
+                    list.innerHTML += `<div class="card flex justify-between items-center">
+                        <div><h4 class="font-bold text-blue-400">${n.title}</h4><p class="text-xs">${n.chapter} (${n.price}C)</p></div>
+                        <button onclick="readNovel('${doc.id}',${n.price})" class="bg-blue-600 px-4 py-1 rounded-full text-xs">Read</button>
+                    </div>`;
+                });
+            });
+        }
+
+        async function readNovel(id, pr) {
             const uid = auth.currentUser.uid;
-            const userDoc = await db.collection('users').doc(uid).get();
-            const userCoins = userDoc.data().coins || 0;
-
-            if (price > 0) {
-                if (userCoins < price) return alert('Coin မလောက်ပါ။');
-                if (confirm(`${price} Coins သုံးပြီး ဖတ်မှာလား?`)) {
-                    await db.collection('users').doc(uid).update({ coins: userCoins - price });
-                    fetchUserData(uid);
-                } else { return; }
-            }
-
-            const chap = await db.collection('chapters').doc(id).get();
-            alert("Content: \n\n" + chap.data().content);
+            const user = await db.collection('users').doc(uid).get();
+            const coins = user.data().coins || 0;
+            if (pr > 0 && coins < pr) return alert("No Coins!");
+            if (pr > 0) await db.collection('users').doc(uid).update({ coins: coins - pr });
+            const doc = await db.collection('novels').doc(id).get();
+            document.body.innerHTML = `<div class="p-6 bg-gray-900 text-gray-100 min-h-screen">
+                <button onclick="location.reload()" class="text-blue-400 mb-4">← Back</button>
+                <h1 class="text-2xl font-bold">${doc.data().title}</h1><h2 class="mb-4">${doc.data().chapter}</h2>
+                <div class="whitespace-pre-wrap text-lg">${doc.data().content}</div>
+            </div>`;
         }
-
-        function login() { /* Standard Firebase Login */ }
-        function register() { /* Standard Firebase Register */ }
-        function logout() { auth.signOut(); }
     </script>
 </body>
 </html>
