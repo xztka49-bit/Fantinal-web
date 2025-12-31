@@ -3,62 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fantinal Novel Store</title>
+    <title>Fantinal Novel Store - Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <style>
         :root { --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --accent: #2563eb; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; transition: 0.3s; }
-        .card { background: var(--card); border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; }
-        .sidebar { position: fixed; left: -100%; top: 0; width: 85%; height: 100%; background: var(--card); z-index: 100; transition: 0.3s; padding: 20px; }
-        .sidebar.active { left: 0; box-shadow: 5px 0 20px rgba(0,0,0,0.5); }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 90; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
+        .card { background: var(--card); border-radius: 16px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; }
+        .sidebar { position: fixed; left: -100%; top: 0; width: 85%; height: 100%; background: var(--card); z-index: 100; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 25px; }
+        .sidebar.active { left: 0; box-shadow: 10px 0 30px rgba(0,0,0,0.6); }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; z-index: 90; backdrop-filter: blur(4px); }
         .overlay.active { display: block; }
-        .genre-btn { padding: 8px 16px; border-radius: 20px; font-size: 11px; background: #334155; color: white; white-space: nowrap; transition: 0.2s; }
-        .genre-btn.active { background: var(--accent); box-shadow: 0 0 10px var(--accent); font-weight: bold; }
-        input, select, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; background: #0f172a; color: white; border: 1px solid #334155; font-size: 13px; }
+        .genre-btn { padding: 8px 18px; border-radius: 25px; font-size: 11px; background: #334155; color: white; white-space: nowrap; transition: 0.3s; }
+        .genre-btn.active { background: var(--accent); transform: scale(1.05); font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 10px; background: #0f172a; color: white; border: 1px solid #334155; }
+        .slider-wrapper { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; border-radius: 16px; scroll-behavior: smooth; }
+        .slider-item { min-width: 100%; scroll-snap-align: start; height: 180px; object-fit: cover; border-radius: 16px; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .admin-tab-btn { flex: 1; padding: 10px 5px; font-size: 10px; background: #334155; border-radius: 6px; }
-        .admin-tab-btn.active { background: var(--accent); }
+        .admin-tab-btn { flex: 1; padding: 12px 5px; font-size: 10px; background: #334155; border-radius: 8px; transition: 0.2s; font-weight: 600; }
+        .admin-tab-btn.active { background: var(--accent); color: white; }
     </style>
 </head>
 <body>
     <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
     
     <div id="sidebar" class="sidebar overflow-y-auto">
-        <h2 class="text-xl font-bold mb-4 border-b border-gray-700 pb-2">User Profile</h2>
-        <div class="mb-6 p-4 bg-slate-800/50 rounded-xl border border-blue-500/30">
-            <p id="userEmail" class="font-bold text-sm mb-3 text-blue-400">-</p>
-            <div class="flex justify-between border-t border-gray-700 pt-3">
-                <div><p class="text-[10px] text-gray-400">Balance</p><p id="userBalance" class="font-bold text-yellow-500">0 C</p></div>
-                <div><p class="text-[10px] text-gray-400 text-right">Spent</p><p id="userSpent" class="font-bold text-red-400 text-right">0 C</p></div>
+        <h2 class="text-2xl font-black mb-6 text-blue-500">PROFILE</h2>
+        <div class="mb-6 p-5 bg-slate-800/80 rounded-2xl border border-blue-500/20">
+            <p id="userEmail" class="font-bold text-sm mb-4 text-blue-300 truncate">-</p>
+            <div class="flex justify-between border-t border-gray-700 pt-4">
+                <div><p class="text-[10px] text-gray-400 uppercase">Balance</p><p id="userBalance" class="text-lg font-black text-yellow-500">0 C</p></div>
+                <div><p class="text-[10px] text-gray-400 text-right uppercase">Spent</p><p id="userSpent" class="text-lg font-black text-red-400 text-right">0 C</p></div>
             </div>
-            <button onclick="showSection('buyCoinSection')" class="w-full mt-4 bg-yellow-600 text-[11px] py-2 rounded-lg font-bold">COIN ဝယ်ယူမည်</button>
+            <button onclick="showSection('buyCoinSection')" class="w-full mt-5 bg-gradient-to-r from-yellow-600 to-orange-600 text-xs py-3 rounded-xl font-bold shadow-lg">TOP UP COINS</button>
         </div>
-        <h3 class="text-xs font-bold uppercase text-gray-400 mb-2">Recent History</h3>
-        <div id="userHistory" class="text-[10px] space-y-2 mb-10"></div>
-        <button onclick="auth.signOut()" class="w-full bg-red-600 py-2 rounded text-xs font-bold">Logout</button>
+        <h3 class="text-[10px] font-black uppercase text-gray-500 mb-3 tracking-widest">Usage History</h3>
+        <div id="userHistory" class="space-y-3 mb-10"></div>
+        <button onclick="auth.signOut()" class="w-full bg-red-500/20 text-red-500 py-3 rounded-xl text-xs font-black border border-red-500/30">LOGOUT</button>
     </div>
 
-    <nav class="bg-slate-900 p-4 sticky top-0 z-50 flex justify-between items-center shadow-md">
-        <div class="flex items-center gap-3">
-            <button onclick="toggleMenu()" class="text-xl">☰</button>
-            <h1 class="text-lg font-bold tracking-tighter" onclick="location.reload()">FANTINAL</h1>
+    <nav class="bg-slate-900/90 backdrop-blur-md p-4 sticky top-0 z-50 flex justify-between items-center border-b border-gray-800">
+        <div class="flex items-center gap-4">
+            <button onclick="toggleMenu()" class="text-2xl">☰</button>
+            <h1 class="text-xl font-black tracking-tighter text-white" onclick="location.reload()">FANTINAL</h1>
         </div>
-        <div id="adminIndicator" class="hidden bg-red-600 px-2 py-0.5 rounded text-[8px] font-bold">ADMIN</div>
+        <div id="adminIndicator" class="hidden bg-red-600 px-3 py-1 rounded-full text-[9px] font-black animate-pulse">ADMIN MODE</div>
     </nav>
 
     <main class="max-w-md mx-auto p-4">
         <div id="buyCoinSection" class="hidden">
-            <button onclick="showSection('bookStore')" class="text-blue-400 mb-4 text-xs font-bold">← BACK</button>
-            <div class="card p-4">
-                <h2 class="text-lg font-bold mb-4 text-yellow-500">Coin Package</h2>
-                <div class="bg-slate-800 p-3 rounded-lg mb-4 text-[10px] border-l-4 border-yellow-500">
-                    <p>KBZpay / Wave Pay: <span class="text-white font-bold">09759731746</span></p>
-                    <p>Name: <span class="text-white font-bold">THU KHA AUNG</span></p>
+            <button onclick="showSection('bookStore')" class="text-blue-400 mb-6 text-xs font-bold">← BACK TO STORE</button>
+            <div class="card p-6">
+                <h2 class="text-xl font-black mb-6 text-yellow-500">Deposit Coins</h2>
+                <div class="bg-slate-800 p-4 rounded-xl mb-6 text-xs border-l-4 border-yellow-500">
+                    <p class="text-gray-400 mb-1">KBZpay / Wave Pay:</p>
+                    <p class="text-white font-black text-lg">09759731746</p>
+                    <p class="text-blue-400 font-bold mt-2">THU KHA AUNG</p>
                 </div>
+                <label class="text-[10px] text-gray-400 font-bold uppercase">Select Package</label>
                 <select id="coinPackage">
                     <option value="1000">1000 MMK (1000 C)</option>
                     <option value="2000">2000 MMK (2000 C)</option>
@@ -66,22 +70,23 @@
                     <option value="10000">10000 MMK (10000 C)</option>
                     <option value="30000">30000 MMK (30000 C)</option>
                 </select>
-                <input type="text" id="buyerName" placeholder="ဝယ်ယူသူအမည်">
-                <input type="number" id="transId" placeholder="Transaction ID (နောက်ဆုံး ၆ လုံး)">
-                <button onclick="requestCoins()" class="w-full bg-green-600 py-3 rounded-lg font-bold">REQUEST SUBMIT</button>
+                <input type="text" id="buyerName" placeholder="Payer Name">
+                <input type="number" id="transId" placeholder="Last 6 digits of Trans ID">
+                <button onclick="requestCoins()" class="w-full bg-blue-600 py-4 rounded-xl font-black shadow-xl shadow-blue-900/40 mt-2">SUBMIT REQUEST</button>
             </div>
         </div>
 
-        <div id="authSection" class="card p-6 mt-10">
-            <h2 class="text-xl font-bold mb-6 text-center">Login to Fantinal</h2>
-            <input type="email" id="email" placeholder="Email"><input type="password" id="password" placeholder="Password">
-            <button onclick="login()" class="w-full bg-blue-600 py-3 rounded-lg font-bold mb-4 shadow-lg shadow-blue-900/20">Login</button>
-            <button onclick="register()" class="w-full text-blue-400 text-xs">New Account? Register here</button>
+        <div id="authSection" class="card p-8 mt-12 text-center">
+            <h2 class="text-2xl font-black mb-8">Welcome Back</h2>
+            <input type="email" id="email" placeholder="Email Address">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="login()" class="w-full bg-blue-600 py-4 rounded-xl font-black mb-6">LOGIN</button>
+            <button onclick="register()" class="text-blue-400 text-xs font-bold">Don't have an account? Register</button>
         </div>
 
         <div id="bookStore" class="hidden">
-            <div id="adSlider" class="slider-container no-scrollbar mb-4"></div>
-            <div class="flex gap-2 overflow-x-auto mb-6 pb-2 no-scrollbar" id="genreTabs">
+            <div id="adSlider" class="slider-wrapper no-scrollbar mb-6"></div>
+            <div class="flex gap-2 overflow-x-auto mb-6 pb-2 no-scrollbar">
                 <button onclick="loadBooks('All')" class="genre-btn active">All</button>
                 <button onclick="loadBooks('Fan Fiction')" class="genre-btn">Fan Fiction</button>
                 <button onclick="loadBooks('Life')" class="genre-btn">Life</button>
@@ -89,82 +94,89 @@
                 <button onclick="loadBooks('Mega')" class="genre-btn">Mega</button>
             </div>
             <div id="bookList" class="grid grid-cols-2 gap-4"></div>
-            <div id="adminEntry" class="hidden mt-8"><button onclick="showSection('adminDashboard')" class="w-full bg-indigo-600 py-3 rounded-xl text-xs font-bold">OPEN ADMIN PANEL</button></div>
+            <div id="adminEntry" class="hidden mt-12"><button onclick="showSection('adminDashboard')" class="w-full bg-indigo-600 py-4 rounded-2xl text-xs font-black tracking-widest">OPEN ADMIN CONTROL</button></div>
         </div>
 
         <div id="adminDashboard" class="hidden">
-            <button onclick="showSection('bookStore')" class="text-blue-400 mb-4 text-xs font-bold">← BACK</button>
-            <div class="flex gap-1 mb-6 bg-slate-800 p-1 rounded-lg overflow-x-auto no-scrollbar">
-                <button onclick="switchAdminTab('stats')" class="admin-tab-btn active">Analytics</button>
-                <button onclick="switchAdminTab('requests')" class="admin-tab-btn">Requests</button>
-                <button onclick="switchAdminTab('users')" class="admin-tab-btn">User List</button>
-                <button onclick="switchAdminTab('finance')" class="admin-tab-btn">Finance</button>
-                <button onclick="switchAdminTab('upload')" class="admin-tab-btn">Content</button>
+            <button onclick="showSection('bookStore')" class="text-blue-400 mb-6 text-xs font-bold">← BACK</button>
+            <div class="flex gap-1 mb-6 bg-slate-800 p-1.5 rounded-xl">
+                <button onclick="switchAdminTab('stats')" class="admin-tab-btn active">ANALYTICS</button>
+                <button onclick="switchAdminTab('requests')" class="admin-tab-btn">REQUESTS</button>
+                <button onclick="switchAdminTab('users')" class="admin-tab-btn">USERS</button>
+                <button onclick="switchAdminTab('finance')" class="admin-tab-btn">FINANCE</button>
+                <button onclick="switchAdminTab('upload')" class="admin-tab-btn">CONTENT</button>
             </div>
 
             <div id="tab-stats">
-                <div class="flex gap-2 mb-4">
-                    <input type="date" id="viewStart" class="text-[10px]">
-                    <input type="date" id="viewEnd" class="text-[10px]">
-                    <button onclick="loadAdminStats()" class="bg-blue-600 px-3 mb-2 rounded text-[10px]">Filter</button>
+                <div class="flex gap-2 mb-4 bg-slate-800 p-1 rounded-lg">
+                    <button onclick="loadCharts('view')" class="flex-1 py-2 text-[9px] font-bold rounded bg-blue-600" id="chart-view">VIEW LIST</button>
+                    <button onclick="loadCharts('sale')" class="flex-1 py-2 text-[9px] font-bold rounded" id="chart-sale">BOOK SALE</button>
+                    <button onclick="loadCharts('vip')" class="flex-1 py-2 text-[9px] font-bold rounded" id="chart-vip">VIP LIST</button>
                 </div>
-                <div class="card p-4"><h3 class="text-xs font-bold text-blue-400 mb-3">Unique Views (By Selection)</h3><div id="adminViewStats" class="text-[11px] space-y-2"></div></div>
+                <div class="card p-5"><div id="chartContainer" class="text-xs space-y-3"></div></div>
             </div>
 
             <div id="tab-finance" class="hidden">
-                <div class="flex gap-2 mb-4">
-                    <input type="date" id="finStart" class="text-[10px]">
-                    <input type="date" id="finEnd" class="text-[10px]">
-                    <button onclick="loadAdminFinance()" class="bg-green-600 px-3 mb-2 rounded text-[10px]">Filter</button>
+                <div class="grid grid-cols-2 gap-2 mb-4">
+                    <div><label class="text-[9px] text-gray-500 font-bold">START DATE</label><input type="date" id="finStart" class="text-[10px]"></div>
+                    <div><label class="text-[9px] text-gray-500 font-bold">END DATE</label><input type="date" id="finEnd" class="text-[10px]"></div>
                 </div>
-                <div class="bg-green-900/20 p-4 rounded-xl text-center border border-green-500 mb-4">
-                    <p class="text-[10px]">Revenue in Selected Period</p>
-                    <h2 id="totalRev" class="text-xl font-bold text-green-400">0 MMK</h2>
+                <button onclick="loadAdminFinance()" class="w-full bg-green-600 py-3 rounded-lg text-xs font-bold mb-4">CALCULATE REVENUE</button>
+                <div class="bg-green-500/10 p-6 rounded-2xl text-center border border-green-500/30 mb-6">
+                    <p class="text-[10px] text-green-500 font-bold uppercase">Total Approved Income</p>
+                    <h2 id="totalRev" class="text-3xl font-black text-green-400 mt-1">0 MMK</h2>
                 </div>
-                <div id="adminSalesList" class="card p-4 text-[11px] space-y-2"></div>
+                <div id="financeLog" class="card p-4 text-[10px] space-y-2"></div>
             </div>
 
-            <div id="tab-requests" class="hidden"><div id="requestList" class="space-y-2"></div></div>
+            <div id="tab-requests" class="hidden"><div id="requestList" class="space-y-3"></div></div>
             <div id="tab-users" class="hidden"><div id="totalUsersList" class="space-y-2 text-[11px]"></div></div>
 
             <div id="tab-upload" class="hidden">
-                <div class="card p-4 mb-4">
-                    <h4 class="text-xs font-bold mb-2">Novel Settings</h4>
-                    <input type="text" id="bTitle" placeholder="Novel Name (Must be Unique)">
+                <div class="card p-5 mb-4">
+                    <h4 class="text-xs font-black mb-4 text-blue-400 uppercase">Novel Config</h4>
+                    <input type="text" id="bTitle" placeholder="Unique Novel Name">
                     <input type="text" id="bCover" placeholder="Cover Image URL">
-                    <select id="bGenre">
-                        <option value="Fan Fiction">Fan Fiction</option>
-                        <option value="Life">Life</option>
-                        <option value="True">True</option>
-                        <option value="Mega">Mega</option>
-                    </select>
-                    <button onclick="uploadBook()" class="w-full bg-blue-600 py-2 rounded text-xs">Create Novel</button>
+                    <select id="bGenre"><option value="Fan Fiction">Fan Fiction</option><option value="Life">Life</option><option value="True">True</option><option value="Mega">Mega</option></select>
+                    <button onclick="uploadBook()" class="w-full bg-blue-600 py-3 rounded-xl text-xs font-bold">CREATE NOVEL</button>
                 </div>
-                <div class="card p-4">
-                    <h4 class="text-xs font-bold mb-2">Ads</h4>
-                    <input type="text" id="ad1" placeholder="Ad 1 Link"><input type="text" id="ad2" placeholder="Ad 2 Link">
-                    <button onclick="saveAds()" class="bg-green-600 w-full py-2 rounded text-xs font-bold">Save Ads</button>
+                <div class="card p-5">
+                    <h4 class="text-xs font-black mb-4 text-green-400 uppercase">Swipeable Ads (4 Max)</h4>
+                    <input type="text" id="ad1" placeholder="Ad 1 URL"><input type="text" id="ad2" placeholder="Ad 2 URL">
+                    <input type="text" id="ad3" placeholder="Ad 3 URL"><input type="text" id="ad4" placeholder="Ad 4 URL">
+                    <button onclick="saveAds()" class="bg-green-600 w-full py-3 rounded-xl text-xs font-bold">UPDATE SLIDER</button>
                 </div>
             </div>
         </div>
 
         <div id="chapterView" class="hidden">
-            <button onclick="showSection('bookStore')" class="text-blue-400 mb-4 text-xs font-bold">← BACK</button>
-            <div id="adminChapterBtn" class="hidden mb-4"><button onclick="showSection('addChapterForm')" class="bg-blue-600 py-2 rounded text-xs font-bold w-full">+ ADD NEW CHAPTER</button></div>
-            <div id="chapterList" class="space-y-2"></div>
+            <button onclick="showSection('bookStore')" class="text-blue-400 mb-6 text-xs font-bold">← BACK</button>
+            <div class="card p-5 mb-4 border-t-4 border-yellow-500">
+                <div class="flex justify-between items-center mb-4">
+                    <div><p class="text-[10px] text-gray-400 uppercase">VIP ACCESS</p><h3 id="vipPriceTag" class="text-xl font-black text-yellow-500">0 C</h3></div>
+                    <button id="buyVipBtn" onclick="handleVipPurchase()" class="bg-yellow-600 px-6 py-2 rounded-xl text-xs font-black">GET VIP</button>
+                </div>
+                <div id="adminVipEdit" class="hidden border-t border-gray-700 pt-3 mt-3">
+                    <input type="number" id="newVipPrice" placeholder="Set VIP Price" class="mb-2">
+                    <button onclick="updateVipPrice()" class="w-full bg-slate-700 py-2 rounded text-[10px] font-bold">UPDATE PRICE</button>
+                </div>
+            </div>
+            <div id="adminChapterBtn" class="hidden mb-6"><button onclick="prepareAddChapter()" class="bg-blue-600 py-3 rounded-xl text-xs font-bold w-full">+ ADD NEW CHAPTER</button></div>
+            <div id="chapterList" class="space-y-3 pb-10"></div>
         </div>
 
         <div id="addChapterForm" class="hidden">
-            <h3 id="formTitle" class="font-bold mb-4">Add Chapter</h3>
+            <h3 id="formTitle" class="text-lg font-black mb-6">Create Chapter</h3>
             <input type="text" id="cTitle" placeholder="Chapter Name">
-            <textarea id="cContent" rows="10" placeholder="Content..."></textarea>
-            <input type="number" id="cPrice" placeholder="Price (Coins)">
-            <button id="submitChBtn" onclick="uploadChapter()" class="w-full bg-blue-600 py-3 rounded font-bold">Publish</button>
-            <button onclick="showSection('chapterView')" class="w-full mt-2 text-gray-400 text-xs">Cancel</button>
+            <textarea id="cContent" rows="15" placeholder="Story content starts here..."></textarea>
+            <input type="number" id="cPrice" placeholder="Chapter Price (Coins)">
+            <button id="submitChBtn" onclick="uploadChapter()" class="w-full bg-blue-600 py-4 rounded-xl font-black mb-3">PUBLISH</button>
+            <button onclick="showSection('chapterView')" class="w-full text-gray-500 text-xs font-bold">DISCARD</button>
         </div>
     </main>
 
     <script>
+        // Firebase Configuration (Using existing credentials)
         const firebaseConfig = {
             apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
             authDomain: "fantinal-publishing-5b960.firebaseapp.com",
@@ -178,19 +190,8 @@
         let currentBookId = ""; let currentBookTitle = ""; let editChapterId = null;
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); if(document.getElementById('sidebar').classList.contains('active')) loadUserStats(); }
-        function showSection(id) { 
-            document.querySelectorAll('main > div').forEach(s => s.classList.add('hidden')); 
-            document.getElementById(id).classList.remove('hidden'); 
-            if(id === 'bookStore') { document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
-            window.scrollTo(0,0);
-        }
-        function switchAdminTab(tab) {
-            document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
-            ['stats', 'requests', 'users', 'finance', 'upload'].forEach(t => document.getElementById('tab-'+t).classList.add('hidden'));
-            document.getElementById('tab-'+tab).classList.remove('hidden');
-            if(tab === 'users') loadAllUsers();
-        }
+        function showSection(id) { document.querySelectorAll('main > div').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); if(id === 'bookStore') { document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); } window.scrollTo(0,0); }
+        function switchAdminTab(tab) { document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active')); event.target.classList.add('active'); ['stats', 'requests', 'users', 'finance', 'upload'].forEach(t => document.getElementById('tab-'+t).classList.add('hidden')); document.getElementById('tab-'+tab).classList.remove('hidden'); if(tab==='stats') loadCharts('view'); if(tab==='finance') loadAdminFinance(); }
 
         auth.onAuthStateChanged(user => {
             if (user) {
@@ -199,29 +200,25 @@
                     document.getElementById('adminEntry').classList.remove('hidden'); 
                     document.getElementById('adminIndicator').classList.remove('hidden');
                     document.getElementById('adminChapterBtn').classList.remove('hidden');
+                    document.getElementById('adminVipEdit').classList.remove('hidden');
                     loadPendingRequests();
                 }
-                db.collection('users').doc(user.uid).onSnapshot(doc => {
-                    if(doc.exists) {
-                        document.getElementById('userBalance').innerText = (doc.data().coins || 0) + " C";
-                        document.getElementById('userSpent').innerText = (doc.data().spent || 0) + " C";
-                    }
-                });
+                db.collection('users').doc(user.uid).onSnapshot(doc => { if(doc.exists) { document.getElementById('userBalance').innerText = (doc.data().coins || 0) + " C"; document.getElementById('userSpent').innerText = (doc.data().spent || 0) + " C"; } });
                 showSection('bookStore'); loadBooks('All'); loadAds();
             } else { showSection('authSection'); }
         });
 
+        // Store Logic
         async function loadBooks(genre) {
             document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('active'));
-            event && event.target.classList.add('active');
+            if(event) event.target.classList.add('active');
             const snap = await db.collection('books').orderBy('createdAt', 'desc').get();
             const list = document.getElementById('bookList'); list.innerHTML = "";
             snap.forEach(doc => {
                 const b = doc.data(); if (genre !== 'All' && b.genre !== genre) return;
-                list.innerHTML += `<div class="card cursor-pointer" onclick="openBook('${doc.id}', '${b.title}')">
-                    <img src="${b.cover}" class="h-44 w-full object-cover">
-                    <div class="p-2 text-[10px] font-bold truncate">${b.title}</div>
-                    <div class="px-2 pb-2 text-[8px] text-gray-400">👁️ ${b.views || 0} | ${b.genre}</div>
+                list.innerHTML += `<div class="card cursor-pointer group" onclick="openBook('${doc.id}', '${b.title}')">
+                    <img src="${b.cover}" class="h-48 w-full object-cover transition duration-500 group-hover:scale-110">
+                    <div class="p-3"><p class="text-[11px] font-black truncate">${b.title}</p><p class="text-[9px] text-gray-500 mt-1">👁️ ${b.views || 0} | ${b.genre}</p></div>
                 </div>`;
             });
         }
@@ -230,7 +227,45 @@
             currentBookId = id; currentBookTitle = title; 
             showSection('chapterView'); 
             await db.collection('books').doc(id).update({ views: firebase.firestore.FieldValue.increment(1) }); 
+            db.collection('books').doc(id).onSnapshot(doc => {
+                const b = doc.data();
+                document.getElementById('vipPriceTag').innerText = (b.vipPrice || 5000) + " C";
+                checkVipStatus(id);
+            });
             loadChapters(id); 
+        }
+
+        async function checkVipStatus(bookId) {
+            const userDoc = await db.collection('users').doc(auth.currentUser.uid).get();
+            const vips = userDoc.data().vipBooks || [];
+            const btn = document.getElementById('buyVipBtn');
+            if(vips.includes(bookId)) { btn.innerText = "ACTIVE VIP"; btn.className = "bg-green-600 px-6 py-2 rounded-xl text-xs font-black"; btn.disabled = true; }
+            else { btn.innerText = "GET VIP"; btn.className = "bg-yellow-600 px-6 py-2 rounded-xl text-xs font-black"; btn.disabled = false; }
+        }
+
+        async function handleVipPurchase() {
+            const bookDoc = await db.collection('books').doc(currentBookId).get();
+            const price = bookDoc.data().vipPrice || 5000;
+            const userRef = db.collection('users').doc(auth.currentUser.uid);
+            const userDoc = await userRef.get();
+            if((userDoc.data().coins || 0) < price) return alert("Insufficient coins for VIP!");
+            if(confirm(`Purchase VIP for ${currentBookTitle} at ${price} C?`)) {
+                await userRef.update({ 
+                    coins: firebase.firestore.FieldValue.increment(-price),
+                    spent: firebase.firestore.FieldValue.increment(price),
+                    vipBooks: firebase.firestore.FieldValue.arrayUnion(currentBookId),
+                    history: firebase.firestore.FieldValue.arrayUnion({ book: currentBookTitle, chapter: "VIP SUBSCRIPTION", price: price, date: new Date().toLocaleString() })
+                });
+                await db.collection('books').doc(currentBookId).update({ vips: firebase.firestore.FieldValue.increment(1), sales: firebase.firestore.FieldValue.increment(price) });
+                alert("VIP Activated!");
+            }
+        }
+
+        async function updateVipPrice() {
+            const price = parseInt(document.getElementById('newVipPrice').value);
+            if(!price) return;
+            await db.collection('books').doc(currentBookId).update({ vipPrice: price });
+            alert("VIP Price Updated!");
         }
 
         async function loadChapters(bookId) {
@@ -238,19 +273,18 @@
             const list = document.getElementById('chapterList'); list.innerHTML = "";
             const userDoc = await db.collection('users').doc(auth.currentUser.uid).get();
             const unlocked = userDoc.data().unlocked || [];
+            const isVip = (userDoc.data().vipBooks || []).includes(bookId);
             const isAdmin = auth.currentUser.email === 'xztka49@gmail.com';
 
             snap.forEach((doc) => {
-                const c = doc.data(); const isLocked = c.price > 0 && !unlocked.includes(doc.id);
-                list.innerHTML += `<div class="card p-4 border-l-4 ${isLocked?'border-green-600':'border-blue-600'}">
-                    <div class="flex justify-between items-center mb-2">
-                        <div class="text-xs font-bold">${c.title} <span class="text-gray-500 text-[9px] ml-2">${c.price} C</span></div>
-                        <button onclick="handleChapter('${doc.id}', ${c.price}, '${c.title}')" class="${isLocked?'bg-green-600':'bg-blue-600'} px-4 py-1 rounded text-[10px] font-bold text-white">${isLocked?'Buy':'Read'}</button>
+                const c = doc.data(); 
+                const isLocked = c.price > 0 && !unlocked.includes(doc.id) && !isVip;
+                list.innerHTML += `<div class="card p-4 border-l-4 ${isLocked?'border-orange-600':'border-blue-500'} bg-slate-800/40">
+                    <div class="flex justify-between items-center">
+                        <div class="text-[11px] font-black">${c.title} <span class="text-orange-500 ml-2">${isVip ? 'VIP FREE' : c.price+' C'}</span></div>
+                        <button onclick="handleChapter('${doc.id}', ${c.price}, '${c.title}')" class="${isLocked?'bg-orange-600':'bg-blue-600'} px-5 py-1.5 rounded-lg text-[10px] font-black">${isLocked?'Buy':'Read'}</button>
                     </div>
-                    ${isAdmin ? `<div class="flex gap-2 border-t border-gray-700 pt-2 mt-2">
-                        <button onclick="editChapter('${doc.id}')" class="text-blue-400 text-[9px]">EDIT</button>
-                        <button onclick="deleteChapter('${doc.id}')" class="text-red-500 text-[9px]">DELETE</button>
-                    </div>`:''}
+                    ${isAdmin ? `<div class="flex gap-4 mt-3 border-t border-gray-700 pt-3"><button onclick="editChapter('${doc.id}')" class="text-blue-400 text-[10px] font-bold">EDIT</button><button onclick="deleteChapter('${doc.id}')" class="text-red-500 text-[10px] font-bold">DELETE</button></div>`:''}
                 </div>`;
             });
         }
@@ -259,14 +293,15 @@
             const userRef = db.collection('users').doc(auth.currentUser.uid);
             const userDoc = await userRef.get();
             const unlocked = userDoc.data().unlocked || [];
-            if (price > 0 && !unlocked.includes(id)) {
-                if ((userDoc.data().coins || 0) < price) return alert("Coin မလုံလောက်ပါ!");
-                if (confirm(`${title} ကို ${price} C ဖြင့် ဝယ်မလား?`)) {
+            const isVip = (userDoc.data().vipBooks || []).includes(currentBookId);
+            if (price > 0 && !unlocked.includes(id) && !isVip) {
+                if ((userDoc.data().coins || 0) < price) return alert("Insufficient Coins!");
+                if (confirm(`Unlock ${title} for ${price} C?`)) {
                     await userRef.update({ 
-                        coins: userDoc.data().coins - price,
-                        spent: (userDoc.data().spent || 0) + price,
+                        coins: firebase.firestore.FieldValue.increment(-price),
+                        spent: firebase.firestore.FieldValue.increment(price),
                         unlocked: firebase.firestore.FieldValue.arrayUnion(id),
-                        history: firebase.firestore.FieldValue.arrayUnion({ book: currentBookTitle, chapter: title, price: price, date: new Date().toLocaleString(), timestamp: new Date() })
+                        history: firebase.firestore.FieldValue.arrayUnion({ book: currentBookTitle, chapter: title, price: price, date: new Date().toLocaleString() })
                     });
                     await db.collection('books').doc(currentBookId).update({ sales: firebase.firestore.FieldValue.increment(price) });
                     loadChapters(currentBookId);
@@ -277,99 +312,110 @@
         async function renderReader(id) {
             const doc = await db.collection('books').doc(currentBookId).collection('chapters').doc(id).get();
             const c = doc.data();
-            const readerDiv = document.createElement('div');
-            readerDiv.className = "fixed inset-0 bg-slate-900 text-white z-[200] p-6 overflow-y-auto";
-            readerDiv.innerHTML = `<button onclick="this.parentElement.remove()" class="text-blue-400 mb-6 font-bold">← EXIT</button><h1 class="text-xl font-bold mb-4">${c.title}</h1><div class="whitespace-pre-wrap leading-relaxed text-lg pb-20">${c.content}</div>`;
-            document.body.appendChild(readerDiv);
+            const reader = document.createElement('div');
+            reader.className = "fixed inset-0 bg-slate-950 text-slate-200 z-[200] p-6 overflow-y-auto";
+            reader.innerHTML = `<button onclick="this.parentElement.remove()" class="text-blue-400 mb-8 font-black">← CLOSE READER</button><h1 class="text-2xl font-black mb-6 text-white">${c.title}</h1><div class="whitespace-pre-wrap leading-relaxed text-lg pb-32 font-serif">${c.content}</div>`;
+            document.body.appendChild(reader);
+            window.scrollTo(0,0);
         }
 
-        // Admin Features
-        async function loadAllUsers() {
-            const snap = await db.collection('users').get();
-            document.getElementById('totalUsersList').innerHTML = `<p class="mb-2 text-blue-400 font-bold">Total Users: ${snap.size}</p>` + 
-                snap.docs.map(d => `<div class="bg-slate-800 p-2 rounded flex justify-between"><span>${d.data().email}</span><span class="text-yellow-500">${d.data().coins} C</span></div>`).join('');
-        }
-
-        async function loadAdminStats() {
-            const start = new Date(document.getElementById('viewStart').value || '2024-01-01');
-            const end = new Date(document.getElementById('viewEnd').value || '2030-12-31'); end.setHours(23,59,59);
+        // Admin Analytics & Finance Sync
+        async function loadCharts(type) {
+            document.querySelectorAll('#tab-stats button').forEach(b => b.classList.remove('bg-blue-600'));
+            document.getElementById('chart-'+type).classList.add('bg-blue-600');
             const snap = await db.collection('books').get();
-            // ပုံထဲမှာပြသလို နာမည်မထပ်စေရန် Grouping လုပ်ခြင်း
-            document.getElementById('adminViewStats').innerHTML = snap.docs.map(d => `<div class="flex justify-between border-b border-gray-800 pb-1"><span>${d.data().title}</span><span class="text-blue-400">${d.data().views || 0} Views</span></div>`).join('');
+            let data = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            if(type === 'view') data.sort((a,b) => (b.views||0) - (a.views||0));
+            if(type === 'sale') data.sort((a,b) => (b.sales||0) - (a.sales||0));
+            if(type === 'vip') data.sort((a,b) => (b.vips||0) - (a.vips||0));
+
+            document.getElementById('chartContainer').innerHTML = data.map((b, i) => `
+                <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+                    <span class="font-bold">${i+1}. ${b.title}</span>
+                    <span class="text-blue-400 font-black">${type==='view' ? b.views+' Views' : type==='sale' ? b.sales+' Coins' : b.vips+' VIPs'}</span>
+                </div>
+            `).join('');
         }
 
         async function loadAdminFinance() {
-            const start = new Date(document.getElementById('finStart').value || '2024-01-01');
-            const end = new Date(document.getElementById('finEnd').value || '2030-12-31'); end.setHours(23,59,59);
+            const start = document.getElementById('finStart').value ? new Date(document.getElementById('finStart').value) : new Date(0);
+            const end = document.getElementById('finEnd').value ? new Date(document.getElementById('finEnd').value) : new Date();
+            end.setHours(23,59,59);
+            
             const snap = await db.collection('coinRequests').where('status', '==', 'approved').where('date', '>=', start).where('date', '<=', end).get();
-            let total = 0; snap.forEach(d => total += d.data().amount);
+            let total = 0;
+            let logs = "";
+            snap.forEach(d => { 
+                total += d.data().amount; 
+                logs += `<div class="flex justify-between border-b border-gray-800 pb-1"><span>${d.data().buyerName}</span><span class="text-green-500">+${d.data().amount}</span></div>`;
+            });
             document.getElementById('totalRev').innerText = total + " MMK";
-            const books = await db.collection('books').get();
-            document.getElementById('adminSalesList').innerHTML = books.docs.map(d => `<div class="flex justify-between border-b border-gray-800 pb-1"><span>${d.data().title}</span><span class="text-green-400">${d.data().sales || 0} Coins</span></div>`).join('');
+            document.getElementById('financeLog').innerHTML = logs || "No approved deposits found for this range.";
         }
 
-        async function editChapter(id) {
-            const doc = await db.collection('books').doc(currentBookId).collection('chapters').doc(id).get();
-            const c = doc.data(); editChapterId = id;
-            document.getElementById('cTitle').value = c.title;
-            document.getElementById('cContent').value = c.content;
-            document.getElementById('cPrice').value = c.price;
-            document.getElementById('formTitle').innerText = "Edit Chapter";
-            document.getElementById('submitChBtn').innerText = "Save Changes";
-            showSection('addChapterForm');
-        }
-
-        async function deleteChapter(id) {
-            if(confirm("ဤအခန်းကို ဖျက်မှာ သေချာပါသလား?")) {
-                await db.collection('books').doc(currentBookId).collection('chapters').doc(id).delete();
-                loadChapters(currentBookId);
+        async function approveCoin(rid, uid, amt, status) {
+            if(status === 'approved') {
+                await db.collection('users').doc(uid).update({ coins: firebase.firestore.FieldValue.increment(amt) });
+                // Financial Record sync is handled by querying the coinRequests collection with 'approved' status
             }
+            await db.collection('coinRequests').doc(rid).update({ status: status });
+            alert("Request Processed!");
+            loadPendingRequests();
         }
 
-        async function uploadChapter() {
-            const data = { title: document.getElementById('cTitle').value, content: document.getElementById('cContent').value, price: parseInt(document.getElementById('cPrice').value) || 0, date: new Date() };
-            if(editChapterId) {
-                await db.collection('books').doc(currentBookId).collection('chapters').doc(editChapterId).update(data);
-                editChapterId = null;
-            } else {
-                await db.collection('books').doc(currentBookId).collection('chapters').add(data);
-            }
-            document.getElementById('cTitle').value = ""; document.getElementById('cContent').value = "";
-            showSection('chapterView'); loadChapters(currentBookId);
-        }
-
-        // Common Logic
-        async function loadUserStats() {
-            const doc = await db.collection('users').doc(auth.currentUser.uid).get();
-            if(doc.exists) document.getElementById('userHistory').innerHTML = (doc.data().history || []).reverse().slice(0,10).map(h => `<div class="bg-slate-800 p-2 rounded flex flex-col"><div class="flex justify-between font-bold"><span>${h.book}</span><span class="text-red-400">-${h.price} C</span></div><span class="text-[8px] text-gray-500">${h.chapter}</span></div>`).join('');
-        }
-        async function requestCoins() {
-            const data = { uid: auth.currentUser.uid, email: auth.currentUser.email, amount: parseInt(document.getElementById('coinPackage').value), buyerName: document.getElementById('buyerName').value, transId: document.getElementById('transId').value, status: 'pending', date: new Date() };
-            if(!data.buyerName || data.transId.length < 6) return alert("အချက်အလက်ပြည့်စုံစွာဖြည့်ပါ");
-            await db.collection('coinRequests').add(data); alert("တင်ပြပြီးပါပြီ"); showSection('bookStore');
-        }
         function loadPendingRequests() { 
             db.collection('coinRequests').where('status', '==', 'pending').onSnapshot(snap => { 
-                document.getElementById('requestList').innerHTML = snap.docs.map(doc => `<div class="card p-3 text-[10px]"><div class="mb-2"><b>${doc.data().buyerName}</b> (${doc.data().amount} MMK) <br> TID: ${doc.data().transId}</div><div class="flex gap-2"><button onclick="approveCoin('${doc.id}','${doc.data().uid}',${doc.data().amount},'approved')" class="bg-blue-600 px-3 py-1 rounded flex-1">Approve</button><button onclick="approveCoin('${doc.id}','${doc.data().uid}',0,'rejected')" class="bg-red-600 px-3 py-1 rounded flex-1">Reject</button></div></div>`).join('');
+                document.getElementById('requestList').innerHTML = snap.docs.map(doc => `
+                <div class="card p-4 text-[10px]">
+                    <div class="mb-3"><b class="text-blue-300 text-sm">${doc.data().buyerName}</b><br>Requested: <span class="text-yellow-500 font-bold">${doc.data().amount} MMK</span><br>TID: ${doc.data().transId}</div>
+                    <div class="flex gap-2">
+                        <button onclick="approveCoin('${doc.id}','${doc.data().uid}',${doc.data().amount},'approved')" class="bg-blue-600 py-2 rounded-lg flex-1 font-black">APPROVE</button>
+                        <button onclick="approveCoin('${doc.id}','${doc.data().uid}',0,'rejected')" class="bg-red-600 py-2 rounded-lg flex-1 font-black">REJECT</button>
+                    </div>
+                </div>`).join('');
             });
-            loadAdminStats(); loadAdminFinance();
         }
-        async function approveCoin(rid, uid, amt, status) {
-            if(status === 'approved') await db.collection('users').doc(uid).update({ coins: firebase.firestore.FieldValue.increment(amt) });
-            await db.collection('coinRequests').doc(rid).update({ status: status });
-            alert("Action Success!");
+
+        // Utils
+        async function saveAds() { 
+            const images = [document.getElementById('ad1').value, document.getElementById('ad2').value, document.getElementById('ad3').value, document.getElementById('ad4').value].filter(i => i);
+            await db.collection('settings').doc('ads').set({ images }); alert("Slider Updated!"); loadAds(); 
         }
-        async function saveAds() { await db.collection('settings').doc('ads').set({ images: [document.getElementById('ad1').value, document.getElementById('ad2').value] }); alert("Saved!"); loadAds(); }
-        async function loadAds() { const doc = await db.collection('settings').doc('ads').get(); if(doc.exists) document.getElementById('adSlider').innerHTML = doc.data().images.filter(i => i).map(i => `<img src="${i}" class="slider-item">`).join(''); }
+        async function loadAds() { 
+            const doc = await db.collection('settings').doc('ads').get(); 
+            if(doc.exists) document.getElementById('adSlider').innerHTML = doc.data().images.map(i => `<img src="${i}" class="slider-item">`).join(''); 
+        }
+        async function loadUserStats() {
+            const doc = await db.collection('users').doc(auth.currentUser.uid).get();
+            if(doc.exists) document.getElementById('userHistory').innerHTML = (doc.data().history || []).reverse().slice(0,10).map(h => `<div class="bg-slate-800 p-3 rounded-xl border border-gray-700"><div class="flex justify-between font-black text-xs"><span>${h.book}</span><span class="text-red-400">-${h.price} C</span></div><p class="text-[9px] text-gray-500 mt-1">${h.chapter} • ${h.date}</p></div>`).join('');
+        }
+        async function requestCoins() {
+            const amt = parseInt(document.getElementById('coinPackage').value);
+            const name = document.getElementById('buyerName').value;
+            const tid = document.getElementById('transId').value;
+            if(!name || tid.length < 6) return alert("Fill all info correctly!");
+            await db.collection('coinRequests').add({ uid: auth.currentUser.uid, email: auth.currentUser.email, amount: amt, buyerName: name, transId: tid, status: 'pending', date: new Date() });
+            alert("Request Submitted!"); showSection('bookStore');
+        }
         async function uploadBook() {
             const title = document.getElementById('bTitle').value;
             const existing = await db.collection('books').where('title', '==', title).get();
-            if(!existing.empty) return alert("Novel Name ရှိပြီးသားဖြစ်သည်");
-            await db.collection('books').add({ title: title, cover: document.getElementById('bCover').value, genre: document.getElementById('bGenre').value, views: 0, sales: 0, createdAt: new Date() });
-            alert("Success!"); loadBooks('All');
+            if(!existing.empty) return alert("Novel name already exists!");
+            await db.collection('books').add({ title: title, cover: document.getElementById('bCover').value, genre: document.getElementById('bGenre').value, views: 0, sales: 0, vips: 0, vipPrice: 5000, createdAt: new Date() });
+            alert("Novel Published!"); loadBooks('All');
+        }
+        function prepareAddChapter() { editChapterId = null; document.getElementById('formTitle').innerText = "Create Chapter"; document.getElementById('submitChBtn').innerText = "PUBLISH"; document.getElementById('cTitle').value = ""; document.getElementById('cContent').value = ""; document.getElementById('cPrice').value = ""; showSection('addChapterForm'); }
+        async function editChapter(id) { editChapterId = id; const doc = await db.collection('books').doc(currentBookId).collection('chapters').doc(id).get(); const c = doc.data(); document.getElementById('cTitle').value = c.title; document.getElementById('cContent').value = c.content; document.getElementById('cPrice').value = c.price; document.getElementById('formTitle').innerText = "Edit Chapter"; document.getElementById('submitChBtn').innerText = "SAVE CHANGES"; showSection('addChapterForm'); }
+        async function deleteChapter(id) { if(confirm("Delete this chapter forever?")) { await db.collection('books').doc(currentBookId).collection('chapters').doc(id).delete(); loadChapters(currentBookId); } }
+        async function uploadChapter() {
+            const data = { title: document.getElementById('cTitle').value, content: document.getElementById('cContent').value, price: parseInt(document.getElementById('cPrice').value) || 0, date: new Date() };
+            if(editChapterId) await db.collection('books').doc(currentBookId).collection('chapters').doc(editChapterId).update(data);
+            else await db.collection('books').doc(currentBookId).collection('chapters').add(data);
+            showSection('chapterView'); loadChapters(currentBookId);
         }
         async function login() { try { await auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value); } catch(e) { alert(e.message); } }
-        async function register() { try { const cred = await auth.createUserWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value); await db.collection('users').doc(cred.user.uid).set({ email: cred.user.email, coins: 0, spent: 0, unlocked: [], history: [] }); alert("Success!"); } catch(e) { alert(e.message); } }
+        async function register() { try { const cred = await auth.createUserWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value); await db.collection('users').doc(cred.user.uid).set({ email: cred.user.email, coins: 0, spent: 0, unlocked: [], vipBooks: [], history: [] }); alert("Account Ready!"); } catch(e) { alert(e.message); } }
     </script>
 </body>
 </html>
