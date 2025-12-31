@@ -222,6 +222,16 @@
                     <button onclick="updateVipPrice()" class="bg-blue-600 px-5 rounded-xl font-black text-[10px]">SET</button>
                 </div>
             </div>
+            
+            <div id="admBookInfo" class="hidden glass p-6 mb-8 border-green-500/30">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="text-xs font-black uppercase text-green-500">Book Analytics</h4>
+                    <p id="admSalesCount" class="text-sm font-black text-blue-400">Sales: 0 C</p>
+                </div>
+                <p class="text-[10px] font-black opacity-50 uppercase mb-2">Recent Viewers</p>
+                <div id="admViewersList" class="space-y-1 max-h-32 overflow-y-auto no-scrollbar text-[10px] font-bold opacity-80 italic"></div>
+            </div>
+
             <div id="admChapAdd" class="hidden mb-8"><button onclick="showSection('chapterForm')" class="w-full py-4 glass text-blue-400 font-black text-xs">+ ADD NEW CHAPTER</button></div>
             <div id="chapterList" class="space-y-4"></div>
         </div>
@@ -273,16 +283,26 @@
                 document.getElementById('userEmail').innerText = user.email;
                 const isAdmin = user.email === 'xztka49@gmail.com';
                 if(isAdmin) {
-                    ['adminBadge','adminBtn','admChapAdd','admVipEdit'].forEach(id => document.getElementById(id).classList.remove('hidden'));
+                    ['adminBadge','adminBtn','admChapAdd','admVipEdit','admBookInfo'].forEach(id => document.getElementById(id).classList.remove('hidden'));
                     listenNoti(); loadAdminReqs();
                 }
                 db.collection('users').doc(user.uid).onSnapshot(doc => { if(doc.exists) { 
                     document.getElementById('uBalance').innerText = (doc.data().coins || 0) + " C"; 
                     document.getElementById('uSpent').innerText = (doc.data().spent || 0) + " C"; 
+                    if(doc.data().history) loadHistory(doc.data().history);
                 }});
                 showSection('homeSection'); filterBooks('All'); loadAds();
             } else showSection('authSection');
         });
+
+        // HISTORY UI
+        function loadHistory(h) {
+            document.getElementById('historyList').innerHTML = h.reverse().map(i => `
+                <div class="glass p-5 flex justify-between items-center">
+                    <div><p class="text-xs font-black uppercase text-blue-400">${i.type}</p><p class="text-[10px] opacity-60">${i.date}</p></div>
+                    <p class="font-black text-sm ${i.type==='Deposit'?'text-green-500':'text-red-400'}">${i.amt} C</p>
+                </div>`).join('');
+        }
 
         // NOTI & DEPOSIT
         function listenNoti() {
@@ -327,7 +347,7 @@
             await db.collection('coinRequests').doc(id).update({ status });
         }
 
-        // NOVELS & CATEGORIES
+        // NOVELS & ANALYTICS
         async function filterBooks(cat) {
             document.querySelectorAll('.cat-tab').forEach(b => {
                 b.classList.remove('active'); if(b.innerText === cat) b.classList.add('active');
@@ -343,12 +363,28 @@
 
         async function openBook(id) {
             curB = id; showSection('chapterView');
-            db.collection('books').doc(id).update({ views: firebase.firestore.FieldValue.increment(1) });
-            db.collection('books').doc(id).onSnapshot(doc => { document.getElementById('vipPriceTag').innerText = (doc.data().vipPrice || 5000) + " C"; });
+            const isAdmin = auth.currentUser.email === 'xztka49@gmail.com';
+            
+            // Track Viewer
+            await db.collection('books').doc(id).update({ 
+                views: firebase.firestore.FieldValue.increment(1),
+                viewers: firebase.firestore.FieldValue.arrayUnion(`${auth.currentUser.email} (${new Date().toLocaleDateString()})`)
+            });
+
+            db.collection('books').doc(id).onSnapshot(doc => { 
+                const d = doc.data();
+                document.getElementById('vipPriceTag').innerText = (d.vipPrice || 5000) + " C"; 
+                if(isAdmin) {
+                    document.getElementById('admSalesCount').innerText = `Sales: ${d.sales || 0} C`;
+                    if(d.viewers) {
+                        document.getElementById('admViewersList').innerHTML = d.viewers.reverse().slice(0, 30).map(v => `<p>• ${v}</p>`).join('');
+                    }
+                }
+            });
             loadChaps();
         }
 
-        // VIP SYSTEM (FIXED)
+        // VIP SYSTEM
         async function buyVip() {
             const uRef = db.collection('users').doc(auth.currentUser.uid);
             const bRef = db.collection('books').doc(curB);
@@ -357,12 +393,14 @@
             if((uDoc.data().vips || []).includes(curB)) return alert("Already VIP!");
             if(uDoc.data().coins < price) return alert("Not enough coins!");
             if(!confirm(`Unlock VIP for ${price} C?`)) return;
+            
             await uRef.update({ 
                 coins: firebase.firestore.FieldValue.increment(-price), 
                 spent: firebase.firestore.FieldValue.increment(price),
                 vips: firebase.firestore.FieldValue.arrayUnion(curB),
                 history: firebase.firestore.FieldValue.arrayUnion({type:'VIP Unlock', title: bDoc.data().title, amt: price, date: new Date().toLocaleString()})
             });
+            await bRef.update({ sales: firebase.firestore.FieldValue.increment(price) });
             alert("VIP Active!"); loadChaps();
         }
 
@@ -405,6 +443,7 @@
                     bought: firebase.firestore.FieldValue.arrayUnion(c.id),
                     history: firebase.firestore.FieldValue.arrayUnion({type:'Chapter Buy', title: c.title, amt: c.price, date: new Date().toLocaleString()})
                 });
+                await db.collection('books').doc(curB).update({ sales: firebase.firestore.FieldValue.increment(c.price) });
             }
             curI = idx; document.getElementById('readerBody').innerText = allC[idx].content; showSection('readerSection');
             document.getElementById('pBtn').onclick = () => idx > 0 && readC(idx-1, true);
@@ -441,11 +480,43 @@
         async function saveNovel() {
             const data = { title: document.getElementById('nTitle').value, cover: document.getElementById('nCover').value, genre: document.getElementById('nGenre').value };
             if(curE) await db.collection('books').doc(curE).update(data);
-            else await db.collection('books').add({ ...data, views: 0, sales: 0, createdAt: new Date(), vipPrice: 5000 });
+            else await db.collection('books').add({ ...data, views: 0, sales: 0, viewers: [], createdAt: new Date(), vipPrice: 5000 });
             showSection('adminDashboard'); filterBooks('All');
         }
 
-        // FINANCE & OTHERS
+        // GIFTS (WITH COPY BUTTON)
+        async function generateGift() {
+            const amt = parseInt(document.getElementById('genAmt').value);
+            const code = "GIFT-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+            await db.collection('giftCodes').doc(code).set({ code, amount: amt, status: 'unused', createdAt: new Date() });
+            alert("Generated: " + code); loadGifts();
+        }
+
+        async function loadGifts() {
+            const snap = await db.collection('giftCodes').orderBy('createdAt','desc').get();
+            document.getElementById('admGiftList').innerHTML = snap.docs.map(doc => `
+                <div class="glass p-4 flex justify-between items-center">
+                    <div><p class="text-xs font-black text-purple-400">${doc.data().code}</p><p class="text-[8px] opacity-40 uppercase">${doc.data().status}</p></div>
+                    <div class="flex items-center gap-3">
+                        <p class="font-black">${doc.data().amount} C</p>
+                        <button onclick="navigator.clipboard.writeText('${doc.data().code}');alert('Copied!')" class="p-2 bg-white/5 rounded-lg text-xs">📋</button>
+                    </div>
+                </div>`).join('');
+        }
+
+        // OTHERS
+        async function redeemGift() {
+            const code = document.getElementById('gCodeInput').value.trim();
+            const ref = db.collection('giftCodes').doc(code), doc = await ref.get();
+            if(!doc.exists || doc.data().status !== 'unused') return alert("Invalid Code");
+            await db.collection('users').doc(auth.currentUser.uid).update({ 
+                coins: firebase.firestore.FieldValue.increment(doc.data().amount),
+                history: firebase.firestore.FieldValue.arrayUnion({type:'Gift Redeem', amt: doc.data().amount, date: new Date().toLocaleString()})
+            });
+            await ref.update({ status: 'used', usedBy: auth.currentUser.email });
+            alert("Success!"); showSection('homeSection');
+        }
+
         async function loadFinance() {
             const d = await db.collection('admin').doc('fin').get();
             document.getElementById('totalFinance').innerText = (d.exists ? d.data().total : 0) + " MMK";
@@ -467,34 +538,8 @@
             await db.collection('settings').doc('ads').set({ images }); alert("Ads Saved!"); loadAds();
         }
 
-        async function generateGift() {
-            const amt = parseInt(document.getElementById('genAmt').value);
-            const code = "GIFT-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-            await db.collection('giftCodes').doc(code).set({ code, amount: amt, status: 'unused', createdAt: new Date() });
-            alert("Generated: " + code); loadGifts();
-        }
-
-        async function loadGifts() {
-            const snap = await db.collection('giftCodes').orderBy('createdAt','desc').get();
-            document.getElementById('admGiftList').innerHTML = snap.docs.map(doc => `<div class="glass p-4 flex justify-between"><p class="text-xs font-black text-purple-400">${doc.data().code}</p><p class="font-black">${doc.data().amount} C</p></div>`).join('');
-        }
-
-        async function redeemGift() {
-            const code = document.getElementById('gCodeInput').value.trim();
-            const ref = db.collection('giftCodes').doc(code), doc = await ref.get();
-            if(!doc.exists || doc.data().status !== 'unused') return alert("Invalid Code");
-            await db.collection('users').doc(auth.currentUser.uid).update({ 
-                coins: firebase.firestore.FieldValue.increment(doc.data().amount),
-                history: firebase.firestore.FieldValue.arrayUnion({type:'Gift Redeem', amt: doc.data().amount, date: new Date().toLocaleString()})
-            });
-            await ref.update({ status: 'used', usedBy: auth.currentUser.email });
-            alert("Success!"); showSection('homeSection');
-        }
-
-        // AUTH CORE
         async function login() { try { await auth.signInWithEmailAndPassword(document.getElementById('lEmail').value, document.getElementById('lPass').value); } catch(e) { alert(e.message); } }
         async function register() { try { const res = await auth.createUserWithEmailAndPassword(document.getElementById('rEmail').value, document.getElementById('rPass').value); await db.collection('users').doc(res.user.uid).set({ email: res.user.email, coins: 0, spent: 0, vips: [], bought: [], history: [] }); } catch(e) { alert(e.message); } }
     </script>
 </body>
 </html>
-
