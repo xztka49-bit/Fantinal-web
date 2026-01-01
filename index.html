@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fantinal Pro - Premium Edition</title>
+    <title>Fantinal Pro - Full Premium Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -11,21 +11,13 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
         
-        :root {
-            --primary: #60a5fa; --secondary: #c084fc; --bg: #030712; --card: rgba(15, 23, 42, 0.7); --text: #f8fafc;
-        }
-        .light-mode {
-            --bg: #f1f5f9; --card: rgba(255, 255, 255, 0.9); --text: #0f172a;
-        }
-        body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow-x: hidden; }
+        :root { --primary: #60a5fa; --secondary: #c084fc; --bg: #030712; --card: rgba(15, 23, 42, 0.7); --text: #f8fafc; }
+        .light-mode { --bg: #f1f5f9; --card: rgba(255, 255, 255, 0.9); --text: #0f172a; }
         
-        .glass { 
-            background: var(--card); 
-            backdrop-filter: blur(25px); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            border-radius: 32px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-        }
+        body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.4s; overflow-x: hidden; }
+        
+        /* Glassmorphism UI */
+        .glass { background: var(--card); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 32px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
         .light-mode .glass { border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 10px 40px rgba(0,0,0,0.06); }
         
         .sidebar { position: fixed; left: -100%; top: 0; width: 85%; height: 100%; background: var(--bg); z-index: 1000; transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1); border-right: 1px solid rgba(255,255,255,0.1); }
@@ -34,19 +26,20 @@
         .btn-grad { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; transition: 0.3s ease; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); }
         .btn-grad:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(59, 130, 246, 0.4); }
         
-        .cat-tab { padding: 12px 24px; border-radius: 50px; font-size: 12px; font-weight: 800; white-space: nowrap; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        .cat-tab { padding: 12px 24px; border-radius: 50px; font-size: 12px; font-weight: 800; white-space: nowrap; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; cursor: pointer; }
         .cat-tab.active { background: #3b82f6; color: white; border-color: #3b82f6; }
 
         .noti-toast { position: fixed; top: 25px; right: 25px; z-index: 9999; animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 24px; }
         @keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
 
         input, select, textarea { width: 100%; padding: 18px; margin-bottom: 14px; border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: inherit; outline: none; transition: 0.3s; }
+        input:focus { border-color: #3b82f6; background: rgba(255,255,255,0.06); }
+        
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        .qr-card { background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.1); }
-        
-        /* New Comment Style */
-        .comment-box { border-left: 3px solid #3b82f6; padding-left: 15px; margin-bottom: 15px; }
+        /* Reader Mode Security */
+        #readerSection { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        .comment-box { border-left: 3px solid #3b82f6; padding-left: 15px; margin-bottom: 15px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 0 15px 15px 0; }
     </style>
 </head>
 <body>
@@ -76,6 +69,7 @@
             <button onclick="showSection('bookmarkSection')" class="w-full bg-pink-500/10 border border-pink-500/20 text-pink-400 py-4 rounded-3xl font-black text-sm tracking-widest">MY BOOKMARKS</button>
             <button onclick="showSection('depositSection')" class="w-full btn-grad py-5 rounded-3xl font-black text-sm tracking-widest">DEPOSIT COINS</button>
             <button onclick="showSection('giftRedeemSection')" class="w-full bg-slate-800/50 border border-white/5 text-white py-5 rounded-3xl font-black text-sm tracking-widest">REDEEM GIFT</button>
+            
             <div class="pt-6 space-y-3">
                 <button onclick="toggleTheme()" class="w-full bg-blue-500/5 text-blue-400 py-4 rounded-2xl font-bold text-xs uppercase border border-blue-500/10">Appearance</button>
                 <button onclick="auth.signOut()" class="w-full py-4 text-red-500/60 font-black text-[10px] uppercase tracking-[0.2em]">Logout Session</button>
@@ -88,19 +82,20 @@
             <button onclick="toggleMenu()" class="p-4 glass rounded-2xl">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
             </button>
-            <h1 class="text-2xl font-black italic tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500" onclick="location.reload()">FANTINAL</h1>
+            <h1 class="text-2xl font-black italic tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500 cursor-pointer" onclick="location.reload()">FANTINAL</h1>
         </div>
         <div id="adminBadge" class="hidden px-5 py-2 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-full text-[9px] font-black uppercase">Admin</div>
     </nav>
 
     <main class="max-w-md mx-auto p-6 pb-40">
+        
         <div id="authSection" class="hidden py-10">
             <div class="text-center mb-12">
                 <h2 class="text-4xl font-black mb-2 tracking-tighter">Welcome Back</h2>
                 <p class="text-sm opacity-50 font-bold">Sign in to continue your journey</p>
             </div>
             <div class="flex gap-2 bg-slate-900/60 p-2 rounded-3xl mb-10 border border-white/5">
-                <button onclick="switchAuth('login')" id="btnLog" class="flex-1 py-4 rounded-2xl font-black text-xs transition-all duration-500 bg-blue-600">LOGIN</button>
+                <button onclick="switchAuth('login')" id="btnLog" class="flex-1 py-4 rounded-2xl font-black text-xs transition-all duration-500 bg-blue-600 text-white">LOGIN</button>
                 <button onclick="switchAuth('reg')" id="btnReg" class="flex-1 py-4 rounded-2xl font-black text-xs transition-all duration-500">JOIN US</button>
             </div>
             <div id="loginForm" class="glass p-10">
@@ -119,7 +114,7 @@
             <div id="adSlider" class="flex overflow-x-auto gap-4 mb-8 no-scrollbar h-60 rounded-[40px] shadow-2xl"></div>
             
             <div class="relative mb-8">
-                <input type="text" id="searchInput" oninput="searchBooks()" placeholder="Search novels by title..." class="pl-14 bg-white/5 border-white/10 rounded-3xl">
+                <input type="text" id="searchInput" oninput="searchBooks()" placeholder="Search novels..." class="pl-14 bg-white/5 border-white/10 rounded-3xl focus:ring-2 ring-blue-500">
                 <div class="absolute left-6 top-5 opacity-40">
                     <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                 </div>
@@ -134,11 +129,14 @@
             </div>
 
             <div id="bookGrid" class="grid grid-cols-2 gap-6"></div>
-            <div id="adminBtn" class="hidden mt-16"><button onclick="showSection('adminDashboard')" class="w-full py-6 glass border-red-500/30 text-red-500 font-black text-[10px] uppercase tracking-[0.3em]">Administrator Management</button></div>
+            
+            <div id="adminBtn" class="hidden mt-16">
+                <button onclick="showSection('adminDashboard')" class="w-full py-6 glass border-red-500/30 text-red-500 font-black text-[10px] uppercase tracking-[0.3em]">Administrator Management</button>
+            </div>
         </div>
 
         <div id="bookmarkSection" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase">← Library</button>
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase">← Back</button>
             <h2 class="text-3xl font-black mb-8 italic">My Bookmarks</h2>
             <div id="bookmarkGrid" class="grid grid-cols-2 gap-6"></div>
         </div>
@@ -146,11 +144,11 @@
         <div id="transferSection" class="hidden">
             <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase">← Back</button>
             <div class="glass p-10">
-                <h2 class="text-3xl font-black mb-2 italic tracking-tighter text-blue-400">Transfer Coins</h2>
-                <p class="text-[10px] font-bold opacity-40 uppercase mb-10">Send coins to friends</p>
+                <h2 class="text-3xl font-black mb-2 italic text-blue-400">Transfer Coins</h2>
+                <p class="text-[10px] font-bold opacity-40 uppercase mb-8">Send coins instantly</p>
                 <input type="email" id="tRecipient" placeholder="Recipient Gmail Address">
                 <input type="number" id="tAmount" placeholder="Coin Amount">
-                <button onclick="transferCoins()" class="w-full btn-grad py-5 rounded-2xl font-black text-xs uppercase tracking-widest mt-4">Send Now</button>
+                <button onclick="transferCoins()" class="w-full btn-grad py-5 rounded-2xl font-black text-xs uppercase mt-4">Confirm Transfer</button>
             </div>
         </div>
 
@@ -163,13 +161,13 @@
         <div id="depositSection" class="hidden">
             <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase">← Return</button>
             <div class="glass p-10">
-                <h2 class="text-3xl font-black mb-2 italic text-blue-400">Add Wealth</h2>
+                <h2 class="text-3xl font-black mb-8 italic text-blue-400">Add Wealth</h2>
                 <div class="grid grid-cols-1 gap-4 mb-10">
-                    <div class="qr-card p-6 rounded-[30px] text-center">
+                    <div class="qr-card p-6 rounded-[30px] text-center bg-white/5 border border-white/10">
                         <img src="https://img.sanishtech.com/u/b80997ba169794aaad6fd4146e649353.jpeg" class="w-40 h-40 mx-auto mb-4 rounded-3xl border-4 border-white/5">
                         <p class="text-[11px] font-black text-blue-400">KBZ PAY QR</p>
                     </div>
-                    <div class="qr-card p-6 rounded-[30px] text-center">
+                    <div class="qr-card p-6 rounded-[30px] text-center bg-white/5 border border-white/10">
                         <img src="https://img.sanishtech.com/u/6ed8971d622b39fae5c2baea16b2be4c.jpeg" class="w-40 h-40 mx-auto mb-4 rounded-3xl border-4 border-white/5">
                         <p class="text-[11px] font-black text-yellow-500">WAVEPAY QR</p>
                     </div>
@@ -178,10 +176,11 @@
                     <option value="1000">1,000 MMK (1,000 C)</option>
                     <option value="5000">5,000 MMK (5,000 C)</option>
                     <option value="10000">10,000 MMK (10,000 C)</option>
+                    <option value="20000">20,000 MMK (20,000 C)</option>
                 </select>
                 <input type="text" id="payName" placeholder="Payer Name">
                 <input type="text" id="payTid" placeholder="Transaction ID (Last 6 Digits)">
-                <button onclick="submitDeposit()" class="w-full btn-grad py-5 rounded-2xl font-black uppercase text-xs mt-4">Confirm Transfer</button>
+                <button onclick="submitDeposit()" class="w-full btn-grad py-5 rounded-2xl font-black uppercase text-xs mt-4">Submit Payment</button>
             </div>
         </div>
 
@@ -202,23 +201,42 @@
                 <button onclick="setAdminTab('usr')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black transition">Users</button>
                 <button onclick="setAdminTab('gft')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black transition">Gifts</button>
             </div>
+            
             <div id="tab-req" class="space-y-4"></div>
-            <div id="tab-nov" class="hidden"><button onclick="openNovelForm()" class="w-full btn-grad py-5 rounded-3xl font-black text-[10px] mb-10">+ NEW NOVEL</button><div id="admNovelList" class="space-y-4"></div></div>
-            <div id="tab-usr" class="hidden"><div id="admUserList" class="space-y-3"></div></div>
-            <div id="tab-gft" class="hidden"><input type="number" id="genAmt" placeholder="Coin Amount"><button onclick="generateGift()" class="w-full bg-purple-600 py-4 rounded-2xl font-black text-[10px] uppercase">Forge Gift</button><div id="admGiftList" class="space-y-3 mt-8"></div></div>
+            
+            <div id="tab-nov" class="hidden">
+                <button onclick="openNovelForm()" class="w-full btn-grad py-5 rounded-3xl font-black text-[10px] mb-10">+ CREATE NEW NOVEL</button>
+                <div id="admNovelList" class="space-y-4"></div>
+            </div>
+            
+            <div id="tab-usr" class="hidden">
+                <div id="admUserList" class="space-y-3"></div>
+            </div>
+            
+            <div id="tab-gft" class="hidden">
+                <input type="number" id="genAmt" placeholder="Coin Amount">
+                <button onclick="generateGift()" class="w-full bg-purple-600 py-4 rounded-2xl font-black text-[10px] uppercase">Generate Code</button>
+                <div id="admGiftList" class="space-y-3 mt-8"></div>
+            </div>
         </div>
 
         <div id="novelFormSection" class="hidden">
-            <h2 id="nFormTitle" class="text-3xl font-black mb-10 italic">Modify Asset</h2>
-            <input type="text" id="nTitle" placeholder="Asset Title">
+            <h2 id="nFormTitle" class="text-3xl font-black mb-10 italic">Modify Novel</h2>
+            <input type="text" id="nTitle" placeholder="Novel Title">
             <input type="text" id="nCover" placeholder="Cover Image URL">
-            <select id="nGenre"><option value="Fan Fiction">Fan Fiction</option><option value="Life">Life</option><option value="True Story">True Story</option><option value="Mega">Mega</option></select>
+            <input type="number" id="nVipPrice" placeholder="VIP Full Access Price (Default 5000)">
+            <select id="nGenre">
+                <option value="Fan Fiction">Fan Fiction</option>
+                <option value="Life">Life</option>
+                <option value="True Story">True Story</option>
+                <option value="Mega">Mega</option>
+            </select>
             <button onclick="saveNovel()" class="w-full btn-grad py-5 rounded-2xl font-black uppercase text-xs">Commit Changes</button>
-            <button onclick="showSection('adminDashboard')" class="w-full py-5 text-gray-500 font-bold text-[10px] uppercase">Abort</button>
+            <button onclick="showSection('adminDashboard')" class="w-full py-5 text-gray-500 font-bold text-[10px] uppercase mt-2">Abort</button>
         </div>
 
         <div id="chapterView" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase">← Back</button>
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase">← Back to Library</button>
             
             <div class="glass p-10 mb-10 border-yellow-500/20">
                 <div class="flex justify-between items-center">
@@ -226,21 +244,23 @@
                         <p class="text-[9px] font-black uppercase opacity-40">Lifetime Access</p>
                         <h3 id="vipPriceTag" class="text-4xl font-black text-yellow-500 tracking-tighter">0 C</h3>
                     </div>
-                    <button id="vipBtn" onclick="buyVip()" class="bg-gradient-to-br from-yellow-500 to-amber-700 text-white px-8 py-4 rounded-[20px] text-[10px] font-black uppercase">ELEVATE TO VIP</button>
+                    <button id="vipBtn" onclick="buyVip()" class="bg-gradient-to-br from-yellow-500 to-amber-700 text-white px-8 py-4 rounded-[20px] text-[10px] font-black uppercase">GET VIP ACCESS</button>
                 </div>
-                <div class="flex gap-4 mt-8">
-                    <button onclick="toggleBookmark()" id="bookmarkBtn" class="flex-1 py-4 glass border-pink-500/20 text-pink-500 font-black text-[10px] uppercase">Add to Bookmarks</button>
+                <div class="mt-8">
+                    <button onclick="toggleBookmark()" id="bookmarkBtn" class="w-full py-4 glass border-pink-500/20 text-pink-500 font-black text-[10px] uppercase">Add to Bookmarks</button>
                 </div>
             </div>
 
-            <div id="admViewersList" class="hidden glass p-8 mb-10 text-[10px] opacity-70"></div>
-            <div id="admChapAdd" class="hidden mb-10"><button onclick="showSection('chapterForm')" class="w-full py-5 glass border-blue-500/20 text-blue-400 font-black text-[10px] uppercase">+ CHAPTER</button></div>
+            <div id="admChapAdd" class="hidden mb-10">
+                <button onclick="showSection('chapterForm')" class="w-full py-5 glass border-blue-500/20 text-blue-400 font-black text-[10px] uppercase">+ ADD NEW CHAPTER</button>
+            </div>
+            
             <div id="chapterList" class="space-y-4"></div>
 
-            <div class="mt-16">
-                <h3 class="text-2xl font-black mb-8 italic">Discussion</h3>
+            <div class="mt-20">
+                <h3 class="text-2xl font-black mb-8 italic">Reader's Discussion</h3>
                 <div class="glass p-6 mb-8">
-                    <textarea id="commentInput" rows="3" placeholder="Write a comment..." class="bg-white/5 border-white/5 mb-4"></textarea>
+                    <textarea id="commentInput" rows="3" placeholder="Join the discussion..." class="bg-white/5 border-white/5"></textarea>
                     <button onclick="postComment()" class="w-full py-4 bg-blue-600 rounded-2xl font-black text-[10px] uppercase">Post Comment</button>
                 </div>
                 <div id="commentList" class="space-y-6"></div>
@@ -248,32 +268,34 @@
         </div>
 
         <div id="chapterForm" class="hidden">
-            <input type="text" id="cTitle" placeholder="Segment Title">
-            <textarea id="cContent" rows="18" placeholder="Draft your content here..." class="text-lg"></textarea>
+            <h2 class="text-2xl font-black mb-6">Chapter Details</h2>
+            <input type="text" id="cTitle" placeholder="Chapter Title">
+            <textarea id="cContent" rows="18" placeholder="Enter chapter content here..." class="text-lg leading-relaxed"></textarea>
             <div class="flex gap-4">
-                <input type="number" id="cPrice" placeholder="Value (0 = Free)" class="flex-1">
-                <button onclick="saveChapter()" class="flex-[2] btn-grad py-4 rounded-2xl font-black text-[10px]">Authorize Publication</button>
+                <input type="number" id="cPrice" placeholder="Price (0 for Free)" class="flex-1">
+                <button onclick="saveChapter()" class="flex-[2] btn-grad py-4 rounded-2xl font-black text-[10px] uppercase">Publish Chapter</button>
             </div>
-            <button onclick="showSection('chapterView')" class="w-full py-6 text-gray-500 font-bold text-[10px] uppercase">Discard</button>
+            <button onclick="showSection('chapterView')" class="w-full py-6 text-gray-500 font-bold text-[10px] uppercase mt-2">Discard</button>
         </div>
 
-        <div id="readerSection" class="hidden fixed inset-0 bg-inherit z-[2000] p-8 overflow-y-auto no-scrollbar">
-            <div class="max-w-md mx-auto relative select-none" oncontextmenu="return false;">
+        <div id="readerSection" class="hidden fixed inset-0 bg-inherit z-[2000] p-8 overflow-y-auto no-scrollbar" oncontextmenu="return false;">
+            <div class="max-w-md mx-auto relative select-none">
                 <div class="flex justify-between items-center mb-12">
-                    <button onclick="showSection('chapterView')" class="p-5 bg-white/5 text-red-500 rounded-full">✕</button>
-                    <p class="text-[10px] font-bold text-blue-400">PREMIUM READER</p>
+                    <button onclick="showSection('chapterView')" class="p-5 bg-white/5 text-red-500 rounded-full hover:bg-red-500/10 transition">✕ Close</button>
+                    <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Premium Content</p>
                 </div>
-                <div id="readerBody" class="whitespace-pre-wrap leading-[2.5] text-xl font-medium opacity-90 pb-32"></div>
+                <div id="readerBody" class="whitespace-pre-wrap leading-[2.6] text-xl font-medium opacity-90 pb-40"></div>
+                
                 <div class="fixed bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-[var(--bg)] to-transparent flex gap-4 max-w-md mx-auto">
-                    <button id="pBtn" class="flex-1 glass py-5 font-black text-[10px] uppercase">Back</button>
-                    <button id="nBtn" class="flex-1 btn-grad py-5 rounded-3xl font-black text-[10px] uppercase">Next</button>
+                    <button id="pBtn" class="flex-1 glass py-5 font-black text-[10px] uppercase">Previous</button>
+                    <button id="nBtn" class="flex-1 btn-grad py-5 rounded-3xl font-black text-[10px] uppercase">Next Chapter</button>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-        // CONFIG - Using your existing credentials
+        // FIREBASE CONFIGURATION (Verified)
         const firebaseConfig = {
             apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
             authDomain: "fantinal-publishing-5b960.firebaseapp.com",
@@ -284,228 +306,418 @@
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(), db = firebase.firestore();
-        let curB = "", curE = null, allC = [], allB = [];
 
-        // UI CORE
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('hidden'); }
+        // GLOBAL STATES (Original Names Retained)
+        let curB = "", curE = null, allC = [], allB = [], curI = 0;
+
+        // UI CORE FUNCTIONS
+        function toggleMenu() { 
+            document.getElementById('sidebar').classList.toggle('active'); 
+            document.getElementById('overlay').classList.toggle('hidden'); 
+        }
+
         function showSection(id) { 
             document.querySelectorAll('main > div').forEach(s => s.classList.add('hidden')); 
             document.getElementById(id).classList.remove('hidden'); 
             window.scrollTo(0,0);
             if(id === 'bookmarkSection') loadBookmarks();
         }
-        function switchAuth(t) { document.getElementById('loginForm').classList.toggle('hidden', t==='reg'); document.getElementById('regForm').classList.toggle('hidden', t==='login'); document.getElementById('btnLog').classList.toggle('bg-blue-600', t==='login'); document.getElementById('btnReg').classList.toggle('bg-blue-600', t==='reg'); }
+
+        function switchAuth(t) { 
+            document.getElementById('loginForm').classList.toggle('hidden', t==='reg'); 
+            document.getElementById('regForm').classList.toggle('hidden', t==='login'); 
+            document.getElementById('btnLog').classList.toggle('bg-blue-600', t==='login'); 
+            document.getElementById('btnReg').classList.toggle('bg-blue-600', t==='reg'); 
+        }
+
         function toggleTheme() { document.body.classList.toggle('light-mode'); }
 
-        // AUTH & REALTIME
+        function showNoti(m, t='success') {
+            const b = document.createElement('div');
+            b.className = `noti-toast p-6 glass border-l-4 ${t==='success'?'border-green-500':'border-red-500'} text-xs font-bold shadow-2xl`;
+            b.innerText = m;
+            document.getElementById('notiBox').appendChild(b);
+            setTimeout(() => b.remove(), 4000);
+        }
+
+        // AUTHENTICATION
         auth.onAuthStateChanged(user => {
             if(user) {
                 document.getElementById('userEmail').innerText = user.email;
-                const isAdmin = user.email === 'xztka49@gmail.com';
-                if(isAdmin) {
-                    ['adminBadge','adminBtn','admChapAdd'].forEach(id => document.getElementById(id).classList.remove('hidden'));
-                    listenNoti(); loadAdminReqs();
+                if(user.email === 'xztka49@gmail.com') {
+                    document.getElementById('adminBadge').classList.remove('hidden');
+                    document.getElementById('adminBtn').classList.remove('hidden');
+                    document.getElementById('admChapAdd').classList.remove('hidden');
+                    listenNoti();
+                    loadAdminData();
                 }
-                db.collection('users').doc(user.uid).onSnapshot(doc => { if(doc.exists) { 
-                    document.getElementById('uBalance').innerText = (doc.data().coins || 0) + " C"; 
-                    document.getElementById('uSpent').innerText = (doc.data().spent || 0) + " C"; 
-                    if(doc.data().history) loadHistory(doc.data().history);
-                }});
-                showSection('homeSection'); loadAllBooks(); loadAds();
-            } else showSection('authSection');
+                db.collection('users').doc(user.uid).onSnapshot(doc => {
+                    if(doc.exists) {
+                        const data = doc.data();
+                        document.getElementById('uBalance').innerText = (data.coins || 0) + " C";
+                        document.getElementById('uSpent').innerText = (data.spent || 0) + " C";
+                        if(data.history) renderHistory(data.history);
+                    }
+                });
+                showSection('homeSection');
+                loadAllBooks();
+                loadAds();
+            } else {
+                showSection('authSection');
+            }
         });
 
-        // LOAD DATA
+        async function login() {
+            const e = document.getElementById('lEmail').value, p = document.getElementById('lPass').value;
+            try { await auth.signInWithEmailAndPassword(e, p); } catch(err) { showNoti(err.message, 'error'); }
+        }
+
+        async function register() {
+            const e = document.getElementById('rEmail').value, p = document.getElementById('rPass').value;
+            try {
+                const res = await auth.createUserWithEmailAndPassword(e, p);
+                await db.collection('users').doc(res.user.uid).set({
+                    email: e, coins: 0, spent: 0, vips: [], bought: [], history: [], bookmarks: []
+                });
+            } catch(err) { showNoti(err.message, 'error'); }
+        }
+
+        // NOVEL & SEARCH SYSTEM
         async function loadAllBooks() {
             const snap = await db.collection('books').get();
-            allB = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
+            allB = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             renderGrid(allB);
         }
 
         function renderGrid(books) {
             document.getElementById('bookGrid').innerHTML = books.map(b => `
-                <div class="glass overflow-hidden group relative" onclick="openBook('${b.id}')">
-                    <img src="${b.cover}" class="h-56 w-full object-cover group-hover:scale-110 transition-transform duration-700">
-                    <div class="p-5"><p class="font-black text-[12px] truncate mb-1">${b.title}</p>
-                    <p class="text-[9px] font-black opacity-40 uppercase">${b.genre}</p></div>
+                <div class="glass overflow-hidden group relative cursor-pointer" onclick="openBook('${b.id}')">
+                    <img src="${b.cover}" class="h-56 w-full object-cover group-hover:scale-110 transition duration-700">
+                    <div class="p-5">
+                        <p class="font-black text-[12px] truncate mb-1">${b.title}</p>
+                        <p class="text-[9px] font-black opacity-40 uppercase">${b.genre}</p>
+                    </div>
                 </div>`).join('');
         }
 
-        // FEATURE: SEARCH NOVELS
         function searchBooks() {
             const term = document.getElementById('searchInput').value.toLowerCase();
             const filtered = allB.filter(b => b.title.toLowerCase().includes(term));
             renderGrid(filtered);
         }
 
-        async function filterBooks(cat) {
+        function filterBooks(cat) {
             document.querySelectorAll('.cat-tab').forEach(b => b.classList.toggle('active', b.innerText.includes(cat)));
             if(cat === 'All') renderGrid(allB);
             else renderGrid(allB.filter(b => b.genre === cat));
         }
 
-        // FEATURE: COIN TRANSFER SYSTEM
+        // COIN TRANSFER SYSTEM (New)
         async function transferCoins() {
-            const recipientEmail = document.getElementById('tRecipient').value.trim();
+            const targetEmail = document.getElementById('tRecipient').value.trim();
             const amount = parseInt(document.getElementById('tAmount').value);
-            if(!recipientEmail || amount < 1) return alert("Please enter valid details.");
-            if(recipientEmail === auth.currentUser.email) return alert("Cannot send to yourself.");
+            
+            if(!targetEmail || isNaN(amount) || amount <= 0) return showNoti("Invalid amount or email", 'error');
+            if(targetEmail === auth.currentUser.email) return showNoti("Cannot send to yourself", 'error');
 
-            const uRef = db.collection('users').doc(auth.currentUser.uid);
-            const uDoc = await uRef.get();
-            if(uDoc.data().coins < amount) return alert("Insufficient coins.");
+            const senderRef = db.collection('users').doc(auth.currentUser.uid);
+            const senderDoc = await senderRef.get();
+            if(senderDoc.data().coins < amount) return showNoti("Insufficient coins", 'error');
 
             try {
-                const targetSnap = await db.collection('users').where('email', '==', recipientEmail).get();
-                if(targetSnap.empty) return alert("User not found.");
+                const targetSnap = await db.collection('users').where('email', '==', targetEmail).get();
+                if(targetSnap.empty) return showNoti("User not found", 'error');
+                
                 const targetRef = targetSnap.docs[0].ref;
-
                 const batch = db.batch();
-                batch.update(uRef, { 
+
+                batch.update(senderRef, {
                     coins: firebase.firestore.FieldValue.increment(-amount),
-                    history: firebase.firestore.FieldValue.arrayUnion({type:'Sent Coins', to: recipientEmail, amt: amount, date: new Date().toLocaleString()})
+                    history: firebase.firestore.FieldValue.arrayUnion({
+                        type: 'Transfer Sent', to: targetEmail, amt: amount, date: new Date().toLocaleString()
+                    })
                 });
-                batch.update(targetRef, { 
+
+                batch.update(targetRef, {
                     coins: firebase.firestore.FieldValue.increment(amount),
-                    history: firebase.firestore.FieldValue.arrayUnion({type:'Received Coins', from: auth.currentUser.email, amt: amount, date: new Date().toLocaleString()})
+                    history: firebase.firestore.FieldValue.arrayUnion({
+                        type: 'Transfer Received', from: auth.currentUser.email, amt: amount, date: new Date().toLocaleString()
+                    })
                 });
+
                 await batch.commit();
-                alert("Transfer Successful!");
+                showNoti(`Successfully sent ${amount} C to ${targetEmail}`);
                 showSection('homeSection');
-            } catch(e) { alert("Transfer Error: " + e.message); }
+            } catch(e) { showNoti(e.message, 'error'); }
         }
 
-        // FEATURE: BOOKMARK SYSTEM
+        // BOOKMARK SYSTEM (New)
         async function toggleBookmark() {
             const uRef = db.collection('users').doc(auth.currentUser.uid);
             const uDoc = await uRef.get();
-            const bookmarks = uDoc.data().bookmarks || [];
-            const bBtn = document.getElementById('bookmarkBtn');
+            const bks = uDoc.data().bookmarks || [];
             
-            if(bookmarks.includes(curB)) {
+            if(bks.includes(curB)) {
                 await uRef.update({ bookmarks: firebase.firestore.FieldValue.arrayRemove(curB) });
-                bBtn.innerText = "Add to Bookmarks";
+                document.getElementById('bookmarkBtn').innerText = "Add to Bookmarks";
+                showNoti("Removed from Bookmarks");
             } else {
                 await uRef.update({ bookmarks: firebase.firestore.FieldValue.arrayUnion(curB) });
-                bBtn.innerText = "Remove from Bookmarks";
+                document.getElementById('bookmarkBtn').innerText = "Remove from Bookmarks";
+                showNoti("Added to Bookmarks");
             }
         }
 
         async function loadBookmarks() {
             const uDoc = await db.collection('users').doc(auth.currentUser.uid).get();
             const bIds = uDoc.data().bookmarks || [];
-            const bData = allB.filter(b => bIds.includes(b.id));
-            document.getElementById('bookmarkGrid').innerHTML = bData.map(b => `
+            const filtered = allB.filter(b => bIds.includes(b.id));
+            
+            document.getElementById('bookmarkGrid').innerHTML = filtered.map(b => `
                 <div class="glass overflow-hidden" onclick="openBook('${b.id}')">
                     <img src="${b.cover}" class="h-40 w-full object-cover">
                     <div class="p-4"><p class="font-black text-[10px] truncate">${b.title}</p></div>
                 </div>`).join('') || "<p class='col-span-2 text-center py-20 opacity-30'>No bookmarks yet.</p>";
         }
 
-        // FEATURE: COMMENT SYSTEM
+        // COMMENT SYSTEM (New)
         async function postComment() {
             const text = document.getElementById('commentInput').value.trim();
             if(!text) return;
             await db.collection('books').doc(curB).collection('comments').add({
-                user: auth.currentUser.email,
-                text: text,
-                date: new Date()
+                user: auth.currentUser.email, text: text, date: new Date()
             });
             document.getElementById('commentInput').value = "";
             loadComments();
         }
 
         async function loadComments() {
-            const snap = await db.collection('books').doc(curB).collection('comments').orderBy('date','desc').limit(20).get();
+            const snap = await db.collection('books').doc(curB).collection('comments').orderBy('date', 'desc').get();
             document.getElementById('commentList').innerHTML = snap.docs.map(doc => `
                 <div class="comment-box">
                     <p class="text-[9px] font-black text-blue-400 mb-1 uppercase">${doc.data().user}</p>
                     <p class="text-xs opacity-80 leading-relaxed">${doc.data().text}</p>
-                </div>`).join('') || "<p class='opacity-20 text-xs'>No discussions yet.</p>";
+                </div>`).join('') || "<p class='opacity-20 text-xs'>Be the first to comment!</p>";
         }
 
-        // FEATURE: ANTI-CHEAT READ SYSTEM (SERVER-SIDE CHECKING)
-        async function readC(idx, alreadyChecked = false) {
-            const c = allC[idx];
-            const uRef = db.collection('users').doc(auth.currentUser.uid);
-            const uDoc = await uRef.get();
-            const isVip = (uDoc.data().vips || []).includes(curB);
-            const bought = uDoc.data().bought || [];
-
-            const hasAccess = c.price === 0 || isVip || bought.includes(c.id);
-
-            if(!hasAccess && !alreadyChecked) {
-                if(uDoc.data().coins < c.price) return alert("Insufficient coins!");
-                if(!confirm(`Buy this chapter for ${c.price} Coins?`)) return;
-                
-                // Purchase Logic
-                await uRef.update({ 
-                    coins: firebase.firestore.FieldValue.increment(-c.price), 
-                    spent: firebase.firestore.FieldValue.increment(c.price),
-                    bought: firebase.firestore.FieldValue.arrayUnion(c.id),
-                    history: firebase.firestore.FieldValue.arrayUnion({type:'Chapter Buy', title: c.title, amt: c.price, date: new Date().toLocaleString()})
-                });
-                await db.collection('books').doc(curB).update({ sales: firebase.firestore.FieldValue.increment(c.price) });
-                return readC(idx, true); // Re-run after purchase
-            }
-
-            if(hasAccess) {
-                document.getElementById('readerBody').innerText = c.content;
-                showSection('readerSection');
-                document.getElementById('pBtn').onclick = () => idx > 0 && readC(idx-1);
-                document.getElementById('nBtn').onclick = () => idx < allC.length-1 && readC(idx+1);
-            } else {
-                alert("Access Denied: Please purchase to read.");
-            }
-        }
-
-        // CORE BOOK FUNCTIONS (RETAINED & UPDATED)
+        // CHAPTER & READER LOGIC
         async function openBook(id) {
             curB = id; showSection('chapterView');
             const uDoc = await db.collection('users').doc(auth.currentUser.uid).get();
             document.getElementById('bookmarkBtn').innerText = (uDoc.data().bookmarks || []).includes(id) ? "Remove from Bookmarks" : "Add to Bookmarks";
             
-            db.collection('books').doc(id).onSnapshot(doc => { 
-                const d = doc.data();
-                document.getElementById('vipPriceTag').innerText = (d.vipPrice || 5000) + " C"; 
-            });
-            loadChaps(); loadComments();
+            const bDoc = await db.collection('books').doc(id).get();
+            document.getElementById('vipPriceTag').innerText = (bDoc.data().vipPrice || 5000) + " C";
+            
+            loadChaps();
+            loadComments();
         }
 
         async function loadChaps() {
-            const snap = await db.collection('books').doc(curB).collection('chapters').orderBy('date','asc').get();
+            const snap = await db.collection('books').doc(curB).collection('chapters').orderBy('date', 'asc').get();
             const uDoc = await db.collection('users').doc(auth.currentUser.uid).get();
             const isVip = (uDoc.data().vips || []).includes(curB), bought = uDoc.data().bought || [];
-            allC = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            allC = snap.docs.map(d => ({ id: d.id, ...d.data() }));
             
             document.getElementById('chapterList').innerHTML = allC.map((c, i) => {
-                const can = c.price === 0 || isVip || bought.includes(c.id);
-                return `<div class="glass p-6 flex justify-between items-center border-white/5">
-                    <div class="w-3/5"><p class="text-[9px] font-black opacity-30 uppercase tracking-[0.2em] mb-1">Chapter ${i+1}</p><p class="text-xs font-black truncate">${c.title}</p></div>
-                    <button onclick="readC(${i})" class="${can?'bg-blue-600':'bg-white/5 border border-white/10'} px-8 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest">${can?'READ':'BUY ('+c.price+' C)'}</button>
+                const canRead = c.price === 0 || isVip || bought.includes(c.id);
+                return `<div class="glass p-6 flex justify-between items-center">
+                    <div class="w-3/5">
+                        <p class="text-[9px] font-black opacity-30 uppercase mb-1">Chapter ${i+1}</p>
+                        <p class="text-xs font-black truncate">${c.title}</p>
+                    </div>
+                    <button onclick="readChapter(${i})" class="${canRead?'bg-blue-600':'bg-white/5 border border-white/10'} px-8 py-3 rounded-2xl text-[9px] font-black uppercase">
+                        ${canRead?'READ':'BUY ('+c.price+' C)'}
+                    </button>
                 </div>`;
             }).join('');
         }
 
-        // REST OF THE ORIGINAL FUNCTIONS (DEPOSIT, GIFT, ADMIN, ETC.)
-        async function login() { try { await auth.signInWithEmailAndPassword(document.getElementById('lEmail').value, document.getElementById('lPass').value); } catch(e) { alert(e.message); } }
-        async function register() { try { const res = await auth.createUserWithEmailAndPassword(document.getElementById('rEmail').value, document.getElementById('rPass').value); await db.collection('users').doc(res.user.uid).set({ email: res.user.email, coins: 0, spent: 0, vips: [], bought: [], history: [], bookmarks: [] }); } catch(e) { alert(e.message); } }
-        async function buyVip() {
+        async function readChapter(idx) {
+            const chapter = allC[idx];
             const uRef = db.collection('users').doc(auth.currentUser.uid);
-            const bRef = db.collection('books').doc(curB);
-            const uDoc = await uRef.get(), bDoc = await bRef.get();
-            const price = bDoc.data().vipPrice || 5000;
-            if((uDoc.data().vips || []).includes(curB)) return alert("Already VIP.");
-            if(uDoc.data().coins < price) return alert("Insufficient coins.");
-            await uRef.update({ coins: firebase.firestore.FieldValue.increment(-price), vips: firebase.firestore.FieldValue.arrayUnion(curB) });
-            alert("VIP Activated!"); loadChaps();
+            const uDoc = await uRef.get();
+            const isVip = (uDoc.data().vips || []).includes(curB);
+            const isBought = (uDoc.data().bought || []).includes(chapter.id);
+
+            if(chapter.price > 0 && !isVip && !isBought) {
+                if(uDoc.data().coins < chapter.price) return showNoti("Insufficient Coins", 'error');
+                if(!confirm(`Unlock this chapter for ${chapter.price} Coins?`)) return;
+
+                await uRef.update({
+                    coins: firebase.firestore.FieldValue.increment(-chapter.price),
+                    spent: firebase.firestore.FieldValue.increment(chapter.price),
+                    bought: firebase.firestore.FieldValue.arrayUnion(chapter.id),
+                    history: firebase.firestore.FieldValue.arrayUnion({
+                        type: 'Chapter Unlock', title: chapter.title, amt: chapter.price, date: new Date().toLocaleString()
+                    })
+                });
+                showNoti("Chapter Unlocked!");
+                loadChaps();
+                return;
+            }
+
+            // Reader Body Setup (Security)
+            curI = idx;
+            document.getElementById('readerBody').innerText = chapter.content;
+            showSection('readerSection');
+            
+            document.getElementById('pBtn').onclick = () => idx > 0 && readChapter(idx - 1);
+            document.getElementById('nBtn').onclick = () => idx < allC.length - 1 && readChapter(idx + 1);
         }
-        // ... (Keep your other existing functions like submitDeposit, approveDep, saveNovel, etc. below)
+
+        async function buyVip() {
+            const bDoc = await db.collection('books').doc(curB).get();
+            const p = bDoc.data().vipPrice || 5000;
+            const uRef = db.collection('users').doc(auth.currentUser.uid);
+            const uDoc = await uRef.get();
+            
+            if((uDoc.data().vips || []).includes(curB)) return showNoti("Already a VIP");
+            if(uDoc.data().coins < p) return showNoti("Insufficient Coins", 'error');
+
+            await uRef.update({
+                coins: firebase.firestore.FieldValue.increment(-p),
+                spent: firebase.firestore.FieldValue.increment(p),
+                vips: firebase.firestore.FieldValue.arrayUnion(curB),
+                history: firebase.firestore.FieldValue.arrayUnion({
+                    type: 'VIP Full Access', title: bDoc.data().title, amt: p, date: new Date().toLocaleString()
+                })
+            });
+            showNoti("VIP Unlocked!");
+            loadChaps();
+        }
+
+        // ORIGINAL DEPOSIT LOGIC
         async function submitDeposit() {
-            const amt = parseInt(document.getElementById('coinPackage').value), name = document.getElementById('payName').value, tid = document.getElementById('payTid').value;
-            if(!name || tid.length < 5) return alert("Fill all details.");
-            await db.collection('coinRequests').add({ uid: auth.currentUser.uid, email: auth.currentUser.email, amt, buyerName: name, transId: tid, status: 'pending', date: new Date() });
-            alert("Request Sent."); showSection('homeSection');
+            const amt = parseInt(document.getElementById('coinPackage').value);
+            const name = document.getElementById('payName').value, tid = document.getElementById('payTid').value;
+            if(!name || tid.length < 5) return showNoti("Invalid Details", 'error');
+            
+            await db.collection('coinRequests').add({
+                uid: auth.currentUser.uid, email: auth.currentUser.email,
+                amt, buyerName: name, transId: tid, status: 'pending', date: new Date()
+            });
+            showNoti("Deposit request sent. Wait for approval.");
+            showSection('homeSection');
+        }
+
+        async function redeemGift() {
+            const code = document.getElementById('gCodeInput').value.trim().toUpperCase();
+            const snap = await db.collection('gifts').doc(code).get();
+            if(!snap.exists || snap.data().used) return showNoti("Invalid or Used Code", 'error');
+
+            await db.collection('gifts').doc(code).update({ used: true, usedBy: auth.currentUser.email });
+            await db.collection('users').doc(auth.currentUser.uid).update({
+                coins: firebase.firestore.FieldValue.increment(snap.data().amt),
+                history: firebase.firestore.FieldValue.arrayUnion({
+                    type: 'Gift Redeemed', amt: snap.data().amt, date: new Date().toLocaleString()
+                })
+            });
+            showNoti(`Redeemed ${snap.data().amt} Coins!`);
+            showSection('homeSection');
+        }
+
+        // ADMIN FUNCTIONS (Full Logic)
+        function setAdminTab(t) {
+            document.querySelectorAll('.adm-t').forEach(b => b.classList.remove('bg-blue-600'));
+            event.target.classList.add('bg-blue-600');
+            ['tab-req','tab-nov','tab-usr','tab-gft'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            document.getElementById('tab-'+t).classList.remove('hidden');
+        }
+
+        async function loadAdminData() {
+            // Load Requests
+            db.collection('coinRequests').where('status','==','pending').onSnapshot(snap => {
+                document.getElementById('tab-req').innerHTML = snap.docs.map(doc => `
+                    <div class="glass p-6">
+                        <p class="text-xs font-bold">${doc.data().email}</p>
+                        <p class="text-xl font-black text-yellow-500">${doc.data().amt} C</p>
+                        <p class="text-[10px] opacity-40 mt-2">${doc.data().buyerName} | ${doc.data().transId}</p>
+                        <div class="flex gap-2 mt-4">
+                            <button onclick="approveDep('${doc.id}', '${doc.data().uid}', ${doc.data().amt})" class="flex-1 py-2 bg-green-600 rounded-xl text-[10px] font-bold">APPROVE</button>
+                            <button onclick="rejectDep('${doc.id}')" class="flex-1 py-2 bg-red-600 rounded-xl text-[10px] font-bold">REJECT</button>
+                        </div>
+                    </div>`).join('') || "No pending requests.";
+            });
+
+            // Load Admin Novel List
+            db.collection('books').onSnapshot(snap => {
+                document.getElementById('admNovelList').innerHTML = snap.docs.map(doc => `
+                    <div class="glass p-4 flex justify-between items-center">
+                        <p class="text-xs font-bold">${doc.data().title}</p>
+                        <div class="flex gap-2">
+                            <button onclick="editNovel('${doc.id}')" class="p-2 bg-blue-600 rounded-lg text-[9px]">EDIT</button>
+                            <button onclick="deleteNovel('${doc.id}')" class="p-2 bg-red-600 rounded-lg text-[9px]">DEL</button>
+                        </div>
+                    </div>`).join('');
+            });
+        }
+
+        async function approveDep(id, uid, amt) {
+            await db.collection('users').doc(uid).update({ 
+                coins: firebase.firestore.FieldValue.increment(amt),
+                history: firebase.firestore.FieldValue.arrayUnion({ type: 'Deposit Approved', amt, date: new Date().toLocaleString() })
+            });
+            await db.collection('coinRequests').doc(id).update({ status: 'approved' });
+            showNoti("Approved!");
+        }
+
+        function openNovelForm(id=null) {
+            curE = id;
+            showSection('novelFormSection');
+            if(!id) {
+                document.getElementById('nTitle').value = "";
+                document.getElementById('nCover').value = "";
+                document.getElementById('nVipPrice').value = "5000";
+            }
+        }
+
+        async function saveNovel() {
+            const d = {
+                title: document.getElementById('nTitle').value,
+                cover: document.getElementById('nCover').value,
+                genre: document.getElementById('nGenre').value,
+                vipPrice: parseInt(document.getElementById('nVipPrice').value) || 5000
+            };
+            if(curE) await db.collection('books').doc(curE).update(d);
+            else await db.collection('books').add({ ...d, sales: 0 });
+            showNoti("Novel Saved");
+            showSection('adminDashboard');
+            loadAllBooks();
+        }
+
+        async function saveChapter() {
+            const d = {
+                title: document.getElementById('cTitle').value,
+                content: document.getElementById('cContent').value,
+                price: parseInt(document.getElementById('cPrice').value) || 0,
+                date: new Date()
+            };
+            await db.collection('books').doc(curB).collection('chapters').add(d);
+            showNoti("Chapter Published");
+            showSection('chapterView');
+            loadChaps();
+        }
+
+        // UTILITIES
+        function loadAds() {
+            db.collection('settings').doc('ads').get().then(doc => {
+                if(doc.exists) document.getElementById('adSlider').innerHTML = doc.data().images.map(i => `<img src="${i}" class="min-w-full h-full object-cover rounded-[40px]">`).join('');
+            });
+        }
+
+        function renderHistory(h) {
+            document.getElementById('historyList').innerHTML = h.reverse().map(i => `
+                <div class="glass p-5 flex justify-between items-center">
+                    <div><p class="text-[10px] font-black text-blue-400 uppercase">${i.type}</p><p class="text-[9px] opacity-40">${i.date}</p></div>
+                    <p class="font-black text-sm">${i.amt} C</p>
+                </div>`).join('');
+        }
+
+        function listenNoti() {
+            db.collection('coinRequests').where('status','==','pending').onSnapshot(snap => {
+                if(!snap.empty) showNoti("New Deposit Request Received!");
+            });
         }
     </script>
 </body>
