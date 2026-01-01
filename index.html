@@ -47,6 +47,7 @@
         
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
+        /* QR Card Styles */
         .qr-card { background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.1); }
     </style>
 </head>
@@ -115,6 +116,7 @@
 
         <div id="homeSection" class="hidden">
             <div id="adSlider" class="flex overflow-x-auto gap-4 mb-12 no-scrollbar h-60 rounded-[40px] shadow-2xl"></div>
+            
             <div class="flex overflow-x-auto no-scrollbar gap-3 mb-10 pb-2">
                 <button onclick="filterBooks('All')" class="cat-tab active">All Library</button>
                 <button onclick="filterBooks('Fan Fiction')" class="cat-tab">Fan Fiction</button>
@@ -122,6 +124,7 @@
                 <button onclick="filterBooks('True Story')" class="cat-tab">True Story</button>
                 <button onclick="filterBooks('Mega')" class="cat-tab">Mega</button>
             </div>
+
             <div id="bookGrid" class="grid grid-cols-2 gap-6"></div>
             <div id="adminBtn" class="hidden mt-16"><button onclick="showSection('adminDashboard')" class="w-full py-6 glass border-red-500/30 text-red-500 font-black text-[10px] uppercase tracking-[0.3em] hover:bg-red-500/5 transition">Administrator Management</button></div>
         </div>
@@ -146,12 +149,12 @@
                 
                 <div class="grid grid-cols-1 gap-4 mb-10">
                     <div class="qr-card p-6 rounded-[30px] text-center">
-                        <img src="https://img.sanishtech.com/u/b80997ba169794aaad6fd4146e649353.jpeg" alt="KPay" class="w-48 h-48 mx-auto mb-4 rounded-3xl shadow-2xl border-4 border-white/5 object-cover">
+                        <img src="https://img.sanishtech.com/u/b80997ba169794aaad6fd4146e649353.jpeg" alt="KPay" class="w-40 h-40 mx-auto mb-4 rounded-3xl shadow-2xl border-4 border-white/5">
                         <p class="text-[11px] font-black tracking-widest text-blue-400">KBZ PAY QR</p>
                         <p class="text-[9px] font-bold opacity-50 mt-1 uppercase">THU KHA AUNG (09759731746)</p>
                     </div>
                     <div class="qr-card p-6 rounded-[30px] text-center">
-                        <img src="https://img.sanishtech.com/u/6ed8971d622b39fae5c2baea16b2be4c.jpeg" alt="Wave" class="w-48 h-48 mx-auto mb-4 rounded-3xl shadow-2xl border-4 border-white/5 object-cover">
+                        <img src="https://img.sanishtech.com/u/6ed8971d622b39fae5c2baea16b2be4c.jpeg " alt="Wave" class="w-40 h-40 mx-auto mb-4 rounded-3xl shadow-2xl border-4 border-white/5">
                         <p class="text-[11px] font-black tracking-widest text-yellow-500">WAVEPAY QR</p>
                         <p class="text-[9px] font-bold opacity-50 mt-1 uppercase">THU KHA AUNG (09759731746)</p>
                     </div>
@@ -187,6 +190,7 @@
 
         <div id="adminDashboard" class="hidden">
             <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase">← System Exit</button>
+            
             <div class="flex overflow-x-auto no-scrollbar gap-2 mb-10 bg-slate-900/60 p-2 rounded-[25px] border border-white/5">
                 <button onclick="setAdminTab('req')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition bg-blue-600">Requests</button>
                 <button onclick="setAdminTab('nov')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition">Novels</button>
@@ -195,11 +199,14 @@
                 <button onclick="setAdminTab('ads')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition">Ads</button>
                 <button onclick="setAdminTab('fin')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition">Finance</button>
             </div>
+
             <div id="tab-req" class="space-y-4"></div>
+
             <div id="tab-nov" class="hidden">
                 <button onclick="openNovelForm()" class="w-full btn-grad py-5 rounded-3xl font-black text-[10px] tracking-[0.2em] mb-10 shadow-lg">+ REGISTER NEW NOVEL</button>
                 <div id="admNovelList" class="space-y-4"></div>
             </div>
+
             <div id="tab-usr" class="hidden">
                 <div class="glass p-8 mb-8 text-center border-blue-500/20">
                     <p class="text-[9px] font-black opacity-40 uppercase tracking-[0.2em] mb-2">Network Strength</p>
@@ -208,6 +215,7 @@
                 </div>
                 <div id="admUserList" class="space-y-3"></div>
             </div>
+
             <div id="tab-gft" class="hidden">
                 <div class="glass p-10 mb-8 border-purple-500/20">
                     <input type="number" id="genAmt" placeholder="Coin Denomination">
@@ -215,6 +223,7 @@
                 </div>
                 <div id="admGiftList" class="space-y-3"></div>
             </div>
+
             <div id="tab-ads" class="hidden">
                 <div class="glass p-8 space-y-4">
                     <h3 class="text-xs font-black uppercase mb-4 opacity-50 tracking-widest">Slider Assets (URLs)</h3>
@@ -225,6 +234,7 @@
                     <button onclick="updateAds()" class="w-full btn-grad py-4 rounded-2xl font-black text-[10px] tracking-widest">Update Visuals</button>
                 </div>
             </div>
+
             <div id="tab-fin" class="hidden">
                 <div class="glass p-10 text-center border-green-500/30 mb-8 relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-1 bg-green-500/20"></div>
@@ -276,6 +286,7 @@
                 <p class="text-[9px] font-black opacity-30 uppercase mb-3">Audience Trace</p>
                 <div id="admViewersList" class="space-y-2 max-h-40 overflow-y-auto no-scrollbar text-[10px] font-bold opacity-70 italic"></div>
             </div>
+
             <div id="admChapAdd" class="hidden mb-10"><button onclick="showSection('chapterForm')" class="w-full py-5 glass border-blue-500/20 text-blue-400 font-black text-[10px] tracking-widest uppercase">+ Append New Chapter</button></div>
             <div id="chapterList" class="space-y-4"></div>
         </div>
@@ -311,7 +322,7 @@
     </main>
 
     <script>
-        // JS Configuration & Core logic remains the same
+        // CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
             authDomain: "fantinal-publishing-5b960.firebaseapp.com",
@@ -324,12 +335,14 @@
         const auth = firebase.auth(), db = firebase.firestore();
         let curB = "", curE = null, allC = [], curI = 0;
 
+        // UI CORE
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('hidden'); if(document.getElementById('sidebar').classList.contains('active')) loadUserStats(); }
         function showSection(id) { document.querySelectorAll('main > div').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); window.scrollTo(0,0); if(id==='homeSection') { document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.add('hidden'); } }
         function switchAuth(t) { document.getElementById('loginForm').classList.toggle('hidden', t==='reg'); document.getElementById('regForm').classList.toggle('hidden', t==='login'); document.getElementById('btnLog').classList.toggle('bg-blue-600', t==='login'); document.getElementById('btnReg').classList.toggle('bg-blue-600', t==='reg'); }
         function setAdminTab(t) { document.querySelectorAll('.adm-t').forEach(b => { b.classList.remove('bg-blue-600'); if(b.innerText.toLowerCase().startsWith(t)) b.classList.add('bg-blue-600'); }); ['req','nov','usr','gft','ads','fin'].forEach(x => document.getElementById('tab-'+x).classList.add('hidden')); document.getElementById('tab-'+t).classList.remove('hidden'); if(t==='usr') loadUsers(); if(t==='nov') loadAdmNovels(); if(t==='gft') loadGifts(); if(t==='fin') loadFinance(); }
         function toggleTheme() { document.body.classList.toggle('light-mode'); }
 
+        // AUTH & REALTIME
         auth.onAuthStateChanged(user => {
             if(user) {
                 document.getElementById('userEmail').innerText = user.email;
@@ -347,6 +360,7 @@
             } else showSection('authSection');
         });
 
+        // HISTORY UI
         function loadHistory(h) {
             document.getElementById('historyList').innerHTML = h.reverse().map(i => `
                 <div class="glass p-6 flex justify-between items-center border-white/5">
@@ -355,6 +369,7 @@
                 </div>`).join('');
         }
 
+        // NOTI & DEPOSIT
         function listenNoti() {
             db.collection('coinRequests').where('status','==','pending').onSnapshot(snap => {
                 snap.docChanges().forEach(ch => { if(ch.type === "added") {
@@ -375,6 +390,18 @@
             alert("Success: Deposit Request Sent for Review."); showSection('homeSection');
         }
 
+        function loadAdminReqs() {
+            db.collection('coinRequests').where('status','==','pending').onSnapshot(snap => {
+                document.getElementById('tab-req').innerHTML = snap.docs.map(doc => `
+                    <div class="glass p-8 border-white/5 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                        <div class="flex justify-between mb-6"><div><p class="font-black text-sm tracking-tight">${doc.data().buyerName}</p><p class="text-[10px] opacity-40 font-bold">${doc.data().email}</p><p class="text-[10px] text-blue-400 font-bold mt-1">ID: ${doc.data().transId}</p></div><p class="text-blue-400 font-black text-lg tracking-tighter">${doc.data().amt} MMK</p></div>
+                        <div class="flex gap-3"><button onclick="approveDep('${doc.id}', '${doc.data().uid}', ${doc.data().amt}, 'approved')" class="flex-1 bg-blue-600 py-4 rounded-2xl font-black text-[9px] uppercase tracking-widest">Authorize</button>
+                        <button onclick="approveDep('${doc.id}', '', 0, 'rejected')" class="flex-1 bg-red-500/10 text-red-500 py-4 rounded-2xl font-black text-[9px] uppercase tracking-widest">Decline</button></div>
+                    </div>`).join('') || "<p class='text-center py-24 opacity-20 font-black tracking-[0.3em] text-[10px]'>SYSTEM CLEAR: NO PENDING TASKS</p>";
+            });
+        }
+
         async function approveDep(id, uid, amt, status) {
             if(status==='approved') {
                 await db.collection('users').doc(uid).update({ 
@@ -386,6 +413,7 @@
             await db.collection('coinRequests').doc(id).update({ status });
         }
 
+        // NOVELS & ANALYTICS
         async function filterBooks(cat) {
             document.querySelectorAll('.cat-tab').forEach(b => {
                 b.classList.remove('active'); if(b.innerText.includes(cat)) b.classList.add('active');
@@ -403,21 +431,26 @@
         async function openBook(id) {
             curB = id; showSection('chapterView');
             const isAdmin = auth.currentUser.email === 'xztka49@gmail.com';
+            
             await db.collection('books').doc(id).update({ 
                 views: firebase.firestore.FieldValue.increment(1),
                 viewers: firebase.firestore.FieldValue.arrayUnion(`${auth.currentUser.email} (${new Date().toLocaleDateString()})`)
             });
+
             db.collection('books').doc(id).onSnapshot(doc => { 
                 const d = doc.data();
                 document.getElementById('vipPriceTag').innerText = (d.vipPrice || 5000) + " C"; 
                 if(isAdmin) {
                     document.getElementById('admSalesCount').innerText = `Yield: ${d.sales || 0} C`;
-                    if(d.viewers) document.getElementById('admViewersList').innerHTML = d.viewers.reverse().slice(0, 30).map(v => `<p class="border-b border-white/5 pb-1">• ${v}</p>`).join('');
+                    if(d.viewers) {
+                        document.getElementById('admViewersList').innerHTML = d.viewers.reverse().slice(0, 30).map(v => `<p class="border-b border-white/5 pb-1">• ${v}</p>`).join('');
+                    }
                 }
             });
             loadChaps();
         }
 
+        // VIP SYSTEM
         async function buyVip() {
             const uRef = db.collection('users').doc(auth.currentUser.uid);
             const bRef = db.collection('books').doc(curB);
@@ -426,6 +459,7 @@
             if((uDoc.data().vips || []).includes(curB)) return alert("Access Granted: You are already a VIP member of this title.");
             if(uDoc.data().coins < price) return alert("Transaction Declined: Insufficient coin balance.");
             if(!confirm(`Authorize ${price} Coins for Lifetime VIP access?`)) return;
+            
             await uRef.update({ 
                 coins: firebase.firestore.FieldValue.increment(-price), 
                 spent: firebase.firestore.FieldValue.increment(price),
@@ -436,14 +470,24 @@
             alert("Success: VIP Status Activated."); loadChaps();
         }
 
+        async function updateVipPrice() {
+            const p = parseInt(document.getElementById('newVipP').value);
+            if(!p) return;
+            await db.collection('books').doc(curB).update({ vipPrice: p });
+            alert("System: VIP Pricing Updated.");
+        }
+
+        // CHAPTERS & READER
         async function loadChaps() {
             const snap = await db.collection('books').doc(curB).collection('chapters').orderBy('date','asc').get();
             const uDoc = await db.collection('users').doc(auth.currentUser.uid).get();
             const isVip = (uDoc.data().vips || []).includes(curB), bought = uDoc.data().bought || [];
             allC = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            
             const vBtn = document.getElementById('vipBtn');
             if(isVip) { vBtn.innerText = "VIP ACTIVE"; vBtn.classList.replace('from-yellow-500','from-green-600'); vBtn.disabled = true; }
             else { vBtn.innerText = "ELEVATE TO VIP"; vBtn.classList.replace('from-green-600','from-yellow-500'); vBtn.disabled = false; }
+
             document.getElementById('chapterList').innerHTML = allC.map((c, i) => {
                 const can = c.price === 0 || isVip || bought.includes(c.id);
                 return `<div class="glass p-6 flex justify-between items-center border-white/5">
@@ -473,6 +517,61 @@
             document.getElementById('nBtn').onclick = () => idx < allC.length-1 && readC(idx+1, true);
         }
 
+        async function saveChapter() {
+            const t = document.getElementById('cTitle').value, c = document.getElementById('cContent').value, p = parseInt(document.getElementById('cPrice').value);
+            if(!t || !c) return alert("Field Required.");
+            await db.collection('books').doc(curB).collection('chapters').add({ title: t, content: c, price: p || 0, date: new Date() });
+            alert("System: Chapter Published Successfully."); showSection('chapterView'); loadChaps();
+        }
+
+        // NOVEL ADMIN
+        async function loadAdmNovels() {
+            const snap = await db.collection('books').get();
+            document.getElementById('admNovelList').innerHTML = snap.docs.map(doc => `
+                <div class="glass p-5 flex justify-between items-center border-white/5">
+                    <div class="flex items-center gap-4"><img src="${doc.data().cover}" class="w-12 h-12 rounded-2xl object-cover border border-white/10 shadow-lg"><p class="text-[11px] font-black tracking-tight">${doc.data().title}</p></div>
+                    <div class="flex gap-2"><button onclick="openNovelForm('${doc.id}')" class="bg-blue-600/20 text-blue-400 px-5 py-3 rounded-xl text-[9px] font-black">EDIT</button>
+                    <button onclick="deleteNovel('${doc.id}')" class="bg-red-500/10 text-red-500 px-5 py-3 rounded-xl text-[9px] font-black">DEL</button></div>
+                </div>`).join('');
+        }
+
+        function openNovelForm(id = null) {
+            curE = id;
+            if(id) {
+                db.collection('books').doc(id).get().then(doc => {
+                    const d = doc.data(); document.getElementById('nTitle').value = d.title; document.getElementById('nCover').value = d.cover; document.getElementById('nGenre').value = d.genre;
+                });
+            } else { document.getElementById('nTitle').value = ""; document.getElementById('nCover').value = ""; }
+            showSection('novelFormSection');
+        }
+
+        async function saveNovel() {
+            const data = { title: document.getElementById('nTitle').value, cover: document.getElementById('nCover').value, genre: document.getElementById('nGenre').value };
+            if(curE) await db.collection('books').doc(curE).update(data);
+            else await db.collection('books').add({ ...data, views: 0, sales: 0, viewers: [], createdAt: new Date(), vipPrice: 5000 });
+            showSection('adminDashboard'); filterBooks('All');
+        }
+
+        async function generateGift() {
+            const amt = parseInt(document.getElementById('genAmt').value);
+            if(!amt) return;
+            const code = "FTN-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+            await db.collection('giftCodes').doc(code).set({ code, amount: amt, status: 'unused', createdAt: new Date() });
+            alert("Gift Forge Complete: " + code); loadGifts();
+        }
+
+        async function loadGifts() {
+            const snap = await db.collection('giftCodes').orderBy('createdAt','desc').get();
+            document.getElementById('admGiftList').innerHTML = snap.docs.map(doc => `
+                <div class="glass p-5 flex justify-between items-center border-white/5">
+                    <div><p class="text-xs font-black text-purple-400 tracking-widest">${doc.data().code}</p><p class="text-[8px] opacity-40 uppercase font-bold mt-1">${doc.data().status}</p></div>
+                    <div class="flex items-center gap-4">
+                        <p class="font-black text-sm tracking-tighter">${doc.data().amount} C</p>
+                        <button onclick="navigator.clipboard.writeText('${doc.data().code}');alert('Identity Copied')" class="p-3 bg-white/5 rounded-xl hover:bg-white/10 transition">📋</button>
+                    </div>
+                </div>`).join('');
+        }
+
         async function redeemGift() {
             const code = document.getElementById('gCodeInput').value.trim();
             if(!code) return;
@@ -486,10 +585,29 @@
             alert("Voucher Authorized: Coins Added to your wallet."); showSection('homeSection');
         }
 
-        // Auth remains same
+        async function loadFinance() {
+            const d = await db.collection('admin').doc('fin').get();
+            document.getElementById('totalFinance').innerText = (d.exists ? d.data().total.toLocaleString() : 0) + " MMK";
+        }
+
+        async function loadUsers() {
+            const snap = await db.collection('users').get();
+            document.getElementById('totalU').innerText = snap.size;
+            document.getElementById('admUserList').innerHTML = snap.docs.map(doc => `<div class="glass p-5 flex justify-between items-center border-white/5"><p class="text-[10px] font-bold truncate w-40 opacity-70">${doc.data().email}</p><p class="text-yellow-500 font-black text-xs tracking-tighter">${doc.data().coins} C</p></div>`).join('');
+        }
+
+        async function loadAds() {
+            const d = await db.collection('settings').doc('ads').get();
+            if(d.exists) document.getElementById('adSlider').innerHTML = d.data().images.filter(i=>i).map(i => `<img src="${i}" class="min-w-full h-full object-cover">`).join('');
+        }
+
+        async function updateAds() {
+            const images = [document.getElementById('adU1').value, document.getElementById('adU2').value, document.getElementById('adU3').value, document.getElementById('adU4').value];
+            await db.collection('settings').doc('ads').set({ images }); alert("System: Assets Synchronized."); loadAds();
+        }
+
         async function login() { try { await auth.signInWithEmailAndPassword(document.getElementById('lEmail').value, document.getElementById('lPass').value); } catch(e) { alert(e.message); } }
         async function register() { try { const res = await auth.createUserWithEmailAndPassword(document.getElementById('rEmail').value, document.getElementById('rPass').value); await db.collection('users').doc(res.user.uid).set({ email: res.user.email, coins: 0, spent: 0, vips: [], bought: [], history: [] }); } catch(e) { alert(e.message); } }
-        // ... (Remaining Admin Functions - loadAds, loadFinance, etc. keep as is)
     </script>
 </body>
 </html>
