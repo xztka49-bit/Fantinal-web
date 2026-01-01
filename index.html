@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FANTINAL ENTERPRISE SUPREME V22 - LUXURY EDITION</title>
+    <title>FANTINAL ENTERPRISE SUPREME V22 - LUXURY</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -12,19 +12,19 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@400;700&display=swap');
-        :root { --gold: #d4af37; --bg: #020617; --card: rgba(15, 23, 42, 0.95); --txt: #f8fafc; }
+        :root { --gold: #d4af37; --bg: #05070a; --card: rgba(18, 20, 24, 0.95); --txt: #f8fafc; }
         body { background: var(--bg); color: var(--txt); font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.3s; overflow-x: hidden; }
         .luxury-font { font-family: 'Cinzel', serif; }
-        .glass { background: var(--card); backdrop-filter: blur(25px); border: 1px solid rgba(212, 175, 55, 0.1); border-radius: 20px; }
-        .btn-gold { background: linear-gradient(135deg, #d4af37, #f9e29c); color: #000; font-weight: 800; transition: 0.3s; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); }
+        .glass { background: var(--card); backdrop-filter: blur(25px); border: 1px solid rgba(212, 175, 55, 0.1); border-radius: 24px; }
+        .btn-gold { background: linear-gradient(135deg, #d4af37, #f9e29c); color: #000; font-weight: 800; transition: 0.3s; }
         .btn-gold:active { transform: scale(0.96); }
         .gold-text { background: linear-gradient(135deg, #d4af37, #f9e29c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        input, select, textarea { width: 100%; padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212, 175, 55, 0.1); color: inherit; outline: none; margin-bottom: 10px; }
+        input, select, textarea { width: 100%; padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(212, 175, 55, 0.15); color: inherit; outline: none; margin-bottom: 10px; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .sidebar { position: fixed; left: -100%; top: 0; width: 85%; height: 100%; background: var(--bg); z-index: 5000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-right: 1px solid rgba(212, 175, 55, 0.2); }
+        .sidebar { position: fixed; left: -100%; top: 0; width: 85%; height: 100%; background: var(--bg); z-index: 5000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-right: 1px solid var(--gold); }
         .sidebar.active { left: 0; }
-        .chapter-item { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 15px; transition: 0.3s; }
-        .chapter-item:hover { border-color: var(--gold); }
+        .chapter-card { background: rgba(255, 255, 255, 0.03); border-radius: 18px; border: 1px solid rgba(255,255,255,0.05); }
+        .badge-rookie { background: #10b981; color: white; padding: 2px 8px; border-radius: 6px; font-size: 8px; font-weight: 900; }
     </style>
 </head>
 <body class="no-scrollbar">
@@ -33,164 +33,149 @@
     <div id="overlay" class="fixed inset-0 bg-black/80 hidden z-[4000]" onclick="toggleMenu()"></div>
 
     <div id="sidebar" class="sidebar p-8 overflow-y-auto no-scrollbar">
-        <div class="flex justify-between items-center mb-10">
-            <h2 class="luxury-font text-2xl gold-text font-bold">DASHBOARD</h2>
-            <button onclick="toggleMenu()" class="text-2xl opacity-50 text-gold">✕</button>
+        <div class="flex justify-between items-center mb-12">
+            <h2 class="luxury-font text-2xl gold-text">PRESTIGE</h2>
+            <button onclick="toggleMenu()" class="text-2xl text-gold">✕</button>
         </div>
         <div class="glass p-6 mb-8">
-            <p id="userEmail" class="text-[10px] font-bold opacity-40 mb-3 truncate uppercase tracking-widest">Guest</p>
+            <p id="userEmail" class="text-[10px] font-bold opacity-40 mb-3 truncate uppercase tracking-widest">Guest User</p>
             <div class="grid grid-cols-2 gap-4">
                 <div><p class="text-[8px] font-black opacity-30 uppercase">Balance</p><p id="uBalance" class="text-xl font-black text-gold">0 C</p></div>
                 <div class="text-right"><p class="text-[8px] font-black opacity-30 uppercase">Ads Earn</p><p id="uAdsEarned" class="text-xl font-black text-green-500">0 C</p></div>
             </div>
         </div>
-        <nav class="space-y-3">
-            <button onclick="showSection('homeSection')" class="w-full py-4 glass text-[10px] font-black uppercase">Home Library</button>
-            <button onclick="showSection('depositSection')" class="w-full btn-gold py-5 rounded-2xl text-[10px] font-black uppercase shadow-lg">Top Up & Rewards</button>
-            <button onclick="showSection('giftSection')" class="w-full py-4 glass text-[10px] font-black uppercase text-gold">Redeem Gift Code</button>
-            <button onclick="showSection('transferSection')" class="w-full py-4 glass text-[10px] font-black uppercase">Transfer Coins</button>
+        <nav class="space-y-4">
+            <button onclick="showSection('homeSection')" class="w-full py-4 glass text-[10px] font-black uppercase tracking-widest">Home Library</button>
+            <button onclick="showSection('depositSection')" class="w-full btn-gold py-5 rounded-2xl text-[10px] font-black uppercase shadow-lg shadow-yellow-900/20">Top Up & Rewards</button>
+            <button onclick="showSection('giftSection')" class="w-full py-4 glass text-[10px] font-black uppercase text-gold">Redeem Gift</button>
+            <button onclick="showSection('transferSection')" class="w-full py-4 glass text-[10px] font-black uppercase">Transfer</button>
             <button onclick="showSection('bookmarkSection')" class="w-full py-4 glass text-[10px] font-black uppercase">My Library</button>
-            <div class="pt-10 border-t border-white/5"><button onclick="auth.signOut()" class="w-full text-red-500 text-[10px] font-black uppercase">Sign Out</button></div>
+            <button onclick="auth.signOut()" class="w-full py-4 text-red-500 text-[10px] font-black uppercase mt-10">Logout Account</button>
         </nav>
     </div>
 
     <nav class="sticky top-0 z-[3000] px-6 py-5 bg-inherit border-b border-white/5 flex justify-between items-center backdrop-blur-2xl">
-        <button onclick="toggleMenu()" class="p-3 glass rounded-xl"><svg width="20" height="20" fill="none" stroke="#d4af37" stroke-width="3"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
-        <h1 class="luxury-font text-2xl gold-text tracking-widest" onclick="location.reload()">FANTINAL</h1>
-        <div id="adminBadge" class="hidden px-4 py-1.5 bg-red-600 text-white rounded-full text-[8px] font-black uppercase animate-pulse">ADMIN TERMINAL</div>
+        <button onclick="toggleMenu()" class="p-2"><svg width="24" height="24" fill="none" stroke="#d4af37" stroke-width="2.5"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
+        <h1 class="luxury-font text-2xl gold-text font-bold tracking-widest" onclick="location.reload()">FANTINAL</h1>
+        <div id="adminBadge" class="hidden px-4 py-1.5 bg-red-600 text-white rounded-full text-[8px] font-black uppercase animate-pulse">ADMIN</div>
+        <div id="userBadge" class="px-4 py-1.5 glass text-[8px] font-black uppercase">USER</div>
     </nav>
 
     <main class="max-w-md mx-auto p-6 pb-40">
         
-        <div id="adSlot1" class="mb-8 rounded-2xl overflow-hidden hidden shadow-2xl"></div>
-
-        <div id="authSection" class="hidden py-10">
-            <div class="text-center mb-10"><h2 class="luxury-font text-4xl gold-text mb-2">LOGIN</h2><p class="text-[9px] opacity-30 uppercase tracking-[0.4em]">Novel Publishing Platform</p></div>
-            <div class="glass p-8">
-                <input type="email" id="lEmail" placeholder="Email">
+        <div id="authSection" class="hidden py-16">
+            <div class="text-center mb-10"><h2 class="luxury-font text-4xl gold-text mb-2">WELCOME</h2><p class="text-[9px] opacity-30 uppercase tracking-[0.4em]">Novel & Literature Portal</p></div>
+            <div class="glass p-8 shadow-2xl">
+                <input type="email" id="lEmail" placeholder="Email Address">
                 <input type="password" id="lPass" placeholder="Password">
                 <button onclick="login()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase mb-4">Sign In</button>
-                <button onclick="register()" class="w-full bg-white/5 py-4 rounded-xl font-black text-xs uppercase opacity-40">Register</button>
+                <button onclick="register()" class="w-full bg-white/5 py-4 rounded-xl font-black text-xs uppercase opacity-40">Join Now</button>
             </div>
         </div>
 
         <div id="homeSection" class="hidden">
-            <div id="adSlider" class="flex overflow-x-auto gap-3 mb-10 h-52 rounded-[30px] no-scrollbar snap-x"></div>
-            <input type="text" id="searchInput" oninput="searchBooks()" placeholder="Search archives..." class="glass border-none h-14 px-6 mb-8 shadow-xl">
+            <div id="adSlider" class="flex overflow-x-auto gap-3 mb-10 h-56 rounded-[32px] no-scrollbar snap-x"></div>
+            <input type="text" id="searchInput" oninput="searchBooks()" placeholder="Search library..." class="glass border-none h-14 px-6 mb-8 text-sm">
             
             <div class="flex overflow-x-auto no-scrollbar gap-3 mb-10">
-                <button onclick="filterBooks('All')" class="px-6 py-2.5 rounded-full glass text-[10px] font-black uppercase bg-gold text-black border-none">All</button>
-                <button onclick="filterBooks('Fan Fiction')" class="px-6 py-2.5 rounded-full glass text-[10px] font-black uppercase">Fan Fiction</button>
-                <button onclick="filterBooks('Life')" class="px-6 py-2.5 rounded-full glass text-[10px] font-black uppercase">Life</button>
+                <button onclick="filterBooks('All')" class="px-6 py-2.5 rounded-full glass text-[10px] font-black uppercase tracking-widest bg-gold text-black border-none">All</button>
+                <button onclick="filterBooks('Fan Fiction')" class="px-6 py-2.5 rounded-full glass text-[10px] font-black uppercase tracking-widest">Fan Fiction</button>
+                <button onclick="filterBooks('Life')" class="px-6 py-2.5 rounded-full glass text-[10px] font-black uppercase tracking-widest">Life</button>
             </div>
 
             <div id="bookGrid" class="grid grid-cols-2 gap-5"></div>
 
             <div id="adminBtn" class="hidden mt-16 space-y-4">
-                <button onclick="showSection('vsDashboard')" class="w-full py-5 glass border-gold/30 gold-text font-black text-[10px] uppercase">V&S Analytics</button>
-                <button onclick="showSection('adminDashboard')" class="w-full py-5 glass border-red-500/30 text-red-500 font-black text-[10px] uppercase">Master Admin Panel</button>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="showSection('vsDashboard')" class="p-5 glass border-gold/20 gold-text font-black text-[9px] uppercase tracking-widest text-center">V&S Analytics</button>
+                    <button onclick="showSection('adminDashboard')" class="p-5 glass border-red-500/20 text-red-500 font-black text-[9px] uppercase tracking-widest text-center">Admin Panel</button>
+                </div>
             </div>
         </div>
 
         <div id="vsDashboard" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-gold mb-8 text-[10px] font-black uppercase tracking-widest">← Return Home</button>
+            <button onclick="showSection('homeSection')" class="text-gold mb-8 text-[10px] font-black uppercase tracking-[0.2em]">← Return</button>
             <div class="grid grid-cols-2 gap-4 mb-8">
-                <div class="glass p-6 text-center border-gold/10"><p class="text-[8px] opacity-40 uppercase font-black mb-1">Total Viewers</p><p id="totalViewsDisplay" class="text-2xl font-black gold-text">0</p></div>
-                <div class="glass p-6 text-center border-green-500/10"><p class="text-[8px] opacity-40 uppercase font-black mb-1">Total Sales</p><p id="totalSalesDisplay" class="text-2xl font-black text-green-500">0 C</p></div>
+                <div class="glass p-6"><p class="text-[8px] opacity-40 uppercase font-black">Overall Views</p><p id="totalViewsDisplay" class="text-2xl font-black gold-text">0</p></div>
+                <div class="glass p-6"><p class="text-[8px] opacity-40 uppercase font-black">Overall Sales</p><p id="totalSalesDisplay" class="text-2xl font-black text-green-500">0 C</p></div>
             </div>
             <div id="vsList" class="space-y-3"></div>
         </div>
 
         <div id="adminDashboard" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-gold mb-8 text-[10px] font-black uppercase tracking-widest">← Terminate Session</button>
+            <button onclick="showSection('homeSection')" class="text-gold mb-8 text-[10px] font-black uppercase tracking-[0.2em]">← Close Terminal</button>
             
-            <div class="glass p-6 mb-8 border-gold/20 flex justify-between items-center">
-                <div><p class="text-[10px] opacity-40 font-black uppercase">Total Platform Users</p><p id="totalUserCount" class="text-3xl font-black gold-text">0</p></div>
-                <div class="text-right"><p class="text-[10px] opacity-40 font-black uppercase">Active Revenue</p><p id="totalAdminRev" class="text-xl font-black text-green-500">0 C</p></div>
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="glass p-6 border-gold/10"><p class="text-[8px] opacity-40 uppercase font-black">Total Users</p><p id="totalUserCount" class="text-3xl font-black gold-text">0</p></div>
+                <div class="glass p-6 border-green-500/10"><p class="text-[8px] opacity-40 uppercase font-black">Active Revenue</p><p id="totalRevAll" class="text-3xl font-black text-green-500">0 C</p></div>
             </div>
 
             <div class="glass p-6 mb-8">
                 <h3 class="gold-text text-sm font-black mb-4 uppercase">Gift Code Generator</h3>
                 <div class="flex gap-2">
-                    <input type="number" id="giftAmtInput" placeholder="Coin Amt" class="mb-0 text-sm">
+                    <input type="number" id="giftAmtInput" placeholder="Coin Amount" class="mb-0 text-sm">
                     <button onclick="generateGiftCode()" class="btn-gold px-6 rounded-xl text-[10px]">GENERATE</button>
                 </div>
-                <div id="generatedCode" class="mt-4 p-4 bg-white/5 border border-gold/20 rounded-xl text-center font-mono text-gold hidden select-all"></div>
+                <div id="generatedCode" class="mt-4 p-4 bg-white/5 rounded-xl text-center font-mono text-gold hidden"></div>
             </div>
 
             <div class="flex gap-2 mb-8 overflow-x-auto no-scrollbar">
-                <button onclick="setAdminTab('nov')" class="adm-t px-8 py-3 glass bg-gold text-black border-none text-[9px] font-black uppercase">Novels</button>
-                <button onclick="setAdminTab('pay')" class="adm-t px-8 py-3 glass text-[9px] font-black uppercase">Payments</button>
-                <button onclick="setAdminTab('ads')" class="adm-t px-8 py-3 glass text-[9px] font-black uppercase">Settings</button>
+                <button onclick="setAdminTab('nov')" class="adm-t px-6 py-3 glass bg-gold text-black border-none text-[9px] font-black uppercase">Novels</button>
+                <button onclick="setAdminTab('pay')" class="adm-t px-6 py-3 glass text-[9px] font-black uppercase">Payments</button>
+                <button onclick="setAdminTab('ads')" class="adm-t px-6 py-3 glass text-[9px] font-black uppercase">Ads</button>
             </div>
 
             <div id="tab-nov">
-                <button onclick="openNovelForm()" class="w-full btn-gold py-4 rounded-xl font-black text-[10px] mb-6 uppercase shadow-lg">+ Register New Novel</button>
+                <button onclick="openNovelForm()" class="w-full btn-gold py-4 rounded-xl font-black text-[10px] mb-6 uppercase shadow-xl">+ New Archive</button>
                 <div id="admNovelList" class="space-y-3"></div>
             </div>
             <div id="tab-pay" class="hidden space-y-4"></div>
-            <div id="tab-ads" class="hidden space-y-6">
-                <div><p class="text-[9px] font-black opacity-30 uppercase mb-3">Reward Video (YouTube Embed)</p><input type="text" id="adVidLink" placeholder="https://www.youtube.com/embed/..."></div>
-                <div><p class="text-[9px] font-black opacity-30 uppercase mb-3">Banner Images</p>
-                    <input type="text" id="adUrl1" placeholder="Banner Slot 1" class="mb-2">
-                    <input type="text" id="adUrl2" placeholder="Banner Slot 2" class="mb-2">
-                    <input type="text" id="adUrl3" placeholder="Banner Slot 3" class="mb-2">
-                    <input type="text" id="adUrl4" placeholder="Banner Slot 4" class="mb-2">
-                </div>
-                <button onclick="saveAds(); saveVidLink();" class="w-full btn-gold py-4 rounded-xl font-black text-[10px] uppercase">Save All Config</button>
+            <div id="tab-ads" class="hidden space-y-4">
+                <input type="text" id="adUrl1" placeholder="Ad Slot 1 Image">
+                <input type="text" id="adUrl2" placeholder="Ad Slot 2 Image">
+                <button onclick="saveAds()" class="w-full btn-gold py-4 rounded-xl font-black text-[10px] uppercase">Update Banners</button>
             </div>
         </div>
 
         <div id="chapterView" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-gold mb-10 text-[10px] font-black uppercase tracking-widest">← Back to archives</button>
-            <div id="bookDetailHeader" class="text-center mb-12"></div>
-
-            <div id="admChapAdd" class="hidden mb-10"><button onclick="openChapterForm()" class="w-full py-4 glass border-gold/30 text-gold font-black text-[10px] uppercase tracking-widest">+ Add Episode</button></div>
+            <button onclick="showSection('homeSection')" class="text-gold mb-8 text-[10px] font-black uppercase tracking-widest">← Back to Home</button>
             
-            <h3 class="luxury-font text-xl gold-text mb-6">EPISODE LIST</h3>
+            <div id="bookHeaderUI" class="mb-10 text-center">
+                </div>
+
+            <div id="admChapAdd" class="hidden mb-8"><button onclick="openChapterForm()" class="w-full py-4 glass border-gold/30 text-gold font-black text-[10px] uppercase tracking-widest shadow-lg">+ Add New Episode</button></div>
+            
+            <h3 class="luxury-font text-lg gold-text mb-6">EPISODES</h3>
             <div id="chapterList" class="space-y-4 mb-16"></div>
 
             <div class="border-t border-white/5 pt-12">
-                <h3 class="luxury-font text-xl gold-text mb-8 text-center">COMMUNITY REVIEWS</h3>
-                <div class="glass p-6 mb-10">
-                    <textarea id="comInput" rows="3" placeholder="Write a public comment..." class="bg-transparent border-none p-0 mb-4 text-sm"></textarea>
+                <h3 class="luxury-font text-xl gold-text mb-8">DISCUSSION HUB</h3>
+                <div class="glass p-5 mb-8">
+                    <textarea id="comInput" rows="3" placeholder="Write your review..." class="bg-transparent border-none text-sm p-0 mb-4"></textarea>
                     <button onclick="postComment()" class="w-full btn-gold py-3 rounded-xl text-[10px] font-black uppercase">Post Review</button>
                 </div>
                 <div id="commentList" class="space-y-5"></div>
             </div>
         </div>
 
-        <div id="readerSection" class="hidden fixed inset-0 bg-[#020617] z-[6000] p-8 overflow-y-auto no-scrollbar">
+        <div id="readerSection" class="hidden fixed inset-0 bg-[#05070a] z-[6000] p-8 overflow-y-auto no-scrollbar">
             <div class="max-w-md mx-auto pb-40">
-                <div class="flex justify-between items-center mb-12"><button onclick="showSection('chapterView')" class="text-gold text-2xl">✕</button><p class="luxury-font gold-text text-xs tracking-widest">FANTINAL READER</p></div>
-                <div id="readerBody" class="text-lg leading-[2.2] opacity-90 italic font-medium text-slate-300 whitespace-pre-wrap select-none"></div>
-                
-                <div id="adSlot3" class="mt-12 rounded-2xl overflow-hidden hidden"></div>
-
-                <div class="flex gap-4 mt-20"><button id="pBtn" class="flex-1 glass py-5 text-[10px] font-black uppercase">Previous</button><button id="nBtn" class="flex-1 btn-gold py-5 rounded-2xl text-[10px] font-black uppercase">Next Episode</button></div>
+                <div class="flex justify-between items-center mb-12"><button onclick="showSection('chapterView')" class="text-gold text-2xl">✕</button><p class="luxury-font gold-text tracking-[0.3em] text-xs">READER</p></div>
+                <div id="readerBody" class="text-lg leading-[2] opacity-90 italic font-medium text-slate-300"></div>
+                <div class="flex gap-4 mt-20"><button id="pBtn" class="flex-1 glass py-5 text-[10px] font-black uppercase">Prev</button><button id="nBtn" class="flex-1 btn-gold py-5 rounded-2xl text-[10px] font-black uppercase">Next</button></div>
             </div>
         </div>
 
         <div id="depositSection" class="hidden">
             <button onclick="showSection('homeSection')" class="text-gold mb-8 text-[10px] font-black uppercase tracking-widest">← Back</button>
-            
-            <div class="glass p-8 mb-8 border-gold/20 shadow-2xl text-center">
-                <h3 class="luxury-font text-xl gold-text mb-4">FREE COINS</h3>
-                <div id="videoContainer" class="hidden mb-6 rounded-2xl overflow-hidden aspect-video bg-black"><iframe id="adVideoIframe" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe></div>
-                <button id="watchBtn" onclick="startWatchAds()" class="w-full py-4 glass border-gold/30 text-gold font-black text-[10px] uppercase">Watch Ad (+20 Coins)</button>
-                <button id="claimBtn" onclick="claimAdCoin()" class="hidden w-full btn-gold py-4 rounded-xl text-[10px] font-black uppercase animate-bounce">Claim 20 Coins</button>
-            </div>
-
-            <div id="adSlot4" class="mb-8 rounded-2xl overflow-hidden hidden shadow-lg"></div>
-
-            <div class="glass p-8">
-                <h2 class="luxury-font gold-text text-xl mb-6">TOP UP PORTAL</h2>
-                <div class="bg-white/5 p-6 rounded-2xl border border-gold/10 mb-8">
-                    <p class="text-[9px] font-black opacity-30 uppercase mb-2">KBZ Pay / Wave Pay</p>
+            <div class="glass p-8 mb-8 border-gold/20 shadow-2xl">
+                <h3 class="luxury-font text-xl gold-text mb-2">OFFICIAL PAYMENT</h3>
+                <div class="bg-white/5 p-6 rounded-2xl border border-gold/10 my-6">
+                    <p class="text-[9px] font-black opacity-30 uppercase mb-2">KBZ / Wave Pay</p>
                     <p class="text-2xl font-black gold-text tracking-tighter">09759731746</p>
-                    <p class="text-[9px] opacity-40 uppercase font-black mt-1">THU KHA AUNG</p>
+                    <p class="text-[9px] opacity-40 uppercase font-black">Account: THU KHA AUNG</p>
                 </div>
-                <p class="text-[10px] font-black mb-3 opacity-50 uppercase tracking-widest">Select Coin Package</p>
+                <p class="text-[10px] font-black mb-2 opacity-50 uppercase">Select Package</p>
                 <select id="coinPackage" class="font-bold text-sm">
                     <option value="1000">1,000 MMK = 1,000 C</option>
                     <option value="2000">2,000 MMK = 2,000 C</option>
@@ -199,17 +184,21 @@
                     <option value="25000">25,000 MMK = 25,000 C</option>
                     <option value="50000">50,000 MMK = 50,000 C</option>
                 </select>
-                <input type="text" id="payName" placeholder="Account Name">
-                <input type="text" id="payTid" placeholder="Trans ID (Last 6 Digits)">
-                <button onclick="submitDeposit()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase mt-4">Submit Request</button>
+                <input type="text" id="payName" placeholder="Payer Name">
+                <input type="text" id="payTid" placeholder="Transaction ID (Last 6 Digits)">
+                <button onclick="submitDeposit()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase mt-4">Confirm Deposit</button>
+            </div>
+            <div class="glass p-8 text-center border-green-500/20">
+                <p class="text-[9px] font-black text-green-500 uppercase tracking-widest mb-4">Daily Free Reward</p>
+                <button onclick="startWatchAds()" class="w-full py-4 border border-green-500/20 rounded-xl text-[10px] font-black uppercase text-green-500">Watch Ad for 20 Coins</button>
             </div>
         </div>
 
         <div id="giftSection" class="hidden py-10">
             <div class="glass p-8 text-center border-gold/20">
-                <h2 class="luxury-font text-2xl gold-text mb-6 uppercase">Redeem Code</h2>
-                <input type="text" id="gfCodeInput" placeholder="ENTER GIFT CODE" class="text-center font-mono tracking-widest text-lg uppercase">
-                <button onclick="redeemGiftCode()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase mt-4 shadow-xl">Claim Coins</button>
+                <h2 class="luxury-font text-2xl gold-text mb-4">REDEEM GIFT</h2>
+                <input type="text" id="gfCodeInput" placeholder="Enter Gift Code" class="text-center font-mono tracking-widest">
+                <button onclick="redeemGiftCode()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase mt-2">Claim My Coins</button>
             </div>
         </div>
 
@@ -217,29 +206,27 @@
             <h2 class="luxury-font gold-text text-xl mb-8 uppercase">Archive Editor</h2>
             <input type="text" id="nTitle" placeholder="Title">
             <input type="text" id="nCover" placeholder="Cover URL">
-            <input type="number" id="nVipPrice" placeholder="VIP Full Access Price">
-            <select id="nGenre"><option>Fan Fiction</option><option>Life</option><option>True</option><option>Mega</option></select>
-            <button onclick="saveNovel()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase">Save Archive</button>
-            <button onclick="showSection('adminDashboard')" class="w-full py-4 text-gray-500 text-[10px] font-black uppercase opacity-50">Cancel</button>
+            <input type="number" id="nVipPrice" placeholder="VIP Price">
+            <select id="nGenre"><option>Fan Fiction</option><option>Life</option><option>True</option></select>
+            <button onclick="saveNovel()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase shadow-xl">Commit</button>
         </div>
 
         <div id="chapterForm" class="hidden">
-            <h2 id="chapFormTitle" class="luxury-font gold-text text-xl mb-8 uppercase">Episode Architect</h2>
+            <h2 class="luxury-font gold-text text-xl mb-8 uppercase">Episode Architect</h2>
             <input type="text" id="cTitle" placeholder="Episode Title">
-            <textarea id="cContent" rows="15" placeholder="Chapter content..."></textarea>
+            <textarea id="cContent" rows="15" placeholder="Story content..."></textarea>
             <input type="number" id="cPrice" placeholder="Price (0 = Free)">
-            <button onclick="saveChapter()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase">Publish Episode</button>
-            <button onclick="showSection('chapterView')" class="w-full py-4 text-gray-500 text-[10px] font-black uppercase opacity-50">Cancel</button>
+            <button onclick="saveChapter()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase shadow-xl">Publish</button>
         </div>
 
         <div id="transferSection" class="hidden glass p-8">
             <h2 class="luxury-font gold-text text-xl mb-8">COIN TRANSFER</h2>
             <input type="email" id="tRecipient" placeholder="Recipient Email">
             <input type="number" id="tAmount" placeholder="Amount">
-            <button onclick="transferCoins()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase">Confirm Transfer</button>
+            <button onclick="transferCoins()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase shadow-xl">Send Now</button>
         </div>
 
-        <div id="bookmarkSection" class="hidden"><h2 class="luxury-font gold-text text-2xl mb-12 text-center uppercase tracking-widest">My Library</h2><div id="bookmarkGrid" class="grid grid-cols-2 gap-5"></div></div>
+        <div id="bookmarkSection" class="hidden"><h2 class="luxury-font gold-text text-2xl mb-10 text-center uppercase">My Library</h2><div id="bookmarkGrid" class="grid grid-cols-2 gap-5"></div></div>
 
     </main>
 
@@ -257,15 +244,15 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(), db = firebase.firestore();
 
-        let curB = "", curE = null, curC = null, allB = [], allC = [];
+        let curB = "", curE = null, allB = [], allC = [];
 
-        // CORE UI
+        // UI HELPERS
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('hidden'); }
         function showSection(id) { 
             document.querySelectorAll('main > div').forEach(s => s.classList.add('hidden')); 
             document.getElementById(id).classList.remove('hidden'); 
             window.scrollTo(0,0);
-            if(id === 'bookmarkSection') loadBookmarks();
+            if(id==='bookmarkSection') loadBookmarks();
         }
         function showNoti(m, t = 'success') {
             const b = document.createElement('div');
@@ -274,12 +261,13 @@
             setTimeout(() => { b.style.opacity='0'; setTimeout(()=>b.remove(),400); }, 3000);
         }
 
-        // AUTH & MONITORING
+        // AUTH
         auth.onAuthStateChanged(user => {
             if(user) {
                 document.getElementById('userEmail').innerText = user.email;
                 if(user.email === 'xztka49@gmail.com') {
                     document.getElementById('adminBadge').classList.remove('hidden');
+                    document.getElementById('userBadge').classList.add('hidden');
                     document.getElementById('adminBtn').classList.remove('hidden');
                     document.getElementById('admChapAdd').classList.remove('hidden');
                     loadAdminData();
@@ -320,7 +308,7 @@
                 <div class="glass overflow-hidden cursor-pointer shadow-2xl transition-transform active:scale-95" onclick="openBook('${b.id}')">
                     <img src="${b.cover}" class="h-52 w-full object-cover">
                     <div class="p-4">
-                        <p class="font-black text-[11px] truncate mb-1 uppercase gold-text tracking-tighter">${b.title}</p>
+                        <p class="font-black text-[11px] truncate mb-1 uppercase gold-text">${b.title}</p>
                         <div class="flex justify-between items-center opacity-40">
                             <span class="text-[8px] font-black uppercase">${b.genre}</span>
                             <span class="text-[8px] font-black">👁 ${b.views || 0}</span>
@@ -332,18 +320,18 @@
         async function openBook(id) {
             curB = id; showSection('chapterView');
             const b = allB.find(x => x.id === id);
-            document.getElementById('bookDetailHeader').innerHTML = `
-                <div class="relative inline-block mb-8 shadow-2xl rounded-[24px] overflow-hidden border border-gold/20">
+            document.getElementById('bookHeaderUI').innerHTML = `
+                <div class="relative inline-block mb-6 shadow-2xl rounded-2xl overflow-hidden border border-gold/20">
                     <img src="${b.cover}" class="w-48 h-64 object-cover">
                 </div>
                 <h2 class="luxury-font text-3xl gold-text mb-2 px-6">${b.title}</h2>
-                <div class="flex justify-center gap-6 text-[10px] font-black opacity-40 uppercase tracking-widest mb-8">
+                <div class="flex justify-center gap-6 text-[10px] font-black opacity-40 uppercase tracking-widest mb-6">
                     <span>${b.views || 0} Views</span>
                     <span>★ ${(b.ratingAvg || 0).toFixed(1)}</span>
                 </div>
-                <div class="glass p-6 mx-6 flex justify-between items-center border-gold/10">
-                    <div class="text-left"><p class="text-[8px] opacity-30 uppercase font-black">LIFETIME VIP ACCESS</p><p class="text-2xl font-black gold-text tracking-tighter">${b.vipPrice || 5000} C</p></div>
-                    <button onclick="buyVip()" class="btn-gold px-10 py-3 rounded-xl text-[10px] uppercase font-black">UNLOCK ALL</button>
+                <div class="glass p-5 mx-6 flex justify-between items-center border-gold/10">
+                    <div class="text-left"><p class="text-[8px] opacity-30 uppercase font-black">VIP FULL ACCESS</p><p class="text-xl font-black gold-text">${b.vipPrice || 5000} C</p></div>
+                    <button onclick="buyVip()" class="btn-gold px-8 py-3 rounded-xl text-[10px] uppercase font-black">Get VIP</button>
                 </div>`;
             await db.collection('books').doc(id).update({ views: firebase.firestore.FieldValue.increment(1) });
             loadChaps(); loadComments();
@@ -359,10 +347,10 @@
             document.getElementById('vsList').innerHTML = html;
             document.getElementById('totalViewsDisplay').innerText = tv;
             document.getElementById('totalSalesDisplay').innerText = ts + " C";
-            document.getElementById('totalAdminRev').innerText = ts + " C";
+            document.getElementById('totalRevAll').innerText = ts + " C";
         }
 
-        // CHAPTERS & READER
+        // CHAPTERS
         async function loadChaps() {
             const snap = await db.collection('books').doc(curB).collection('chapters').orderBy('date', 'asc').get();
             allC = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -372,14 +360,14 @@
 
             document.getElementById('chapterList').innerHTML = allC.map((c, i) => {
                 const can = c.price === 0 || isVip || bought.includes(c.id);
-                return `<div class="chapter-item p-5 flex justify-between items-center">
+                return `<div class="chapter-card p-5 flex justify-between items-center">
                     <div><p class="text-[8px] opacity-30 font-black uppercase mb-1">Episode ${i+1}</p><p class="text-xs font-bold gold-text uppercase">${c.title}</p></div>
                     <div class="flex gap-4">
                         ${isAdmin ? `<button onclick="editChapter('${c.id}')" class="text-blue-500 font-black text-[9px]">EDIT</button><button onclick="deleteChapter('${c.id}')" class="text-red-500 font-black text-[9px]">DEL</button>` : ''}
                         <button onclick="readChapter(${i})" class="text-gold font-black text-[10px] tracking-widest">${can ? 'READ' : 'UNLOCK'}</button>
                     </div>
                 </div>`;
-            }).join('') || "<p class='opacity-20 text-center py-20 uppercase text-[10px] font-black tracking-widest'>No Episodes Found</p>";
+            }).join('');
         }
 
         async function readChapter(idx) {
@@ -387,17 +375,17 @@
             const can = c.price === 0 || (uDoc.data().vips || []).includes(curB) || (uDoc.data().bought || []).includes(c.id);
             if(!can) {
                 if(uDoc.data().coins < c.price) return showNoti("Low Balance", 'error');
-                if(!confirm(`Unlock this episode for ${c.price} Coins?`)) return;
+                if(!confirm(`Purchase Episode for ${c.price} Coins?`)) return;
                 await uRef.update({ coins: firebase.firestore.FieldValue.increment(-c.price), bought: firebase.firestore.FieldValue.arrayUnion(c.id) });
                 await db.collection('books').doc(curB).update({ sales: firebase.firestore.FieldValue.increment(c.price) });
-                showNoti("Episode Unlocked!"); loadChaps(); return;
+                loadChaps(); return;
             }
             document.getElementById('readerBody').innerText = c.content; showSection('readerSection');
             document.getElementById('pBtn').onclick = () => idx > 0 && readChapter(idx-1);
             document.getElementById('nBtn').onclick = () => idx < allC.length-1 && readChapter(idx+1);
         }
 
-        // ADMIN CORE (Total User, Gift Code, Ads)
+        // ADMIN FEATURES
         async function loadAdminData() {
             db.collection('users').get().then(s => document.getElementById('totalUserCount').innerText = s.size);
             db.collection('coinRequests').where('status','==','pending').onSnapshot(snap => {
@@ -405,7 +393,7 @@
                     <div class="glass p-5 border-gold/10">
                         <p class="text-[9px] font-black gold-text uppercase mb-2">${doc.data().email}</p>
                         <p class="text-2xl font-black mb-4">${doc.data().amt} C</p>
-                        <button onclick="approveDep('${doc.id}', '${doc.data().uid}', ${doc.data().amt})" class="w-full btn-gold py-3 rounded-xl text-[9px] uppercase">Approve & Deposit</button>
+                        <button onclick="approveDep('${doc.id}', '${doc.data().uid}', ${doc.data().amt})" class="w-full btn-gold py-3 rounded-xl text-[9px] uppercase">Verify Payment</button>
                     </div>`).join('');
             });
             renderAdminNovelList();
@@ -422,62 +410,58 @@
                 </div>`).join('');
         }
 
+        // GIFT CODE SYSTEM (Point 3)
         async function generateGiftCode() {
             const amt = parseInt(document.getElementById('giftAmtInput').value);
-            if(!amt) return showNoti("Enter amount", 'error');
-            const code = "FNT-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+            if(!amt) return;
+            const code = "FN-" + Math.random().toString(36).substring(2, 10).toUpperCase();
             await db.collection('giftCodes').add({ code, amt, used: false, date: new Date() });
             const box = document.getElementById('generatedCode');
-            box.innerText = "GIFT CODE: " + code; box.classList.remove('hidden');
-            showNoti("Code Created!");
+            box.innerText = "CODE: " + code; box.classList.remove('hidden');
+            showNoti("Code Generated!");
         }
 
         async function redeemGiftCode() {
             const code = document.getElementById('gfCodeInput').value.trim();
             const snap = await db.collection('giftCodes').where('code','==',code).where('used','==',false).get();
-            if(snap.empty) return showNoti("Invalid or Expired Code", 'error');
+            if(snap.empty) return showNoti("Invalid or Used Code", 'error');
             const g = snap.docs[0];
             await db.collection('users').doc(auth.currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(g.data().amt) });
             await g.ref.update({ used: true });
-            showNoti(`Success! +${g.data().amt} Coins Claimed.`);
+            showNoti("Claimed: " + g.data().amt + " Coins!");
             document.getElementById('gfCodeInput').value = "";
         }
 
-        // NOVEL & CHAPTER MANAGEMENT (Edit/Delete)
-        function editNovel(id) { curE = id; const b = allB.find(x=>x.id===id); document.getElementById('nTitle').value = b.title; document.getElementById('nCover').value = b.cover; document.getElementById('nVipPrice').value = b.vipPrice; showSection('novelFormSection'); }
-        async function deleteNovel(id) { if(confirm("Permanently delete novel?")) { await db.collection('books').doc(id).delete(); loadAllBooks(); } }
-        
-        function editChapter(cid) {
-            curC = cid; const c = allC.find(x => x.id === cid);
-            document.getElementById('chapFormTitle').innerText = "Edit Episode";
-            document.getElementById('cTitle').value = c.title; document.getElementById('cContent').value = c.content; document.getElementById('cPrice').value = c.price;
-            showSection('chapterForm');
-        }
-        async function deleteChapter(cid) { if(confirm("Delete this episode?")) { await db.collection('books').doc(curB).collection('chapters').doc(cid).delete(); loadChaps(); } }
+        // NOVEL EDIT/DEL (Point 4)
+        function editNovel(id) { curE = id; const b = allB.find(x=>x.id===id); document.getElementById('nTitle').value = b.title; showSection('novelFormSection'); }
+        async function deleteNovel(id) { if(confirm("Delete Novel?")) { await db.collection('books').doc(id).delete(); loadAllBooks(); } }
 
-        // COMMENTS (Admin only Delete)
+        // COMMENT DELETE (Point 1)
         function loadComments() {
             db.collection('books').doc(curB).collection('comments').orderBy('date', 'desc').onSnapshot(snap => {
                 const isAdmin = auth.currentUser.email === 'xztka49@gmail.com';
                 document.getElementById('commentList').innerHTML = snap.docs.map(doc => `
                     <div class="glass p-5">
                         <div class="flex justify-between items-start mb-2">
-                            <span class="text-[9px] font-black gold-text uppercase opacity-60">${doc.data().email}</span>
+                            <div><span class="badge-rookie mr-2 uppercase tracking-tighter">ROOKIE</span><span class="text-[9px] font-black opacity-40 uppercase">${doc.data().email}</span></div>
                             ${isAdmin ? `<button onclick="deleteComment('${doc.id}')" class="text-red-500 font-bold text-[8px]">DELETE</button>` : ''}
                         </div>
                         <p class="text-xs italic opacity-80">${doc.data().text}</p>
                     </div>`).join('');
             });
         }
-        async function deleteComment(cid) { if(confirm("Admin: Delete this review?")) await db.collection('books').doc(curB).collection('comments').doc(cid).delete(); }
 
-        // REMAINING LOGIC (TRANSFER, ADS, SETTINGS)
+        async function deleteComment(cid) { if(confirm("Admin: Delete this comment?")) await db.collection('books').doc(curB).collection('comments').doc(cid).delete(); }
+        async function postComment() { const t = document.getElementById('comInput').value; if(!t) return; await db.collection('books').doc(curB).collection('comments').add({ email: auth.currentUser.email, text: t, date: new Date() }); document.getElementById('comInput').value = ""; }
+
+        // REMAINING LOGIC (TRANSFER, ADS, ETC.)
         async function transferCoins() {
             const email = document.getElementById('tRecipient').value.trim(), amt = parseInt(document.getElementById('tAmount').value);
             const target = await db.collection('users').where('email','==',email).get();
-            if(target.empty) return showNoti("Recipient not found", 'error');
-            const uRef = db.collection('users').doc(auth.currentUser.uid); const uDoc = await uRef.get();
-            if(uDoc.data().coins < amt) return showNoti("Insufficient coins", 'error');
+            if(target.empty) return showNoti("User not found", 'error');
+            const uRef = db.collection('users').doc(auth.currentUser.uid);
+            const uDoc = await uRef.get();
+            if(uDoc.data().coins < amt) return showNoti("Insufficient Balance", 'error');
             await uRef.update({ coins: firebase.firestore.FieldValue.increment(-amt) });
             await target.docs[0].ref.update({ coins: firebase.firestore.FieldValue.increment(amt) });
             showNoti("Transfer Success!"); showSection('homeSection');
@@ -485,61 +469,46 @@
 
         async function approveDep(id, uid, amt) {
             await db.collection('users').doc(uid).update({ coins: firebase.firestore.FieldValue.increment(amt) });
-            await db.collection('coinRequests').doc(id).update({ status: 'approved' }); showNoti("Deposit Verified");
+            await db.collection('coinRequests').doc(id).update({ status: 'approved' }); showNoti("Payment Verified");
         }
 
         async function submitDeposit() {
             const amt = parseInt(document.getElementById('coinPackage').value), name = document.getElementById('payName').value, tid = document.getElementById('payTid').value;
-            if(!name || !tid) return showNoti("Fill all fields", 'error');
+            if(!name || !tid) return showNoti("Missing Information", 'error');
             await db.collection('coinRequests').add({ uid: auth.currentUser.uid, email: auth.currentUser.email, amt, buyerName: name, transId: tid, status: 'pending', date: new Date() });
-            showNoti("Request Submitted!"); showSection('homeSection');
+            showNoti("Deposit Request Sent!"); showSection('homeSection');
         }
 
-        async function saveAds() {
-            const ads = { slot1: document.getElementById('adUrl1').value, slot2: document.getElementById('adUrl2').value, slot3: document.getElementById('adUrl3').value, slot4: document.getElementById('adUrl4').value };
-            await db.collection('settings').doc('ads').set(ads); showNoti("Ads Infrastructure Updated"); loadAds();
-        }
+        // BANNERS
         async function loadAds() {
             const doc = await db.collection('settings').doc('ads').get();
             if(doc.exists) {
                 const d = doc.data();
-                if(d.slot1) { document.getElementById('adSlot1').innerHTML = `<img src="${d.slot1}" class="w-full">`; document.getElementById('adSlot1').classList.remove('hidden'); document.getElementById('adSlider').innerHTML = `<img src="${d.slot1}" class="w-full h-full object-cover rounded-[30px]">`; }
-                if(d.slot3) { document.getElementById('adSlot3').innerHTML = `<img src="${d.slot3}" class="w-full">`; document.getElementById('adSlot3').classList.remove('hidden'); }
-                if(d.slot4) { document.getElementById('adSlot4').innerHTML = `<img src="${d.slot4}" class="w-full">`; document.getElementById('adSlot4').classList.remove('hidden'); }
+                if(d.slot1) document.getElementById('adSlider').innerHTML = `<img src="${d.slot1}" class="w-full h-full object-cover rounded-[32px] snap-center">`;
             }
         }
 
-        async function saveVidLink() { await db.collection('settings').doc('videoAd').set({ link: document.getElementById('adVidLink').value }); }
-        async function startWatchAds() {
-            const doc = await db.collection('settings').doc('videoAd').get();
-            if(!doc.exists || !doc.data().link) return showNoti("No video ad available", 'error');
-            document.getElementById('videoContainer').classList.remove('hidden');
-            document.getElementById('adVideoIframe').src = doc.data().link;
-            document.getElementById('watchBtn').classList.add('hidden');
-            setTimeout(() => { document.getElementById('claimBtn').classList.remove('hidden'); }, 15000);
-        }
-        async function claimAdCoin() {
-            await db.collection('users').doc(auth.currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(20), adsCoinTotal: firebase.firestore.FieldValue.increment(20) });
-            showNoti("Reward Claimed!");
-            document.getElementById('videoContainer').classList.add('hidden');
-            document.getElementById('claimBtn').classList.add('hidden');
-            document.getElementById('watchBtn').classList.remove('hidden');
-            document.getElementById('adVideoIframe').src = "";
+        function setAdminTab(t) {
+            document.querySelectorAll('.adm-t').forEach(b => b.classList.remove('bg-gold', 'text-black'));
+            event.target.classList.add('bg-gold', 'text-black');
+            ['tab-nov', 'tab-pay', 'tab-ads'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            document.getElementById('tab-' + t).classList.remove('hidden');
         }
 
-        function saveNovel() {
-            const d = { title: document.getElementById('nTitle').value, cover: document.getElementById('nCover').value, genre: document.getElementById('nGenre').value, vipPrice: parseInt(document.getElementById('nVipPrice').value) || 5000 };
-            if(curE) db.collection('books').doc(curE).update(d);
-            else db.collection('books').add({...d, views: 0, sales: 0, ratingAvg: 0, ratings: []});
-            showSection('adminDashboard'); loadAllBooks();
+        function openNovelForm() { curE = null; showSection('novelFormSection'); }
+        async function saveNovel() {
+            const d = { title: document.getElementById('nTitle').value, cover: document.getElementById('nCover').value, genre: document.getElementById('nGenre').value, vipPrice: parseInt(document.getElementById('nVipPrice').value) };
+            if(curE) await db.collection('books').doc(curE).update(d);
+            else await db.collection('books').add({...d, views: 0, sales: 0, ratingAvg: 0, ratings: []});
+            loadAllBooks(); showSection('homeSection');
         }
-        function saveChapter() {
+
+        function openChapterForm() { curC = null; showSection('chapterForm'); }
+        async function saveChapter() {
             const d = { title: document.getElementById('cTitle').value, content: document.getElementById('cContent').value, price: parseInt(document.getElementById('cPrice').value) || 0, date: new Date() };
-            if(curC) db.collection('books').doc(curB).collection('chapters').doc(curC).update(d);
-            else db.collection('books').doc(curB).collection('chapters').add(d);
-            showSection('chapterView'); loadChaps();
+            await db.collection('books').doc(curB).collection('chapters').add(d);
+            loadChaps(); showSection('chapterView');
         }
-        async function postComment() { const t = document.getElementById('comInput').value; if(!t) return; await db.collection('books').doc(curB).collection('comments').add({ email: auth.currentUser.email, text: t, date: new Date() }); document.getElementById('comInput').value = ""; }
     </script>
 </body>
 </html>
