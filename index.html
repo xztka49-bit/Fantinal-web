@@ -3,29 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luxury Business Novel</title>
+    <title>Fantinal Publishing - Login & Signup</title>
     <style>
-        body { background: #0B1120; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: #111827; padding: 2rem; border-radius: 12px; border: 1px solid #D4AF37; width: 300px; }
-        h2 { color: #D4AF37; text-align: center; }
-        input { width: 100%; padding: 10px; margin: 10px 0; background: #1F2937; border: 1px solid #374151; color: white; border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #D4AF37; border: none; color: black; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #B8962E; }
+        :root { --gold: #D4AF37; --bg: #0B1120; --card: #111827; --text: #E5E7EB; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: var(--card); padding: 2.5rem; border-radius: 15px; border: 1px solid var(--gold); width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .tabs { display: flex; justify-content: space-around; margin-bottom: 1.5rem; border-bottom: 1px solid #374151; }
+        .tab { padding: 10px; cursor: pointer; color: #9CA3AF; transition: 0.3s; }
+        .tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); font-weight: bold; }
+        .form-group { display: none; }
+        .form-group.active { display: block; }
+        h2 { text-align: center; color: var(--gold); margin-top: 0; font-size: 1.5rem; letter-spacing: 1px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #1F2937; border: 1px solid #374151; color: white; border-radius: 8px; box-sizing: border-box; outline: none; }
+        input:focus { border-color: var(--gold); }
+        button { width: 100%; padding: 12px; background: var(--gold); border: none; color: black; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; margin-top: 10px; text-transform: uppercase; }
+        button:hover { background: #B8962E; transform: translateY(-2px); }
+        .info { text-align: center; font-size: 0.8rem; margin-top: 15px; color: #9CA3AF; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Luxury Signup</h2>
-    <input type="text" id="username" placeholder="Username">
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
-    <button onclick="handleSignup()">Create Account</button>
+<div class="container">
+    <h2>FANTINAL</h2>
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('login')">LOGIN</div>
+        <div class="tab" onclick="switchTab('signup')">SIGNUP</div>
+    </div>
+
+    <div id="login-form" class="form-group active">
+        <input type="email" id="login-email" placeholder="Email Address">
+        <input type="password" id="login-pw" placeholder="Password">
+        <button onclick="handleLogin()">Sign In</button>
+    </div>
+
+    <div id="signup-form" class="form-group">
+        <input type="text" id="reg-user" placeholder="Username">
+        <input type="email" id="reg-email" placeholder="Email Address">
+        <input type="password" id="reg-pw" placeholder="Password">
+        <button onclick="handleSignup()">Create Account</button>
+    </div>
+
+    <div class="info">Premium Business Novels Experience</div>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
   import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -41,10 +64,24 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
+  // Tab Switching
+  window.switchTab = (tab) => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.form-group').forEach(f => f.classList.remove('active'));
+      if(tab === 'login') {
+          document.querySelector('.tab:nth-child(1)').classList.add('active');
+          document.getElementById('login-form').classList.add('active');
+      } else {
+          document.querySelector('.tab:nth-child(2)').classList.add('active');
+          document.getElementById('signup-form').classList.add('active');
+      }
+  }
+
+  // Signup Logic
   window.handleSignup = async () => {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const username = document.getElementById('username').value;
+    const email = document.getElementById('reg-email').value;
+    const password = document.getElementById('reg-pw').value;
+    const username = document.getElementById('reg-user').value;
 
     try {
       const res = await createUserWithEmailAndPassword(auth, email, password);
@@ -55,10 +92,21 @@
         role: "user",
         created_at: new Date()
       });
-      alert("Account Created Successfully!");
-    } catch (error) {
-      alert("Error: " + error.message);
-    }
+      alert("Account Created! You can now login.");
+      switchTab('login');
+    } catch (error) { alert(error.message); }
+  };
+
+  // Login Logic
+  window.handleLogin = async () => {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-pw').value;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      alert("Login Successful! Welcome to Fantinal.");
+      // ဒီနေရာမှာ Home Page ကို သွားမယ့် code ထည့်ရမယ် (ဥပမာ window.location.href = 'home.html')
+    } catch (error) { alert(error.message); }
   };
 </script>
 
