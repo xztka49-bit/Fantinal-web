@@ -10,37 +10,38 @@
         
         /* Auth Screen */
         #auth-screen { display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .auth-container { background: var(--card); padding: 2.5rem; border-radius: 15px; border: 1px solid var(--gold); width: 350px; text-align: center; }
+        .auth-container { background: var(--card); padding: 2rem; border-radius: 15px; border: 1px solid var(--gold); width: 320px; text-align: center; }
         
         /* Main Dashboard */
-        #main-dashboard { display: none; padding: 20px; }
-        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--gold); padding-bottom: 15px; margin-bottom: 30px; }
-        .logo { color: var(--gold); font-size: 1.5rem; font-weight: bold; letter-spacing: 2px; }
-        .user-stats { background: rgba(212, 175, 55, 0.1); padding: 8px 15px; border-radius: 20px; border: 1px solid var(--gold); font-size: 0.9rem; }
+        #main-dashboard { display: none; padding: 20px; animation: fadeIn 0.5s; }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(212, 175, 55, 0.3); padding-bottom: 15px; margin-bottom: 20px; }
+        .logo { color: var(--gold); font-size: 1.4rem; font-weight: bold; letter-spacing: 2px; }
+        .user-stats { background: rgba(212, 175, 55, 0.15); padding: 8px 15px; border-radius: 30px; border: 1px solid var(--gold); font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
 
         /* Novel Grid */
-        .novel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
-        .novel-card { background: var(--card); border-radius: 10px; overflow: hidden; transition: 0.3s; border: 1px solid #1F2937; cursor: pointer; position: relative; }
-        .novel-card:hover { transform: translateY(-10px); border-color: var(--gold); }
-        .novel-cover { width: 100%; height: 220px; background: #1F2937; object-fit: cover; }
+        .novel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
+        .novel-card { background: var(--card); border-radius: 12px; overflow: hidden; transition: 0.3s; border: 1px solid #1F2937; cursor: pointer; }
+        .novel-card:hover { transform: translateY(-5px); border-color: var(--gold); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .novel-cover { width: 100%; height: 210px; background: #1F2937; object-fit: cover; display: block; }
         .novel-info { padding: 10px; }
-        .novel-title { font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; color: var(--gold); }
-        .novel-author { font-size: 0.75rem; color: #9CA3AF; }
-        .vip-tag { position: absolute; top: 10px; right: 10px; background: var(--gold); color: black; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+        .novel-title { font-weight: 600; font-size: 0.85rem; color: var(--gold); margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .novel-author { font-size: 0.7rem; color: #9CA3AF; }
 
-        /* General UI */
-        input { width: 100%; padding: 12px; margin: 10px 0; background: #1F2937; border: 1px solid #374151; color: white; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: var(--gold); border: none; color: black; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        /* Form Styling */
+        input { width: 100%; padding: 12px; margin: 8px 0; background: #1F2937; border: 1px solid #374151; color: white; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: var(--gold); border: none; color: black; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
         .tabs { display: flex; justify-content: space-around; margin-bottom: 1rem; border-bottom: 1px solid #374151; }
-        .tab { padding: 10px; cursor: pointer; color: #9CA3AF; }
+        .tab { padding: 10px; cursor: pointer; color: #9CA3AF; font-size: 0.9rem; }
         .tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div id="auth-screen">
     <div class="auth-container">
-        <h2 style="color:var(--gold)">FANTINAL</h2>
+        <h2 style="color:var(--gold); margin-top:0;">FANTINAL</h2>
         <div class="tabs">
             <div id="tab-login" class="tab active" onclick="switchTab('login')">LOGIN</div>
             <div id="tab-signup" class="tab" onclick="switchTab('signup')">SIGNUP</div>
@@ -63,34 +64,20 @@
     <header>
         <div class="logo">FANTINAL</div>
         <div class="user-stats">
-            <span id="display-name">User</span> | 🪙 <span id="coin-balance">0</span> Coins
+            <span id="display-name">Loading...</span> | 🪙 <span id="coin-balance">0</span>
         </div>
     </header>
 
-    <h3>Business Novels</h3>
+    <h3 style="font-size: 1.1rem; margin-bottom: 15px;">Explore Novels</h3>
     <div class="novel-grid" id="novel-list">
-        <div class="novel-card">
-            <div class="vip-tag">TOP</div>
-            <img src="https://via.placeholder.com/160x220/111827/D4AF37?text=CEO+Life" class="novel-cover">
-            <div class="novel-info">
-                <div class="novel-title">The Billionaire's Strategy</div>
-                <div class="novel-author">By Fantinal Team</div>
-            </div>
-        </div>
-        <div class="novel-card">
-            <img src="https://via.placeholder.com/160x220/111827/D4AF37?text=Startup" class="novel-cover">
-            <div class="novel-info">
-                <div class="novel-title">Startup Leveling Up</div>
-                <div class="novel-author">By Fantinal Team</div>
-            </div>
-        </div>
+        <p style="color: #9CA3AF;">Loading novels...</p>
     </div>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, setDoc, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
@@ -105,50 +92,81 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // Login အခြေအနေကို စောင့်ကြည့်ခြင်း
+  // Auth State Listener
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       document.getElementById('auth-screen').style.display = 'none';
       document.getElementById('main-dashboard').style.display = 'block';
       
-      // User Data ဆွဲယူခြင်း
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      if (userDoc.exists()) {
-        document.getElementById('display-name').innerText = userDoc.data().username;
-        document.getElementById('coin-balance').innerText = userDoc.data().coin_balance;
-      }
+      // User Data Real-time Sync (Fix undefined)
+      onSnapshot(doc(db, "users", user.uid), (docSnap) => {
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          document.getElementById('display-name').innerText = userData.username || "Reader";
+          document.getElementById('coin-balance').innerText = userData.coin_balance ?? 0;
+        }
+      });
+
+      // Load Novels from Firebase
+      loadNovels();
+    } else {
+      document.getElementById('auth-screen').style.display = 'flex';
+      document.getElementById('main-dashboard').style.display = 'none';
     }
   });
+
+  function loadNovels() {
+    const novelList = document.getElementById('novel-list');
+    const q = query(collection(db, "novels"), orderBy("createdAt", "desc"));
+    
+    onSnapshot(q, (snapshot) => {
+      novelList.innerHTML = "";
+      if (snapshot.empty) {
+        novelList.innerHTML = "<p style='color:#9CA3AF;'>ဝတ္ထုများ မရှိသေးပါ။</p>";
+        return;
+      }
+      snapshot.forEach((doc) => {
+        const novel = doc.data();
+        novelList.innerHTML += `
+          <div class="novel-card">
+              <img src="${novel.cover || 'https://via.placeholder.com/150x210/111827/D4AF37?text=Fantinal'}" class="novel-cover" onerror="this.src='https://via.placeholder.com/150x210/111827/D4AF37?text=Image+Error'">
+              <div class="novel-info">
+                  <div class="novel-title">${novel.title || 'Untitled'}</div>
+                  <div class="novel-author">By ${novel.author || 'Unknown'}</div>
+              </div>
+          </div>
+        `;
+      });
+    });
+  }
 
   window.handleLogin = async () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('pw').value;
     try { await signInWithEmailAndPassword(auth, email, password); } 
-    catch (e) { alert(e.message); }
+    catch (e) { alert("Login Error: " + e.message); }
   };
 
   window.handleSignup = async () => {
     const email = document.getElementById('reg-email').value;
     const password = document.getElementById('reg-pw').value;
-    const user = document.getElementById('reg-user').value;
+    const username = document.getElementById('reg-user').value;
     try {
       const res = await createUserWithEmailAndPassword(auth, email, password);
-      await setDoc(doc(db, "users", res.user.uid), { username: user, coin_balance: 0, role: 'user' });
-    } catch (e) { alert(e.message); }
+      await setDoc(doc(db, "users", res.user.uid), { 
+        username: username, 
+        coin_balance: 0, 
+        role: 'user',
+        uid: res.user.uid 
+      });
+    } catch (e) { alert("Signup Error: " + e.message); }
   };
 
   window.switchTab = (tab) => {
-    if(tab === 'login') {
-        document.getElementById('login-fields').style.display = 'block';
-        document.getElementById('signup-fields').style.display = 'none';
-        document.getElementById('tab-login').classList.add('active');
-        document.getElementById('tab-signup').classList.remove('active');
-    } else {
-        document.getElementById('login-fields').style.display = 'none';
-        document.getElementById('signup-fields').style.display = 'block';
-        document.getElementById('tab-signup').classList.add('active');
-        document.getElementById('tab-login').classList.remove('active');
-    }
+    document.getElementById('login-fields').style.display = tab === 'login' ? 'block' : 'none';
+    document.getElementById('signup-fields').style.display = tab === 'signup' ? 'block' : 'none';
+    document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+    document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
   };
 </script>
 </body>
