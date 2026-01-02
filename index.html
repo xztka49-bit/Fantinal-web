@@ -2,219 +2,958 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FANTINAL ENTERPRISE SUPREME V22 - LUXURY</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantinal Pro - Premium Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@400;700&display=swap');
-        :root { --gold: #d4af37; --bg: #05070a; --card: rgba(18, 20, 24, 0.95); --txt: #f8fafc; }
-        body { background: var(--bg); color: var(--txt); font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.3s; overflow-x: hidden; }
-        .luxury-font { font-family: 'Cinzel', serif; }
-        .glass { background: var(--card); backdrop-filter: blur(25px); border: 1px solid rgba(212, 175, 55, 0.1); border-radius: 24px; }
-        .btn-gold { background: linear-gradient(135deg, #d4af37, #f9e29c); color: #000; font-weight: 800; transition: 0.3s; }
-        .btn-gold:active { transform: scale(0.96); }
-        .gold-text { background: linear-gradient(135deg, #d4af37, #f9e29c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        input, select, textarea { width: 100%; padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(212, 175, 55, 0.15); color: inherit; outline: none; margin-bottom: 10px; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .sidebar { position: fixed; left: -100%; top: 0; width: 85%; height: 100%; background: var(--bg); z-index: 5000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-right: 1px solid var(--gold); }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        
+        :root {
+            --primary: #60a5fa; --secondary: #c084fc; --bg: #030712; --card: rgba(15, 23, 42, 0.7); --text: #f8fafc;
+        }
+        .light-mode {
+            --bg: #f1f5f9; --card: rgba(255, 255, 255, 0.9); --text: #0f172a;
+        }
+        body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow-x: hidden; }
+        
+        /* Premium Glass Effect */
+        .glass { 
+            background: var(--card); 
+            backdrop-filter: blur(25px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 32px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        .light-mode .glass { border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 10px 40px rgba(0,0,0,0.06); }
+        
+        .sidebar { position: fixed; left: -100%; top: 0; width: 85%; height: 100%; background: var(--bg); z-index: 1000; transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1); border-right: 1px solid rgba(255,255,255,0.1); }
         .sidebar.active { left: 0; }
-        .chapter-card { background: rgba(255, 255, 255, 0.03); border-radius: 18px; border: 1px solid rgba(255,255,255,0.05); }
-        .badge-rookie { background: #10b981; color: white; padding: 2px 8px; border-radius: 6px; font-size: 8px; font-weight: 900; }
+        
+        .btn-grad { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; transition: 0.3s ease; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); }
+        .btn-grad:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(59, 130, 246, 0.4); }
+        .btn-grad:active { transform: scale(0.96); }
+        
+        .cat-tab { padding: 12px 24px; border-radius: 50px; font-size: 12px; font-weight: 800; white-space: nowrap; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        .cat-tab.active { background: #3b82f6; color: white; border-color: #3b82f6; box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); }
+
+        .noti-toast { position: fixed; top: 25px; right: 25px; z-index: 9999; animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 24px; }
+        @keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
+
+        input, select, textarea { width: 100%; padding: 18px; margin-bottom: 14px; border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: inherit; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); background: rgba(255,255,255,0.06); }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* QR Card Styles */
+        .qr-card { background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.1); }
     </style>
 </head>
-<body class="no-scrollbar">
-
-    <div id="notiBox" class="fixed top-4 right-4 z-[9999] flex flex-col gap-2"></div>
-    <div id="overlay" class="fixed inset-0 bg-black/80 hidden z-[4000]" onclick="toggleMenu()"></div>
+<body>
+    <div id="notiBox" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3"></div>
+    <div id="overlay" class="fixed inset-0 bg-black/80 hidden z-[900] backdrop-blur-md" onclick="toggleMenu()"></div>
 
     <div id="sidebar" class="sidebar p-8 overflow-y-auto no-scrollbar">
         <div class="flex justify-between items-center mb-12">
-            <h2 class="luxury-font text-2xl gold-text">PRESTIGE</h2>
-            <button onclick="toggleMenu()" class="text-2xl text-gold">✕</button>
+            <div>
+                <h2 class="text-3xl font-black italic tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">LUXURY</h2>
+                <p class="text-[10px] font-bold opacity-40">MEMBERSHIP PRIVILEGE</p>
+            </div>
+            <button onclick="toggleMenu()" class="p-4 bg-red-500/10 text-red-500 rounded-full hover:bg-red-500/20 transition">✕</button>
         </div>
-        <div class="glass p-6 mb-8">
-            <p id="userEmail" class="text-[10px] font-bold opacity-40 mb-3 truncate uppercase tracking-widest">Guest User</p>
-            <div class="grid grid-cols-2 gap-4">
-                <div><p class="text-[8px] font-black opacity-30 uppercase">Balance</p><p id="uBalance" class="text-xl font-black text-gold">0 C</p></div>
-                <div class="text-right"><p class="text-[8px] font-black opacity-30 uppercase">Ads Earn</p><p id="uAdsEarned" class="text-xl font-black text-green-500">0 C</p></div>
+        <div class="glass p-8 mb-10 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 blur-3xl"></div>
+            <p id="userEmail" class="text-xs text-blue-400 font-bold mb-6 truncate italic tracking-tight">loading...</p>
+            <div class="grid grid-cols-2 gap-6">
+                <div><p class="text-[10px] uppercase font-black opacity-40 mb-1">Available</p><p id="uBalance" class="text-3xl font-black text-yellow-500 tracking-tighter">0 C</p></div>
+                <div><p class="text-[10px] uppercase font-black opacity-40 mb-1 text-right">Lifetime Spent</p><p id="uSpent" class="text-3xl font-black text-red-400 text-right tracking-tighter">0 C</p></div>
+            </div>
+            <button onclick="showSection('historySection')" class="w-full mt-8 py-4 bg-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-white/5 hover:bg-white/10 transition">View Billing History</button>
+        </div>
+        <div class="space-y-4">
+            <button onclick="showSection('depositSection')" class="w-full btn-grad py-5 rounded-3xl font-black text-sm tracking-widest">DEPOSIT COINS</button>
+            <button onclick="showSection('giftRedeemSection')" class="w-full bg-slate-800/50 border border-white/5 text-white py-5 rounded-3xl font-black text-sm tracking-widest">REDEEM GIFT</button>
+            <div class="pt-10 space-y-3">
+                <button onclick="toggleTheme()" class="w-full bg-blue-500/5 text-blue-400 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest border border-blue-500/10">Switch Appearance</button>
+                <button onclick="auth.signOut()" class="w-full py-4 text-red-500/60 font-black text-[10px] uppercase tracking-[0.2em]">Logout Session</button>
             </div>
         </div>
-        <nav class="space-y-4">
-            <button onclick="showSection('homeSection')" class="w-full py-4 glass text-[10px] font-black uppercase tracking-widest">Home Library</button>
-            <button onclick="showSection('depositSection')" class="w-full btn-gold py-5 rounded-2xl text-[10px] font-black uppercase shadow-lg shadow-yellow-900/20">Top Up & Rewards</button>
-            <button onclick="showSection('giftSection')" class="w-full py-4 glass text-[10px] font-black uppercase text-gold">Redeem Gift</button>
-            <button onclick="showSection('transferSection')" class="w-full py-4 glass text-[10px] font-black uppercase">Transfer</button>
-            <button onclick="showSection('bookmarkSection')" class="w-full py-4 glass text-[10px] font-black uppercase">My Library</button>
-            <button onclick="auth.signOut()" class="w-full py-4 text-red-500 text-[10px] font-black uppercase mt-10">Logout Account</button>
-        </nav>
     </div>
 
-    <nav class="sticky top-0 z-[3000] px-6 py-5 bg-inherit border-b border-white/5 flex justify-between items-center backdrop-blur-2xl">
-        <button onclick="toggleMenu()" class="p-2"><svg width="24" height="24" fill="none" stroke="#d4af37" stroke-width="2.5"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
-        <h1 class="luxury-font text-2xl gold-text font-bold tracking-widest" onclick="location.reload()">FANTINAL</h1>
-        <div id="adminBadge" class="hidden px-4 py-1.5 bg-red-600 text-white rounded-full text-[8px] font-black uppercase animate-pulse">ADMIN</div>
-        <div id="userBadge" class="px-4 py-1.5 glass text-[8px] font-black uppercase">USER</div>
+    <nav class="sticky top-0 z-50 px-6 py-5 bg-inherit backdrop-blur-2xl border-b border-white/5 flex justify-between items-center">
+        <div class="flex items-center gap-5">
+            <button onclick="toggleMenu()" class="p-4 glass rounded-2xl hover:bg-white/5 transition">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+            </button>
+            <h1 class="text-2xl font-black italic tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500" onclick="location.reload()">FANTINAL</h1>
+        </div>
+        <div id="adminBadge" class="hidden px-5 py-2 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-full text-[9px] font-black uppercase shadow-xl shadow-red-500/20 animate-pulse tracking-tighter">Admin Control</div>
     </nav>
 
     <main class="max-w-md mx-auto p-6 pb-40">
-        
-        <div id="authSection" class="hidden py-16">
-            <div class="text-center mb-10"><h2 class="luxury-font text-4xl gold-text mb-2">WELCOME</h2><p class="text-[9px] opacity-30 uppercase tracking-[0.4em]">Novel & Literature Portal</p></div>
-            <div class="glass p-8 shadow-2xl">
+        <div id="authSection" class="hidden py-10">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-black mb-2 tracking-tighter">Welcome Back</h2>
+                <p class="text-sm opacity-50 font-bold">Sign in to continue your journey</p>
+            </div>
+            <div class="flex gap-2 bg-slate-900/60 p-2 rounded-3xl mb-10 border border-white/5">
+                <button onclick="switchAuth('login')" id="btnLog" class="flex-1 py-4 rounded-2xl font-black text-xs transition-all duration-500 bg-blue-600 shadow-lg shadow-blue-500/20">LOGIN</button>
+                <button onclick="switchAuth('reg')" id="btnReg" class="flex-1 py-4 rounded-2xl font-black text-xs transition-all duration-500">JOIN US</button>
+            </div>
+            <div id="loginForm" class="glass p-10">
                 <input type="email" id="lEmail" placeholder="Email Address">
                 <input type="password" id="lPass" placeholder="Password">
-                <button onclick="login()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase mb-4">Sign In</button>
-                <button onclick="register()" class="w-full bg-white/5 py-4 rounded-xl font-black text-xs uppercase opacity-40">Join Now</button>
+                <button onclick="login()" class="w-full btn-grad py-5 rounded-2xl font-black mt-4 uppercase tracking-widest text-xs">Authorize Entry</button>
+            </div>
+            <div id="regForm" class="glass p-10 hidden">
+                <input type="email" id="rEmail" placeholder="New Email Address">
+                <input type="password" id="rPass" placeholder="Secure Password">
+                <button onclick="register()" class="w-full btn-grad py-5 rounded-2xl font-black mt-4 uppercase tracking-widest text-xs">Create Identity</button>
             </div>
         </div>
 
         <div id="homeSection" class="hidden">
-            <div id="adSlider" class="flex overflow-x-auto gap-3 mb-10 h-56 rounded-[32px] no-scrollbar snap-x"></div>
-            <input type="text" id="searchInput" oninput="searchBooks()" placeholder="Search library..." class="glass border-none h-14 px-6 mb-8 text-sm">
-            <div id="bookGrid" class="grid grid-cols-2 gap-5"></div>
-            <div id="adminBtn" class="hidden mt-16 space-y-4">
-                <div class="grid grid-cols-2 gap-3">
-                    <button onclick="showSection('vsDashboard')" class="p-5 glass border-gold/20 gold-text font-black text-[9px] uppercase tracking-widest text-center">V&S Analytics</button>
-                    <button onclick="showSection('adminDashboard')" class="p-5 glass border-red-500/20 text-red-500 font-black text-[9px] uppercase tracking-widest text-center">Admin Panel</button>
-                </div>
+            <div id="adSlider" class="flex overflow-x-auto gap-4 mb-12 no-scrollbar h-60 rounded-[40px] shadow-2xl"></div>
+            
+            <div class="flex overflow-x-auto no-scrollbar gap-3 mb-10 pb-2">
+                <button onclick="filterBooks('All')" class="cat-tab active">All Library</button>
+                <button onclick="filterBooks('Fan Fiction')" class="cat-tab">Fan Fiction</button>
+                <button onclick="filterBooks('Life')" class="cat-tab">Life</button>
+                <button onclick="filterBooks('True Story')" class="cat-tab">True Story</button>
+                <button onclick="filterBooks('Mega')" class="cat-tab">Mega</button>
             </div>
+
+            <div id="bookGrid" class="grid grid-cols-2 gap-6"></div>
+            <div id="adminBtn" class="hidden mt-16"><button onclick="showSection('adminDashboard')" class="w-full py-6 glass border-red-500/30 text-red-500 font-black text-[10px] uppercase tracking-[0.3em] hover:bg-red-500/5 transition">Administrator Management</button></div>
         </div>
 
-        <div id="vsDashboard" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-gold mb-8 text-[10px] font-black uppercase tracking-[0.2em]">← Return</button>
-            <div class="grid grid-cols-2 gap-4 mb-8">
-                <div class="glass p-6"><p class="text-[8px] opacity-40 uppercase font-black">Overall Views</p><p id="totalViewsDisplay" class="text-2xl font-black gold-text">0</p></div>
-                <div class="glass p-6"><p class="text-[8px] opacity-40 uppercase font-black">Overall Sales</p><p id="totalSalesDisplay" class="text-2xl font-black text-green-500">0 C</p></div>
-            </div>
-            <div id="vsList" class="space-y-3"></div>
-        </div>
-
-        <div id="adminDashboard" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-gold mb-8 text-[10px] font-black uppercase tracking-[0.2em]">← Close Terminal</button>
-            <div class="grid grid-cols-2 gap-4 mb-8">
-                <div class="glass p-6 border-gold/10"><p class="text-[8px] opacity-40 uppercase font-black">Total Users</p><p id="totalUserCount" class="text-3xl font-black gold-text">0</p></div>
-                <div class="glass p-6 border-green-500/10"><p class="text-[8px] opacity-40 uppercase font-black">Active Revenue</p><p id="totalRevAll" class="text-3xl font-black text-green-500">0 C</p></div>
-            </div>
-            <div class="flex gap-2 mb-8 overflow-x-auto no-scrollbar">
-                <button onclick="setAdminTab('nov')" class="adm-t px-6 py-3 glass bg-gold text-black border-none text-[9px] font-black uppercase">Novels</button>
-                <button onclick="setAdminTab('pay')" class="adm-t px-6 py-3 glass text-[9px] font-black uppercase">Payments</button>
-            </div>
-            <div id="tab-nov">
-                <button onclick="openNovelForm()" class="w-full btn-gold py-4 rounded-xl font-black text-[10px] mb-6 uppercase shadow-xl">+ New Archive</button>
-                <div id="admNovelList" class="space-y-3"></div>
-            </div>
-            <div id="tab-pay" class="hidden space-y-4"></div>
+        <div id="historySection" class="hidden">
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase flex items-center gap-2">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Library
+            </button>
+            <h2 class="text-3xl font-black mb-8 tracking-tighter italic">Activity Logs</h2>
+            <div id="historyList" class="space-y-4"></div>
         </div>
 
         <div id="depositSection" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-gold mb-8 text-[10px] font-black uppercase tracking-widest">← Back</button>
-            <div class="glass p-8 mb-8 border-gold/20 shadow-2xl">
-                <h3 class="luxury-font text-xl gold-text mb-2">OFFICIAL PAYMENT</h3>
-                <div class="bg-white/5 p-6 rounded-2xl border border-gold/10 my-6 text-center">
-                    <p class="text-[9px] font-black opacity-30 uppercase mb-2">KBZ / Wave Pay</p>
-                    <p class="text-2xl font-black gold-text tracking-tighter">09759731746</p>
-                    <p class="text-[9px] opacity-40 uppercase font-black">Account: THU KHA AUNG</p>
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase flex items-center gap-2">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Return
+            </button>
+            <div class="glass p-10">
+                <h2 class="text-3xl font-black mb-2 italic tracking-tighter text-blue-400">Add Wealth</h2>
+                <p class="text-[10px] font-bold opacity-40 uppercase mb-10 tracking-widest">Select your package</p>
+                
+                <div class="grid grid-cols-1 gap-4 mb-10">
+                    <div class="qr-card p-6 rounded-[30px] text-center">
+                        <img src="https://img.sanishtech.com/u/b80997ba169794aaad6fd4146e649353.jpeg" alt="KPay" class="w-40 h-40 mx-auto mb-4 rounded-3xl shadow-2xl border-4 border-white/5">
+                        <p class="text-[11px] font-black tracking-widest text-blue-400">KBZ PAY QR</p>
+                        <p class="text-[9px] font-bold opacity-50 mt-1 uppercase">THU KHA AUNG (09759731746)</p>
+                    </div>
+                    <div class="qr-card p-6 rounded-[30px] text-center">
+                        <img src="https://img.sanishtech.com/u/6ed8971d622b39fae5c2baea16b2be4c.jpeg " alt="Wave" class="w-40 h-40 mx-auto mb-4 rounded-3xl shadow-2xl border-4 border-white/5">
+                        <p class="text-[11px] font-black tracking-widest text-yellow-500">WAVEPAY QR</p>
+                        <p class="text-[9px] font-bold opacity-50 mt-1 uppercase">THU KHA AUNG (09759731746)</p>
+                    </div>
                 </div>
-                <select id="coinPackage" class="font-bold text-sm">
-                    <option value="1000">1,000 MMK = 1,000 C</option>
-                    <option value="5000">5,000 MMK = 5,000 C</option>
-                    <option value="10000">10,000 MMK = 10,000 C</option>
-                </select>
-                <input type="text" id="payName" placeholder="Payer Name">
-                <input type="text" id="payTid" placeholder="Transaction ID (Last 6 Digits)">
-                <button onclick="submitDeposit()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase mt-4">Confirm Deposit</button>
-            </div>
-            <div class="glass p-8 text-center border-green-500/20">
-                <p class="text-[9px] font-black text-green-500 uppercase tracking-widest mb-4">Daily Free Reward</p>
-                <button onclick="startWatchAds()" class="w-full py-4 border border-green-500/20 rounded-xl text-[10px] font-black uppercase text-green-500">Watch Ad for 20 Coins</button>
-            </div>
-        </div>
 
-        <div id="giftSection" class="hidden py-10">
-            <div class="glass p-8 text-center border-gold/20">
-                <h2 class="luxury-font text-2xl gold-text mb-4">REDEEM GIFT</h2>
-                <input type="text" id="gfCodeInput" placeholder="Enter Gift Code" class="text-center font-mono">
-                <button onclick="redeemGiftCode()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase mt-2">Claim My Coins</button>
+                <div class="space-y-2">
+                    <select id="coinPackage" class="font-bold">
+                        <option value="1000">1,000 MMK (1,000 C)</option>
+                        <option value="5000">5,000 MMK (5,000 C)</option>
+                        <option value="10000">10,000 MMK (10,000 C)</option>
+                        <option value="30000">30,000 MMK (30,000 C)</option>
+                    </select>
+                    <input type="text" id="payName" placeholder="Payer Name (လွှဲသူအမည်)">
+                    <input type="text" id="payTid" placeholder="Transaction ID (Last 6 Digits)">
+                    <button onclick="submitDeposit()" class="w-full btn-grad py-5 rounded-2xl font-black text-xs uppercase tracking-widest mt-4 shadow-blue-500/40">Confirm Transfer</button>
+                </div>
             </div>
         </div>
 
-        <div id="transferSection" class="hidden glass p-8">
-            <h2 class="luxury-font gold-text text-xl mb-8">COIN TRANSFER</h2>
-            <input type="email" id="tRecipient" placeholder="Recipient Email">
-            <input type="number" id="tAmount" placeholder="Amount">
-            <button onclick="transferCoins()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase shadow-xl">Send Now</button>
+        <div id="giftRedeemSection" class="hidden">
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase flex items-center gap-2">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Return
+            </button>
+            <div class="glass p-12 text-center relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-purple-500/10 blur-[80px]"></div>
+                <h2 class="text-4xl font-black mb-2 text-purple-400 italic tracking-tighter">GIFT CARD</h2>
+                <p class="text-[9px] font-bold opacity-40 uppercase tracking-[0.3em] mb-12">Enter your exclusive code</p>
+                <input type="text" id="gCodeInput" placeholder="XXXX-XXXX-XXXX" class="text-center font-black tracking-[0.3em] uppercase py-6 text-xl bg-white/5 border-purple-500/20 text-purple-300">
+                <button onclick="redeemGift()" class="w-full btn-grad py-5 rounded-2xl font-black mt-6 uppercase tracking-widest text-xs shadow-purple-500/20">REDEEM VOUCHER</button>
+            </div>
         </div>
 
-        <div id="chapterView" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-gold mb-8 text-[10px] font-black uppercase tracking-widest">← Back to Home</button>
-            <div id="bookHeaderUI" class="mb-10 text-center"></div>
-            <div id="admChapAdd" class="hidden mb-8"><button onclick="openChapterForm()" class="w-full py-4 glass border-gold/30 text-gold font-black text-[10px] uppercase tracking-widest shadow-lg">+ Add New Episode</button></div>
-            <div id="chapterList" class="space-y-4 mb-16"></div>
-        </div>
+        <div id="adminDashboard" class="hidden">
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase">← System Exit</button>
+            
+            <div class="flex overflow-x-auto no-scrollbar gap-2 mb-10 bg-slate-900/60 p-2 rounded-[25px] border border-white/5">
+                <button onclick="setAdminTab('req')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition bg-blue-600">Requests</button>
+                <button onclick="setAdminTab('nov')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition">Novels</button>
+                <button onclick="setAdminTab('usr')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition">Users</button>
+                <button onclick="setAdminTab('gft')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition">Gifts</button>
+                <button onclick="setAdminTab('ads')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition">Ads</button>
+                <button onclick="setAdminTab('fin')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition">Finance</button>
+            </div>
 
-        <div id="readerSection" class="hidden fixed inset-0 bg-[#05070a] z-[6000] p-8 overflow-y-auto no-scrollbar">
-            <div class="max-w-md mx-auto pb-40">
-                <div class="flex justify-between items-center mb-12"><button onclick="showSection('chapterView')" class="text-gold text-2xl">✕</button></div>
-                <div id="readerBody" class="text-lg leading-[2] opacity-90 italic font-medium text-slate-300"></div>
-                <div class="flex gap-4 mt-20"><button id="pBtn" class="flex-1 glass py-5 text-[10px] font-black uppercase">Prev</button><button id="nBtn" class="flex-1 btn-gold py-5 rounded-2xl text-[10px] font-black uppercase">Next</button></div>
+            <div id="tab-req" class="space-y-4"></div>
+
+            <div id="tab-nov" class="hidden">
+                <button onclick="openNovelForm()" class="w-full btn-grad py-5 rounded-3xl font-black text-[10px] tracking-[0.2em] mb-10 shadow-lg">+ REGISTER NEW NOVEL</button>
+                <div id="admNovelList" class="space-y-4"></div>
+            </div>
+
+            <div id="tab-usr" class="hidden">
+                <div class="glass p-8 mb-8 text-center border-blue-500/20">
+                    <p class="text-[9px] font-black opacity-40 uppercase tracking-[0.2em] mb-2">Network Strength</p>
+                    <h2 id="totalU" class="text-5xl font-black tracking-tighter">0</h2>
+                    <p class="text-[10px] font-bold text-blue-400 mt-2">Active Entities</p>
+                </div>
+                <div id="admUserList" class="space-y-3"></div>
+            </div>
+
+            <div id="tab-gft" class="hidden">
+                <div class="glass p-10 mb-8 border-purple-500/20">
+                    <input type="number" id="genAmt" placeholder="Coin Denomination">
+                    <button onclick="generateGift()" class="w-full bg-purple-600 py-4 rounded-2xl font-black text-[10px] tracking-widest uppercase">Forge Gift Code</button>
+                </div>
+                <div id="admGiftList" class="space-y-3"></div>
+            </div>
+
+            <div id="tab-ads" class="hidden">
+                <div class="glass p-8 space-y-4">
+                    <h3 class="text-xs font-black uppercase mb-4 opacity-50 tracking-widest">Slider Assets (URLs)</h3>
+                    <input type="text" id="adU1" placeholder="Asset URL 1">
+                    <input type="text" id="adU2" placeholder="Asset URL 2">
+                    <input type="text" id="adU3" placeholder="Asset URL 3">
+                    <input type="text" id="adU4" placeholder="Asset URL 4">
+                    <button onclick="updateAds()" class="w-full btn-grad py-4 rounded-2xl font-black text-[10px] tracking-widest">Update Visuals</button>
+                </div>
+            </div>
+
+            <div id="tab-fin" class="hidden">
+                <div class="glass p-10 text-center border-green-500/30 mb-8 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-green-500/20"></div>
+                    <p class="text-[10px] font-black uppercase text-green-500 mb-2 tracking-widest">Gross Revenue</p>
+                    <h2 id="totalFinance" class="text-4xl font-black tracking-tighter">0 MMK</h2>
+                </div>
+                <input type="date" id="searchDate" class="mb-4">
+                <button onclick="filterFinance()" class="w-full bg-slate-800 py-4 rounded-2xl font-black text-[10px] tracking-widest">Audit Transactions</button>
+                <div id="finLogs" class="mt-8 space-y-3"></div>
             </div>
         </div>
 
         <div id="novelFormSection" class="hidden">
-            <h2 class="luxury-font gold-text text-xl mb-8 uppercase">Archive Editor</h2>
-            <input type="text" id="nTitle" placeholder="Title">
-            <input type="text" id="nCover" placeholder="Cover URL">
-            <input type="number" id="nVipPrice" placeholder="VIP Price">
-            <select id="nGenre"><option>Fan Fiction</option><option>Life</option></select>
-            <button onclick="saveNovel()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase shadow-xl">Commit</button>
+            <h2 id="nFormTitle" class="text-3xl font-black mb-10 italic">Modify Asset</h2>
+            <input type="text" id="nTitle" placeholder="Asset Title">
+            <input type="text" id="nCover" placeholder="Cover Image URL">
+            <select id="nGenre" class="font-bold">
+                <option value="Fan Fiction">Fan Fiction</option>
+                <option value="Life">Life</option>
+                <option value="True Story">True Story</option>
+                <option value="Mega">Mega</option>
+            </select>
+            <button onclick="saveNovel()" class="w-full btn-grad py-5 rounded-2xl font-black uppercase tracking-widest text-xs">Commit Changes</button>
+            <button onclick="showSection('adminDashboard')" class="w-full py-5 text-gray-500 font-bold text-[10px] uppercase tracking-widest mt-2">Abort Session</button>
+        </div>
+
+        <div id="chapterView" class="hidden">
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] tracking-[0.2em] uppercase">← Back to Gallery</button>
+            <div class="glass p-10 mb-10 border-yellow-500/20 relative overflow-hidden">
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-yellow-500/5 blur-[50px]"></div>
+                <div class="flex justify-between items-center relative z-10">
+                    <div>
+                        <p class="text-[9px] font-black uppercase opacity-40 mb-1 tracking-widest">Lifetime Access</p>
+                        <h3 id="vipPriceTag" class="text-4xl font-black text-yellow-500 tracking-tighter">0 C</h3>
+                    </div>
+                    <button id="vipBtn" onclick="buyVip()" class="bg-gradient-to-br from-yellow-500 to-amber-700 text-white px-10 py-4 rounded-[20px] text-[10px] font-black uppercase shadow-xl shadow-yellow-500/20">Elevate to VIP</button>
+                </div>
+                <div id="admVipEdit" class="hidden mt-8 pt-8 border-t border-white/5 flex gap-3">
+                    <input type="number" id="newVipP" class="mb-0 text-xs font-bold bg-white/5" placeholder="New Price">
+                    <button onclick="updateVipPrice()" class="bg-blue-600 px-6 rounded-2xl font-black text-[10px] uppercase">Set</button>
+                </div>
+            </div>
+            
+            <div id="admBookInfo" class="hidden glass p-8 mb-10 border-green-500/20">
+                <div class="flex justify-between items-center mb-6">
+                    <h4 class="text-[10px] font-black uppercase text-green-500 tracking-widest">Asset Analytics</h4>
+                    <p id="admSalesCount" class="text-sm font-black text-blue-400">Yield: 0 C</p>
+                </div>
+                <p class="text-[9px] font-black opacity-30 uppercase mb-3">Audience Trace</p>
+                <div id="admViewersList" class="space-y-2 max-h-40 overflow-y-auto no-scrollbar text-[10px] font-bold opacity-70 italic"></div>
+            </div>
+
+            <div id="admChapAdd" class="hidden mb-10"><button onclick="showSection('chapterForm')" class="w-full py-5 glass border-blue-500/20 text-blue-400 font-black text-[10px] tracking-widest uppercase">+ Append New Chapter</button></div>
+            <div id="chapterList" class="space-y-4"></div>
         </div>
 
         <div id="chapterForm" class="hidden">
-            <h2 class="luxury-font gold-text text-xl mb-8 uppercase">Episode Architect</h2>
-            <input type="text" id="cTitle" placeholder="Episode Title">
-            <textarea id="cContent" rows="15" placeholder="Story content..."></textarea>
-            <input type="number" id="cPrice" placeholder="Price (0 = Free)">
-            <button onclick="saveChapter()" class="w-full btn-gold py-4 rounded-xl font-black text-xs uppercase shadow-xl">Publish</button>
+            <input type="text" id="cTitle" placeholder="Segment Title" class="font-black">
+            <textarea id="cContent" rows="18" placeholder="Draft your content here..." class="text-lg leading-relaxed"></textarea>
+            <div class="flex gap-4">
+                <input type="number" id="cPrice" placeholder="Value (0 = Free)" class="flex-1">
+                <button onclick="saveChapter()" class="flex-[2] btn-grad py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest h-[58px]">Authorize Publication</button>
+            </div>
+            <button onclick="showSection('chapterView')" class="w-full py-6 text-gray-500 font-bold text-[10px] uppercase tracking-widest">Discard Draft</button>
         </div>
 
+        <div id="readerSection" class="hidden fixed inset-0 bg-inherit z-[2000] p-8 overflow-y-auto no-scrollbar">
+            <div class="max-w-md mx-auto relative">
+                <div class="flex justify-between items-center mb-12">
+                    <button onclick="showSection('chapterView')" class="p-5 bg-white/5 text-red-500 rounded-full hover:bg-red-500/10 transition">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </button>
+                    <div class="text-right">
+                        <p class="text-[8px] font-black opacity-30 uppercase tracking-[0.3em]">Reading Mode</p>
+                        <p class="text-[10px] font-bold text-blue-400">FANTINAL PREMIUM</p>
+                    </div>
+                </div>
+                <div id="readerBody" class="whitespace-pre-wrap leading-[2.5] text-xl font-medium opacity-90 pb-32 text-justify"></div>
+                <div class="fixed bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)] to-transparent flex gap-4 max-w-md mx-auto z-10">
+                    <button id="pBtn" class="flex-1 glass py-5 font-black text-[10px] tracking-widest uppercase border-white/5 hover:bg-white/10">Back</button>
+                    <button id="nBtn" class="flex-1 btn-grad py-5 rounded-3xl font-black text-[10px] tracking-widest uppercase shadow-lg shadow-blue-500/20">Forward</button>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script>
-        // FIREBASE INITIALIZATION
+        // CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
             authDomain: "fantinal-publishing-5b960.firebaseapp.com",
             projectId: "fantinal-publishing-5b960",
             storageBucket: "fantinal-publishing-5b960.firebasestorage.app",
             messagingSenderId: "961612304854",
-            appId: "1:961612304854:web:6bf7b03072ed83b58b9477",
-            measurementId: "G-3X5NP67TX7"
+            appId: "1:961612304854:web:6bf7b03072ed83b58b9477"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(), db = firebase.firestore();
+        let curB = "", curE = null, allC = [], curI = 0;
+
+        // UI CORE
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('hidden'); if(document.getElementById('sidebar').classList.contains('active')) loadUserStats(); }
+        function showSection(id) { document.querySelectorAll('main > div').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); window.scrollTo(0,0); if(id==='homeSection') { document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.add('hidden'); } }
+        function switchAuth(t) { document.getElementById('loginForm').classList.toggle('hidden', t==='reg'); document.getElementById('regForm').classList.toggle('hidden', t==='login'); document.getElementById('btnLog').classList.toggle('bg-blue-600', t==='login'); document.getElementById('btnReg').classList.toggle('bg-blue-600', t==='reg'); }
+        function setAdminTab(t) { document.querySelectorAll('.adm-t').forEach(b => { b.classList.remove('bg-blue-600'); if(b.innerText.toLowerCase().startsWith(t)) b.classList.add('bg-blue-600'); }); ['req','nov','usr','gft','ads','fin'].forEach(x => document.getElementById('tab-'+x).classList.add('hidden')); document.getElementById('tab-'+t).classList.remove('hidden'); if(t==='usr') loadUsers(); if(t==='nov') loadAdmNovels(); if(t==='gft') loadGifts(); if(t==='fin') loadFinance(); }
+        function toggleTheme() { document.body.classList.toggle('light-mode'); }
+
+        // AUTH & REALTIME
+        auth.onAuthStateChanged(user => {
+            if(user) {
+                document.getElementById('userEmail').innerText = user.email;
+                const isAdmin = user.email === 'xztka49@gmail.com';
+                if(isAdmin) {
+                    ['adminBadge','adminBtn','admChapAdd','admVipEdit','admBookInfo'].forEach(id => document.getElementById(id).classList.remove('hidden'));
+                    listenNoti(); loadAdminReqs();
+                }
+                db.collection('users').doc(user.uid).onSnapshot(doc => { if(doc.exists) { 
+                    document.getElementById('uBalance').innerText = (doc.data().coins || 0) + " C"; 
+                    document.getElementById('uSpent').innerText = (doc.data().spent || 0) + " C"; 
+                    if(doc.data().history) loadHistory(doc.data().history);
+                }});
+                showSection('homeSection'); filterBooks('All'); loadAds();
+            } else showSection('authSection');
+        });
+
+        // HISTORY UI
+        function loadHistory(h) {
+            document.getElementById('historyList').innerHTML = h.reverse().map(i => `
+                <div class="glass p-6 flex justify-between items-center border-white/5">
+                    <div><p class="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-1">${i.type}</p><p class="text-[9px] opacity-40 font-bold uppercase">${i.date}</p></div>
+                    <p class="font-black text-sm tracking-tighter ${i.type==='Deposit' || i.type==='Gift Redeem'?'text-green-500':'text-red-400'}">${i.amt} C</p>
+                </div>`).join('');
+        }
+
+        // NOTI & DEPOSIT
+        function listenNoti() {
+            db.collection('coinRequests').where('status','==','pending').onSnapshot(snap => {
+                snap.docChanges().forEach(ch => { if(ch.type === "added") {
+                    const d = ch.doc.data();
+                    const div = document.createElement('div');
+                    div.className = "noti-toast glass p-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-2xl border-none";
+                    div.innerHTML = `<p class="text-[8px] font-black uppercase tracking-widest opacity-80 mb-1">Incoming Transaction</p><p class="text-xs font-black">${d.buyerName} • ${d.amt} MMK</p>`;
+                    document.getElementById('notiBox').appendChild(div);
+                    setTimeout(() => div.remove(), 6000);
+                }});
+            });
+        }
+
+        async function submitDeposit() {
+            const amt = parseInt(document.getElementById('coinPackage').value), name = document.getElementById('payName').value, tid = document.getElementById('payTid').value;
+            if(!name || tid.length < 5) return alert("Security Validation Failed: Please fill all details correctly.");
+            await db.collection('coinRequests').add({ uid: auth.currentUser.uid, email: auth.currentUser.email, amt, buyerName: name, transId: tid, status: 'pending', date: new Date() });
+            alert("Success: Deposit Request Sent for Review."); showSection('homeSection');
+        }
+
+        function loadAdminReqs() {
+            db.collection('coinRequests').where('status','==','pending').onSnapshot(snap => {
+                document.getElementById('tab-req').innerHTML = snap.docs.map(doc => `
+                    <div class="glass p-8 border-white/5 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                        <div class="flex justify-between mb-6"><div><p class="font-black text-sm tracking-tight">${doc.data().buyerName}</p><p class="text-[10px] opacity-40 font-bold">${doc.data().email}</p><p class="text-[10px] text-blue-400 font-bold mt-1">ID: ${doc.data().transId}</p></div><p class="text-blue-400 font-black text-lg tracking-tighter">${doc.data().amt} MMK</p></div>
+                        <div class="flex gap-3"><button onclick="approveDep('${doc.id}', '${doc.data().uid}', ${doc.data().amt}, 'approved')" class="flex-1 bg-blue-600 py-4 rounded-2xl font-black text-[9px] uppercase tracking-widest">Authorize</button>
+                        <button onclick="approveDep('${doc.id}', '', 0, 'rejected')" class="flex-1 bg-red-500/10 text-red-500 py-4 rounded-2xl font-black text-[9px] uppercase tracking-widest">Decline</button></div>
+                    </div>`).join('') || "<p class='text-center py-24 opacity-20 font-black tracking-[0.3em] text-[10px]'>SYSTEM CLEAR: NO PENDING TASKS</p>";
+            });
+        }
+
+        async function approveDep(id, uid, amt, status) {
+            if(status==='approved') {
+                await db.collection('users').doc(uid).update({ 
+                    coins: firebase.firestore.FieldValue.increment(amt),
+                    history: firebase.firestore.FieldValue.arrayUnion({type:'Deposit', amt, date: new Date().toLocaleString()})
+                });
+                await db.collection('admin').doc('fin').set({ total: firebase.firestore.FieldValue.increment(amt) }, {merge:true});
+            }
+            await db.collection('coinRequests').doc(id).update({ status });
+        }
+
+        // NOVELS & ANALYTICS
+        async function filterBooks(cat) {
+            document.querySelectorAll('.cat-tab').forEach(b => {
+                b.classList.remove('active'); if(b.innerText.includes(cat)) b.classList.add('active');
+            });
+            const snap = (cat === 'All') ? await db.collection('books').get() : await db.collection('books').where('genre','==',cat).get();
+            document.getElementById('bookGrid').innerHTML = snap.docs.map(doc => `
+                <div class="glass overflow-hidden group relative" onclick="openBook('${doc.id}')">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+                    <img src="${doc.data().cover}" class="h-56 w-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="p-5 relative z-20"><p class="font-black text-[12px] truncate mb-1 tracking-tight">${doc.data().title}</p>
+                    <div class="flex justify-between items-center opacity-40"><p class="text-[9px] font-black uppercase tracking-widest">${doc.data().genre}</p><p class="text-[9px] font-bold">👁️ ${doc.data().views || 0}</p></div></div>
+                </div>`).join('');
+        }
+
+        async function openBook(id) {
+            curB = id; showSection('chapterView');
+            const isAdmin = auth.currentUser.email === 'xztka49@gmail.com';
+            
+            await db.collection('books').doc(id).update({ 
+                views: firebase.firestore.FieldValue.increment(1),
+                viewers: firebase.firestore.FieldValue.arrayUnion(`${auth.currentUser.email} (${new Date().toLocaleDateString()})`)
+            });
+
+            db.collection('books').doc(id).onSnapshot(doc => { 
+                const d = doc.data();
+                document.getElementById('vipPriceTag').innerText = (d.vipPrice || 5000) + " C"; 
+                if(isAdmin) {
+                    document.getElementById('admSalesCount').innerText = `Yield: ${d.sales || 0} C`;
+                    if(d.viewers) {
+                        document.getElementById('admViewersList').innerHTML = d.viewers.reverse().slice(0, 30).map(v => `<p class="border-b border-white/5 pb-1">• ${v}</p>`).join('');
+                    }
+                }
+            });
+            loadChaps();
+        }
+
+        // VIP SYSTEM
+        async function buyVip() {
+            const uRef = db.collection('users').doc(auth.currentUser.uid);
+            const bRef = db.collection('books').doc(curB);
+            const uDoc = await uRef.get(), bDoc = await bRef.get();
+            const price = bDoc.data().vipPrice || 5000;
+            if((uDoc.data().vips || []).includes(curB)) return alert("Access Granted: You are already a VIP member of this title.");
+            if(uDoc.data().coins < price) return alert("Transaction Declined: Insufficient coin balance.");
+            if(!confirm(`Authorize ${price} Coins for Lifetime VIP access?`)) return;
+            
+            await uRef.update({ 
+                coins: firebase.firestore.FieldValue.increment(-price), 
+                spent: firebase.firestore.FieldValue.increment(price),
+                vips: firebase.firestore.FieldValue.arrayUnion(curB),
+                history: firebase.firestore.FieldValue.arrayUnion({type:'VIP Unlock', title: bDoc.data().title, amt: price, date: new Date().toLocaleString()})
+            });
+            await bRef.update({ sales: firebase.firestore.FieldValue.increment(price) });
+            alert("Success: VIP Status Activated."); loadChaps();
+        }
+
+        async function updateVipPrice() {
+            const p = parseInt(document.getElementById('newVipP').value);
+            if(!p) return;
+            await db.collection('books').doc(curB).update({ vipPrice: p });
+            alert("System: VIP Pricing Updated.");
+        }
+
+        // CHAPTERS & READER
+        async function loadChaps() {
+            const snap = await db.collection('books').doc(curB).collection('chapters').orderBy('date','asc').get();
+            const uDoc = await db.collection('users').doc(auth.currentUser.uid).get();
+            const isVip = (uDoc.data().vips || []).includes(curB), bought = uDoc.data().bought || [];
+            allC = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            const vBtn = document.getElementById('vipBtn');
+            if(isVip) { vBtn.innerText = "VIP ACTIVE"; vBtn.classList.replace('from-yellow-500','from-green-600'); vBtn.disabled = true; }
+            else { vBtn.innerText = "ELEVATE TO VIP"; vBtn.classList.replace('from-green-600','from-yellow-500'); vBtn.disabled = false; }
+
+            document.getElementById('chapterList').innerHTML = allC.map((c, i) => {
+                const can = c.price === 0 || isVip || bought.includes(c.id);
+                return `<div class="glass p-6 flex justify-between items-center border-white/5">
+                    <div class="w-3/5"><p class="text-[9px] font-black opacity-30 uppercase tracking-[0.2em] mb-1">Chapter ${i+1}</p><p class="text-xs font-black truncate tracking-tight">${c.title}</p></div>
+                    <button onclick="readC(${i}, ${can})" class="${can?'bg-blue-600':'bg-white/5 border border-white/10'} px-8 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all">${can?'READ':'BUY ('+c.price+' C)'}</button>
+                </div>`;
+            }).join('');
+        }
+
+        async function readC(idx, can) {
+            const c = allC[idx];
+            if(!can) {
+                const uRef = db.collection('users').doc(auth.currentUser.uid);
+                const uDoc = await uRef.get();
+                if(uDoc.data().coins < c.price) return alert("Balance Low!");
+                if(!confirm("Authorize purchase for this segment?")) return;
+                await uRef.update({ 
+                    coins: firebase.firestore.FieldValue.increment(-c.price), 
+                    spent: firebase.firestore.FieldValue.increment(c.price),
+                    bought: firebase.firestore.FieldValue.arrayUnion(c.id),
+                    history: firebase.firestore.FieldValue.arrayUnion({type:'Chapter Buy', title: c.title, amt: c.price, date: new Date().toLocaleString()})
+                });
+                await db.collection('books').doc(curB).update({ sales: firebase.firestore.FieldValue.increment(c.price) });
+            }
+            curI = idx; document.getElementById('readerBody').innerText = allC[idx].content; showSection('readerSection');
+            document.getElementById('pBtn').onclick = () => idx > 0 && readC(idx-1, true);
+            document.getElementById('nBtn').onclick = () => idx < allC.length-1 && readC(idx+1, true);
+        }
+
+        async function saveChapter() {
+            const t = document.getElementById('cTitle').value, c = document.getElementById('cContent').value, p = parseInt(document.getElementById('cPrice').value);
+            if(!t || !c) return alert("Field Required.");
+            await db.collection('books').doc(curB).collection('chapters').add({ title: t, content: c, price: p || 0, date: new Date() });
+            alert("System: Chapter Published Successfully."); showSection('chapterView'); loadChaps();
+        }
+
+        // NOVEL ADMIN
+        async function loadAdmNovels() {
+            const snap = await db.collection('books').get();
+            document.getElementById('admNovelList').innerHTML = snap.docs.map(doc => `
+                <div class="glass p-5 flex justify-between items-center border-white/5">
+                    <div class="flex items-center gap-4"><img src="${doc.data().cover}" class="w-12 h-12 rounded-2xl object-cover border border-white/10 shadow-lg"><p class="text-[11px] font-black tracking-tight">${doc.data().title}</p></div>
+                    <div class="flex gap-2"><button onclick="openNovelForm('${doc.id}')" class="bg-blue-600/20 text-blue-400 px-5 py-3 rounded-xl text-[9px] font-black">EDIT</button>
+                    <button onclick="deleteNovel('${doc.id}')" class="bg-red-500/10 text-red-500 px-5 py-3 rounded-xl text-[9px] font-black">DEL</button></div>
+                </div>`).join('');
+        }
+
+        function openNovelForm(id = null) {
+            curE = id;
+            if(id) {
+                db.collection('books').doc(id).get().then(doc => {
+                    const d = doc.data(); document.getElementById('nTitle').value = d.title; document.getElementById('nCover').value = d.cover; document.getElementById('nGenre').value = d.genre;
+                });
+            } else { document.getElementById('nTitle').value = ""; document.getElementById('nCover').value = ""; }
+            showSection('novelFormSection');
+        }
+
+        async function saveNovel() {
+            const data = { title: document.getElementById('nTitle').value, cover: document.getElementById('nCover').value, genre: document.getElementById('nGenre').value };
+            if(curE) await db.collection('books').doc(curE).update(data);
+            else await db.collection('books').add({ ...data, views: 0, sales: 0, viewers: [], createdAt: new Date(), vipPrice: 5000 });
+            showSection('adminDashboard'); filterBooks('All');
+        }
+
+        async function generateGift() {
+            const amt = parseInt(document.getElementById('genAmt').value);
+            if(!amt) return;
+            const code = "FTN-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+            await db.collection('giftCodes').doc(code).set({ code, amount: amt, status: 'unused', createdAt: new Date() });
+            alert("Gift Forge Complete: " + code); loadGifts();
+        }
+
+        async function loadGifts() {
+            const snap = await db.collection('giftCodes').orderBy('createdAt','desc').get();
+            document.getElementById('admGiftList').innerHTML = snap.docs.map(doc => `
+                <div class="glass p-5 flex justify-between items-center border-white/5">
+                    <div><p class="text-xs font-black text-purple-400 tracking-widest">${doc.data().code}</p><p class="text-[8px] opacity-40 uppercase font-bold mt-1">${doc.data().status}</p></div>
+                    <div class="flex items-center gap-4">
+                        <p class="font-black text-sm tracking-tighter">${doc.data().amount} C</p>
+                        <button onclick="navigator.clipboard.writeText('${doc.data().code}');alert('Identity Copied')" class="p-3 bg-white/5 rounded-xl hover:bg-white/10 transition">📋</button>
+                    </div>
+                </div>`).join('');
+        }
+
+        async function redeemGift() {
+            const code = document.getElementById('gCodeInput').value.trim();
+            if(!code) return;
+            const ref = db.collection('giftCodes').doc(code), doc = await ref.get();
+            if(!doc.exists || doc.data().status !== 'unused') return alert("Validation Error: Voucher Invalid or Expired.");
+            await db.collection('users').doc(auth.currentUser.uid).update({ 
+                coins: firebase.firestore.FieldValue.increment(doc.data().amount),
+                history: firebase.firestore.FieldValue.arrayUnion({type:'Gift Redeem', amt: doc.data().amount, date: new Date().toLocaleString()})
+            });
+            await ref.update({ status: 'used', usedBy: auth.currentUser.email });
+            alert("Voucher Authorized: Coins Added to your wallet."); showSection('homeSection');
+        }
+
+        async function loadFinance() {
+            const d = await db.collection('admin').doc('fin').get();
+            document.getElementById('totalFinance').innerText = (d.exists ? d.data().total.toLocaleString() : 0) + " MMK";
+        }
+
+        async function loadUsers() {
+            const snap = await db.collection('users').get();
+            document.getElementById('totalU').innerText = snap.size;
+            document.getElementById('admUserList').innerHTML = snap.docs.map(doc => `<div class="glass p-5 flex justify-between items-center border-white/5"><p class="text-[10px] font-bold truncate w-40 opacity-70">${doc.data().email}</p><p class="text-yellow-500 font-black text-xs tracking-tighter">${doc.data().coins} C</p></div>`).join('');
+        }
+
+        async function loadAds() {
+            const d = await db.collection('settings').doc('ads').get();
+            if(d.exists) document.getElementById('adSlider').innerHTML = d.data().images.filter(i=>i).map(i => `<img src="${i}" class="min-w-full h-full object-cover">`).join('');
+        }
+
+        async function updateAds() {
+            const images = [document.getElementById('adU1').value, document.getElementById('adU2').value, document.getElementById('adU3').value, document.getElementById('adU4').value];
+            await db.collection('settings').doc('ads').set({ images }); alert("System: Assets Synchronized."); loadAds();
+        }
+
+        async function login() { try { await auth.signInWithEmailAndPassword(document.getElementById('lEmail').value, document.getElementById('lPass').value); } catch(e) { alert(e.message); } }
+        async function register() { try { const res = await auth.createUserWithEmailAndPassword(document.getElementById('rEmail').value, document.getElementById('rPass').value); await db.collection('users').doc(res.user.uid).set({ email: res.user.email, coins: 0, spent: 0, vips: [], bought: [], history: [] }); } catch(e) { alert(e.message); } }
+    </script>
+</body>
+</html>
+
+
+
+
+________________________
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fantinal Ultimate - Pro Publisher Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        :root { --p: #3b82f6; --s: #8b5cf6; --bg: #030712; --card: rgba(15, 23, 42, 0.7); --txt: #f8fafc; }
+        .light-mode { --bg: #f8fafc; --card: rgba(255, 255, 255, 0.9); --txt: #0f172a; }
+
+        body { background: var(--bg); color: var(--txt); font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.4s; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+        
+        .glass { background: var(--card); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 30px; }
+        .sidebar { position: fixed; left: -100%; top: 0; width: 85%; height: 100%; background: var(--bg); z-index: 2000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-right: 1px solid rgba(255,255,255,0.05); }
+        .sidebar.active { left: 0; box-shadow: 20px 0 60px rgba(0,0,0,0.6); }
+        
+        .btn-grad { background: linear-gradient(135deg, var(--p), var(--s)); color: white; transition: 0.3s; cursor: pointer; border: none; }
+        .btn-grad:active { transform: scale(0.95); }
+
+        .cat-tab { padding: 12px 24px; border-radius: 50px; font-size: 11px; font-weight: 800; white-space: nowrap; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); transition: 0.3s; }
+        .cat-tab.active { background: var(--p); color: white; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
+
+        #readerSection { user-select: none; -webkit-user-select: none; }
+        .reader-text { line-height: 2.3; font-size: 1.2rem; word-break: break-word; }
+
+        input, select, textarea { width: 100%; padding: 18px; margin-bottom: 14px; border-radius: 18px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); color: inherit; outline: none; }
+        input:focus { border-color: var(--p); }
+
+        .comment-item { border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; margin-bottom: 15px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fadeIn 0.4s ease forwards; }
+    </style>
+</head>
+<body>
+
+    <div id="notiBox" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3"></div>
+    <div id="overlay" class="fixed inset-0 bg-black/80 hidden z-[1500] backdrop-blur-md" onclick="toggleMenu()"></div>
+
+    <div id="sidebar" class="sidebar p-8 overflow-y-auto no-scrollbar">
+        <div class="flex justify-between items-center mb-12">
+            <div>
+                <h2 class="text-3xl font-black italic text-blue-500">PREMIUM</h2>
+                <p class="text-[9px] font-black opacity-30 tracking-[0.3em]">VERSION 5.0 GOLD</p>
+            </div>
+            <button onclick="toggleMenu()" class="p-4 bg-white/5 rounded-full text-xl">✕</button>
+        </div>
+
+        <div class="glass p-8 mb-8">
+            <p id="userEmail" class="text-xs font-bold text-blue-400 mb-6 truncate italic">Account Loading...</p>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <p class="text-[9px] uppercase opacity-40 font-black">Coins</p>
+                    <p id="uBalance" class="text-2xl font-black text-yellow-500 tracking-tighter">0 C</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[9px] uppercase opacity-40 font-black">Total Spent</p>
+                    <p id="uSpent" class="text-2xl font-black text-red-400 tracking-tighter">0 C</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="space-y-4">
+            <button onclick="showSection('transferSection')" class="w-full bg-blue-500/10 text-blue-400 py-4 rounded-2xl font-black text-xs uppercase tracking-widest">Transfer Coins</button>
+            <button onclick="showSection('bookmarkSection')" class="w-full bg-pink-500/10 text-pink-400 py-4 rounded-2xl font-black text-xs uppercase tracking-widest">My Bookmarks</button>
+            <button onclick="showSection('depositSection')" class="w-full btn-grad py-5 rounded-[24px] font-black text-xs uppercase shadow-xl">Deposit Money</button>
+            <button onclick="showSection('giftRedeemSection')" class="w-full bg-slate-800/60 py-4 rounded-2xl font-black text-xs uppercase border border-white/5">Redeem Gift</button>
+            <button onclick="showSection('historySection')" class="w-full py-4 text-[10px] font-black opacity-40 uppercase tracking-widest">Transaction History</button>
+            
+            <div class="pt-10 border-t border-white/5 grid grid-cols-2 gap-3">
+                <button onclick="toggleTheme()" class="bg-white/5 py-3 rounded-xl font-bold text-[10px] uppercase">Theme</button>
+                <button onclick="auth.signOut()" class="bg-red-500/10 text-red-500 py-3 rounded-xl font-bold text-[10px] uppercase">Logout</button>
+            </div>
+        </nav>
+    </div>
+
+    <nav class="sticky top-0 z-[1000] px-6 py-5 bg-inherit border-b border-white/5 flex justify-between items-center backdrop-blur-3xl">
+        <div class="flex items-center gap-4">
+            <button onclick="toggleMenu()" class="p-4 glass rounded-2xl active:scale-90 transition shadow-lg">
+                <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+            </button>
+            <h1 class="text-2xl font-black italic tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500" onclick="location.reload()">FANTINAL</h1>
+        </div>
+        <div id="adminBadge" class="hidden px-4 py-2 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-full text-[9px] font-black uppercase shadow-lg">Authority</div>
+    </nav>
+
+    <main class="max-w-md mx-auto p-6 pb-40">
+
+        <div id="authSection" class="hidden py-10 animate-in">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-black tracking-tighter mb-2">Welcome</h2>
+                <p class="text-[10px] opacity-40 font-black uppercase tracking-[0.4em]">Elite Reading Experience</p>
+            </div>
+            <div class="flex gap-2 bg-slate-900/60 p-2 rounded-[28px] mb-8 border border-white/5">
+                <button onclick="switchAuth('login')" id="btnLog" class="flex-1 py-4 rounded-[22px] font-black text-xs transition-all bg-blue-600">LOGIN</button>
+                <button onclick="switchAuth('reg')" id="btnReg" class="flex-1 py-4 rounded-[22px] font-black text-xs transition-all">SIGN UP</button>
+            </div>
+            <div id="loginForm" class="glass p-10"><input type="email" id="lEmail" placeholder="Email Address"><input type="password" id="lPass" placeholder="Password"><button onclick="login()" class="w-full btn-grad py-5 rounded-2xl font-black uppercase text-xs mt-2 shadow-lg">Enter Library</button></div>
+            <div id="regForm" class="glass p-10 hidden"><input type="email" id="rEmail" placeholder="New Email"><input type="password" id="rPass" placeholder="Secure Password"><button onclick="register()" class="w-full btn-grad py-5 rounded-2xl font-black uppercase text-xs mt-2 shadow-lg">Create Account</button></div>
+        </div>
+
+        <div id="homeSection" class="hidden animate-in">
+            <div id="adSlider" class="flex overflow-x-auto gap-4 mb-10 h-60 rounded-[45px] no-scrollbar snap-x shadow-2xl"></div>
+            
+            <div class="relative mb-10">
+                <input type="text" id="searchInput" oninput="searchBooks()" placeholder="Explore novels..." class="pl-16 bg-white/5 border-white/10 rounded-[25px] h-16 shadow-inner">
+                <div class="absolute left-7 top-5 opacity-30 text-xl">🔍</div>
+            </div>
+
+            <div class="flex overflow-x-auto no-scrollbar gap-3 mb-12">
+                <button onclick="filterBooks('All')" class="cat-tab active">All Library</button>
+                <button onclick="filterBooks('Fan Fiction')" class="cat-tab">Fan Fiction</button>
+                <button onclick="filterBooks('Life')" class="cat-tab">Life</button>
+                <button onclick="filterBooks('Mega')" class="cat-tab">Mega</button>
+            </div>
+
+            <div id="bookGrid" class="grid grid-cols-2 gap-6"></div>
+            
+            <div id="adminBtn" class="hidden mt-20">
+                <button onclick="showSection('adminDashboard')" class="w-full py-6 glass border-red-500/40 text-red-500 font-black text-[10px] uppercase tracking-[0.4em] shadow-xl">Management Dashboard</button>
+            </div>
+        </div>
+
+        <div id="adminDashboard" class="hidden animate-in">
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black uppercase text-[10px] tracking-widest">← Exit Terminal</button>
+            
+            <div class="grid grid-cols-2 gap-4 mb-10">
+                <div class="glass p-8 border-green-500/20 shadow-lg">
+                    <p class="text-[9px] font-black opacity-40 uppercase mb-2">Total Income</p>
+                    <p id="totalSales" class="text-3xl font-black text-green-500 tracking-tighter">0 C</p>
+                </div>
+                <div class="glass p-8 border-blue-500/20 shadow-lg">
+                    <p class="text-[9px] font-black opacity-40 uppercase mb-2">Total Users</p>
+                    <p id="totalUsers" class="text-3xl font-black text-blue-400 tracking-tighter">0</p>
+                </div>
+            </div>
+
+            <div class="flex overflow-x-auto no-scrollbar gap-2 mb-10 bg-slate-900/60 p-2 rounded-[25px]">
+                <button onclick="setAdminTab('req')" class="adm-t flex-1 py-4 rounded-[20px] text-[9px] font-black transition-all bg-blue-600">PAYMENTS</button>
+                <button onclick="setAdminTab('nov')" class="adm-t flex-1 py-4 rounded-[20px] text-[9px] font-black transition-all">NOVELS</button>
+                <button onclick="setAdminTab('usr')" class="adm-t flex-1 py-4 rounded-[20px] text-[9px] font-black transition-all">USERS</button>
+                <button onclick="setAdminTab('gft')" class="adm-t flex-1 py-4 rounded-[20px] text-[9px] font-black transition-all">GIFTS</button>
+            </div>
+
+            <div id="tab-req" class="space-y-4"></div>
+            <div id="tab-nov" class="hidden">
+                <button onclick="openNovelForm()" class="w-full btn-grad py-5 rounded-2xl font-black text-[10px] mb-10 uppercase tracking-widest shadow-lg">+ Create Novel Asset</button>
+                <div id="admNovelList" class="space-y-4"></div>
+            </div>
+            <div id="tab-usr" class="hidden">
+                <input type="text" id="userSearchInput" oninput="searchUsers()" placeholder="Find user by email..." class="bg-white/5">
+                <div id="admUserList" class="space-y-4"></div>
+            </div>
+            <div id="tab-gft" class="hidden">
+                <div class="glass p-10 mb-10">
+                    <input type="number" id="genAmt" placeholder="Coin Amount to Generate">
+                    <button onclick="generateGift()" class="w-full bg-purple-600 py-5 rounded-2xl font-black text-xs uppercase shadow-xl">Create Voucher</button>
+                </div>
+                <div id="admGiftList" class="space-y-3"></div>
+            </div>
+        </div>
+
+        <div id="novelFormSection" class="hidden animate-in">
+            <h2 class="text-3xl font-black mb-10 italic text-blue-500">Novel Composer</h2>
+            <div class="space-y-2">
+                <input type="text" id="nTitle" placeholder="Novel Full Title">
+                <input type="text" id="nCover" placeholder="Direct Image URL (PNG/JPG)">
+                <input type="number" id="nVipPrice" placeholder="Lifetime VIP Price (e.g. 5000)">
+                <select id="nGenre">
+                    <option value="Fan Fiction">Fan Fiction</option>
+                    <option value="Life">Life</option>
+                    <option value="Mega">Mega</option>
+                </select>
+            </div>
+            <button onclick="saveNovel()" class="w-full btn-grad py-6 rounded-2xl font-black uppercase text-xs mt-8 shadow-2xl">Publish / Save</button>
+            <button onclick="showSection('adminDashboard')" class="w-full py-6 text-gray-500 font-black text-[10px] uppercase">Discard</button>
+        </div>
+
+        <div id="chapterView" class="hidden animate-in">
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black uppercase text-[10px] tracking-widest">← Library</button>
+            
+            <div class="glass p-12 mb-10 border-yellow-500/10 shadow-2xl">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <p class="text-[10px] font-black opacity-40 uppercase mb-2">Full Access</p>
+                        <h3 id="vipPriceTag" class="text-4xl font-black text-yellow-500 tracking-tighter">0 C</h3>
+                    </div>
+                    <button id="buyVipBtn" onclick="buyVip()" class="bg-gradient-to-br from-yellow-500 to-amber-700 px-10 py-5 rounded-[25px] text-[10px] font-black uppercase shadow-xl">Buy VIP</button>
+                </div>
+                <button onclick="toggleBookmark()" id="bookmarkBtn" class="w-full py-5 glass border-pink-500/20 text-pink-500 font-black text-[10px] uppercase tracking-widest">Add to Library</button>
+            </div>
+
+            <div id="admChapAdd" class="hidden mb-10">
+                <button onclick="showSection('chapterForm')" class="w-full py-5 glass border-blue-500/20 text-blue-400 font-black rounded-2xl text-[10px] uppercase">+ New Chapter Asset</button>
+            </div>
+            
+            <div id="chapterList" class="space-y-4 mb-20"></div>
+
+            <div class="border-t border-white/5 pt-16">
+                <h3 class="text-2xl font-black mb-10 italic">Discussion</h3>
+                <div class="flex flex-col gap-4 mb-12">
+                    <textarea id="comInput" rows="3" placeholder="Join the conversation..." class="mb-0"></textarea>
+                    <button onclick="postComment()" class="btn-grad py-4 rounded-2xl font-black text-xs uppercase shadow-lg">Post Comment</button>
+                </div>
+                <div id="commentList" class="space-y-8 pb-20"></div>
+            </div>
+        </div>
+
+        <div id="readerSection" class="hidden fixed inset-0 bg-inherit z-[3000] p-10 overflow-y-auto no-scrollbar" oncontextmenu="return false;">
+            <div class="max-w-md mx-auto">
+                <div class="flex justify-between items-center mb-12">
+                    <button onclick="showSection('chapterView')" class="p-5 bg-white/5 text-red-500 rounded-full text-xl shadow-lg">✕</button>
+                    <p class="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em]">Proprietary Content</p>
+                </div>
+                <div id="readerBody" class="reader-text whitespace-pre-wrap opacity-90 pb-60 shadow-inner"></div>
+                
+                <div class="fixed bottom-0 left-0 right-0 p-10 max-w-md mx-auto flex gap-6 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)] to-transparent">
+                    <button id="pBtn" class="flex-1 glass py-6 font-black text-[11px] uppercase">Prev</button>
+                    <button id="nBtn" class="flex-1 btn-grad py-6 rounded-[30px] font-black text-[11px] uppercase shadow-2xl">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="depositSection" class="hidden animate-in">
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black uppercase text-[10px]">← Return</button>
+            <div class="glass p-12 shadow-2xl">
+                <h2 class="text-3xl font-black mb-10 italic text-blue-500 text-center">Top Up Coins</h2>
+                <div class="grid grid-cols-2 gap-6 mb-12">
+                    <div class="text-center">
+                        <img src="https://img.sanishtech.com/u/b80997ba169794aaad6fd4146e649353.jpeg" class="rounded-[30px] border-2 border-white/5 shadow-2xl mb-4">
+                        <p class="text-[10px] font-black text-blue-400">KBZ PAY</p>
+                    </div>
+                    <div class="text-center">
+                        <img src="https://img.sanishtech.com/u/6ed8971d622b39fae5c2baea16b2be4c.jpeg" class="rounded-[30px] border-2 border-white/5 shadow-2xl mb-4">
+                        <p class="text-[10px] font-black text-yellow-500">WAVE PAY</p>
+                    </div>
+                </div>
+                <select id="coinPackage" class="font-black">
+                    <option value="1000">1,000 MMK = 1,000 C</option>
+                    <option value="5000">5,000 MMK = 5,000 C</option>
+                    <option value="10000">10,000 MMK = 10,000 C</option>
+                </select>
+                <input type="text" id="payName" placeholder="Account Name (e.g. Mg Mg)">
+                <input type="text" id="payTid" placeholder="Transaction Last 6 Digits">
+                <button onclick="submitDeposit()" class="w-full btn-grad py-6 rounded-2xl font-black uppercase text-xs mt-6 shadow-2xl">Submit Confirmation</button>
+            </div>
+        </div>
+
+        <div id="transferSection" class="hidden animate-in">
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black uppercase text-[10px]">← Back</button>
+            <div class="glass p-12 border-blue-500/10">
+                <h2 class="text-3xl font-black mb-10 italic text-blue-500">Quick Transfer</h2>
+                <input type="email" id="tRecipient" placeholder="Recipient's Registered Email">
+                <input type="number" id="tAmount" placeholder="Amount to Transfer (Min 100)">
+                <button onclick="transferCoins()" class="w-full btn-grad py-6 rounded-2xl font-black text-xs uppercase mt-6 shadow-xl">Execute Transfer</button>
+            </div>
+        </div>
+
+        <div id="historySection" class="hidden animate-in">
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black uppercase text-[10px]">← Back</button>
+            <h2 class="text-3xl font-black mb-12 italic">Statement</h2>
+            <div id="historyList" class="space-y-4"></div>
+        </div>
+
+        <div id="bookmarkSection" class="hidden animate-in">
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black uppercase text-[10px]">← Back</button>
+            <h2 class="text-3xl font-black mb-12 italic">Bookmarks</h2>
+            <div id="bookmarkGrid" class="grid grid-cols-2 gap-6"></div>
+        </div>
+
+        <div id="chapterForm" class="hidden animate-in">
+            <h2 class="text-3xl font-black mb-10 italic">Chapter Creator</h2>
+            <input type="text" id="cTitle" placeholder="Chapter Heading">
+            <textarea id="cContent" rows="18" placeholder="Start writing the content here..."></textarea>
+            <input type="number" id="cPrice" placeholder="Unlock Price (0 for Free)">
+            <button onclick="saveChapter()" class="w-full btn-grad py-6 rounded-2xl font-black uppercase text-xs shadow-2xl">Publish Asset</button>
+            <button onclick="showSection('chapterView')" class="w-full py-6 text-gray-500 font-bold text-[10px] uppercase">Discard</button>
+        </div>
+
+        <div id="giftRedeemSection" class="hidden animate-in">
+            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black uppercase text-[10px]">← Back</button>
+            <div class="glass p-16 text-center shadow-2xl">
+                <h2 class="text-4xl font-black mb-4 italic text-purple-500">VOUCHER</h2>
+                <p class="text-[10px] font-black opacity-30 uppercase mb-12 tracking-[0.3em]">Unlock Instant Rewards</p>
+                <input type="text" id="gCodeInput" placeholder="CODE-HERE" class="text-center font-black tracking-widest text-3xl py-8 bg-white/5 mb-8 rounded-[30px]">
+                <button onclick="redeemGift()" class="w-full btn-grad py-6 rounded-2xl font-black text-xs uppercase shadow-xl">Claim Gift</button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // CORE INITIALIZATION
+        const firebaseConfig = {
+            apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
+            authDomain: "fantinal-publishing-5b960.firebaseapp.com",
+            projectId: "fantinal-publishing-5b960",
+            storageBucket: "fantinal-publishing-5b960.firebasestorage.app",
+            messagingSenderId: "961612304854",
+            appId: "1:961612304854:web:6bf7b03072ed83b58b9477"
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(), db = firebase.firestore();
 
-        let curB = "", allB = [], allC = [];
+        let curB = "", curE = null, allC = [], allB = [], allU = [], curI = 0;
 
-        // UI HELPERS
+        // UI ACTIONS
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('hidden'); }
         function showSection(id) { 
             document.querySelectorAll('main > div').forEach(s => s.classList.add('hidden')); 
             document.getElementById(id).classList.remove('hidden'); 
             window.scrollTo(0,0);
+            if(id === 'bookmarkSection') loadBookmarks();
         }
+        function switchAuth(t) { 
+            document.getElementById('loginForm').classList.toggle('hidden', t === 'reg'); 
+            document.getElementById('regForm').classList.toggle('hidden', t === 'login'); 
+            document.getElementById('btnLog').classList.toggle('bg-blue-600', t === 'login'); 
+            document.getElementById('btnReg').classList.toggle('bg-blue-600', t === 'reg'); 
+        }
+        function toggleTheme() { document.body.classList.toggle('light-mode'); }
         function showNoti(m, t = 'success') {
             const b = document.createElement('div');
-            b.className = `p-4 glass border-l-4 ${t==='success'?'border-gold':'border-red-500'} text-[10px] font-black uppercase tracking-widest shadow-2xl`;
-            b.innerText = m; document.getElementById('notiBox').appendChild(b);
-            setTimeout(() => { b.style.opacity='0'; setTimeout(()=>b.remove(),400); }, 3000);
+            b.className = `p-5 glass border-l-4 ${t === 'success' ? 'border-green-500' : 'border-red-500'} text-[10px] font-black animate-in shadow-2xl`;
+            b.innerText = m;
+            document.getElementById('notiBox').appendChild(b);
+            setTimeout(() => { b.style.opacity = '0'; setTimeout(() => b.remove(), 400); }, 3500);
         }
 
-        // AUTH SYSTEM
+        // AUTH CONTROL
         auth.onAuthStateChanged(user => {
             if(user) {
                 document.getElementById('userEmail').innerText = user.email;
@@ -228,141 +967,79 @@
                     if(doc.exists) {
                         const d = doc.data();
                         document.getElementById('uBalance').innerText = (d.coins || 0) + " C";
-                        document.getElementById('uAdsEarned').innerText = (d.adsCoinTotal || 0) + " C";
+                        document.getElementById('uSpent').innerText = (d.spent || 0) + " C";
+                        if(d.history) renderHistory(d.history);
                     }
                 });
-                showSection('homeSection'); loadAllBooks();
+                showSection('homeSection'); loadAllBooks(); loadAds();
             } else showSection('authSection');
         });
 
         async function login() { 
-            const e = document.getElementById('lEmail').value, p = document.getElementById('lPass').value;
-            try { await auth.signInWithEmailAndPassword(e, p); } catch(err) { showNoti(err.message, 'error'); } 
+            try { await auth.signInWithEmailAndPassword(document.getElementById('lEmail').value, document.getElementById('lPass').value); } 
+            catch(e) { showNoti(e.message, 'error'); } 
         }
 
         async function register() {
-            const e = document.getElementById('lEmail').value, p = document.getElementById('lPass').value;
             try {
-                const r = await auth.createUserWithEmailAndPassword(e, p);
-                await db.collection('users').doc(r.user.uid).set({ email: e, coins: 0, adsCoinTotal: 0, vips: [], bought: [], date: new Date() });
-            } catch(err) { showNoti(err.message, 'error'); }
-        }
-
-        // --- FIXED COIN & TRANSACTION SYSTEM ---
-
-        async function submitDeposit() {
-            const pkg = document.getElementById('coinPackage');
-            const amt = parseInt(pkg.value);
-            const name = document.getElementById('payName').value.trim();
-            const tid = document.getElementById('payTid').value.trim();
-
-            if(!name || !tid || isNaN(amt)) return showNoti("အချက်အလက်ပြည့်စုံစွာဖြည့်ပါ", 'error');
-
-            try {
-                await db.collection('coinRequests').add({
-                    uid: auth.currentUser.uid,
-                    email: auth.currentUser.email,
-                    amt: amt,
-                    buyerName: name,
-                    transId: tid,
-                    status: 'pending',
-                    date: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                showNoti("ငွေသွင်းတောင်းဆိုမှု တင်ပြပြီးပါပြီ");
-                showSection('homeSection');
+                const r = await auth.createUserWithEmailAndPassword(document.getElementById('rEmail').value, document.getElementById('rPass').value);
+                await db.collection('users').doc(r.user.uid).set({ email: r.user.email, coins: 0, spent: 0, vips: [], bought: [], history: [], bookmarks: [] });
             } catch(e) { showNoti(e.message, 'error'); }
         }
 
-        async function approveDep(docId, uid, amt) {
-            try {
-                const batch = db.batch();
-                const uRef = db.collection('users').doc(uid);
-                const rRef = db.collection('coinRequests').doc(docId);
-                
-                batch.update(uRef, { coins: firebase.firestore.FieldValue.increment(amt) });
-                batch.update(rRef, { status: 'approved' });
-                
-                await batch.commit();
-                showNoti("အတည်ပြုပြီးပါပြီ");
-            } catch(e) { showNoti("Error approving", 'error'); }
-        }
-
-        async function transferCoins() {
-            const email = document.getElementById('tRecipient').value.trim();
-            const amt = parseInt(document.getElementById('tAmount').value);
-
-            if(isNaN(amt) || amt <= 0) return showNoti("ပမာဏမှားယွင်းနေသည်", 'error');
-
-            try {
-                const uRef = db.collection('users').doc(auth.currentUser.uid);
-                const uDoc = await uRef.get();
-                if(uDoc.data().coins < amt) return showNoti("လက်ကျန်မလုံလောက်ပါ", 'error');
-
-                const targetSnap = await db.collection('users').where('email','==',email).get();
-                if(targetSnap.empty) return showNoti("အကောင့်ရှာမတွေ့ပါ", 'error');
-
-                const batch = db.batch();
-                batch.update(uRef, { coins: firebase.firestore.FieldValue.increment(-amt) });
-                batch.update(targetSnap.docs[0].ref, { coins: firebase.firestore.FieldValue.increment(amt) });
-                
-                await batch.commit();
-                showNoti("လွှဲပြောင်းမှုအောင်မြင်ပါသည်");
-                showSection('homeSection');
-            } catch(e) { showNoti(e.message, 'error'); }
-        }
-
-        async function startWatchAds() {
-            showNoti("ကြော်ငြာကြည့်ရှုနေသည်...");
-            setTimeout(async () => {
-                const uRef = db.collection('users').doc(auth.currentUser.uid);
-                await uRef.update({
-                    coins: firebase.firestore.FieldValue.increment(20),
-                    adsCoinTotal: firebase.firestore.FieldValue.increment(20)
-                });
-                showNoti("Coin ၂၀ ရရှိပါပြီ");
-            }, 3000);
-        }
-
-        // --- BOOK & CHAPTER SYSTEM ---
-
+        // NOVEL SYSTEM
         async function loadAllBooks() {
             const snap = await db.collection('books').get();
             allB = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             renderGrid(allB);
+            let total = 0; allB.forEach(b => total += (b.sales || 0));
+            if(document.getElementById('totalSales')) document.getElementById('totalSales').innerText = total + " C";
         }
 
-        function renderGrid(list) {
-            document.getElementById('bookGrid').innerHTML = list.map(b => `
-                <div class="glass overflow-hidden cursor-pointer" onclick="openBook('${b.id}')">
-                    <img src="${b.cover}" class="h-52 w-full object-cover">
-                    <div class="p-4">
-                        <p class="font-black text-[11px] truncate gold-text uppercase">${b.title}</p>
-                        <p class="text-[8px] opacity-40 uppercase">${b.genre} • 👁 ${b.views || 0}</p>
+        function renderGrid(books) {
+            document.getElementById('bookGrid').innerHTML = books.map(b => `
+                <div class="glass overflow-hidden cursor-pointer novel-card" onclick="openBook('${b.id}')">
+                    <img src="${b.cover}" class="h-60 w-full object-cover">
+                    <div class="p-5">
+                        <p class="font-black text-[12px] truncate mb-1">${b.title}</p>
+                        <p class="text-[9px] font-black opacity-30 uppercase tracking-widest">${b.genre}</p>
                     </div>
                 </div>`).join('');
         }
 
+        function searchBooks() {
+            const t = document.getElementById('searchInput').value.toLowerCase();
+            renderGrid(allB.filter(b => b.title.toLowerCase().includes(t)));
+        }
+
+        function filterBooks(cat) {
+            document.querySelectorAll('.cat-tab').forEach(b => b.classList.toggle('active', b.innerText === cat));
+            renderGrid(cat === 'All' ? allB : allB.filter(b => b.genre === cat));
+        }
+
+        // CHAPTER & READING
         async function openBook(id) {
             curB = id; showSection('chapterView');
-            const b = allB.find(x => x.id === id);
-            document.getElementById('bookHeaderUI').innerHTML = `
-                <img src="${b.cover}" class="w-40 h-56 mx-auto rounded-xl shadow-2xl mb-4">
-                <h2 class="luxury-font text-2xl gold-text uppercase">${b.title}</h2>
-                <p class="text-[10px] opacity-40 mb-4 uppercase">${b.views || 0} Views</p>`;
-            loadChaps();
+            const uDoc = await db.collection('users').doc(auth.currentUser.uid).get();
+            document.getElementById('bookmarkBtn').innerText = (uDoc.data().bookmarks || []).includes(id) ? "Remove from Library" : "Add to Library";
+            const bDoc = await db.collection('books').doc(id).get();
+            document.getElementById('vipPriceTag').innerText = (bDoc.data().vipPrice || 5000) + " C";
+            loadChaps(); loadComments();
         }
 
         async function loadChaps() {
             const snap = await db.collection('books').doc(curB).collection('chapters').orderBy('date', 'asc').get();
-            allC = snap.docs.map(d => ({ id: d.id, ...d.data() }));
             const uDoc = await db.collection('users').doc(auth.currentUser.uid).get();
-            const bought = uDoc.data().bought || [];
-
+            const isVip = (uDoc.data().vips || []).includes(curB), bought = uDoc.data().bought || [];
+            allC = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            
             document.getElementById('chapterList').innerHTML = allC.map((c, i) => {
-                const isFree = c.price === 0 || bought.includes(c.id);
-                return `<div class="chapter-card p-5 flex justify-between items-center">
-                    <div><p class="text-xs font-bold gold-text uppercase">${c.title}</p></div>
-                    <button onclick="readChapter(${i})" class="text-gold font-black text-[10px] uppercase">${isFree ? 'READ' : 'BUY ('+c.price+' C)'}</button>
+                const can = c.price === 0 || isVip || bought.includes(c.id);
+                return `<div class="glass p-6 flex justify-between items-center">
+                    <div class="w-2/3"><p class="text-[9px] font-black opacity-30 uppercase">Chapter ${i+1}</p><p class="text-[12px] font-black truncate">${c.title}</p></div>
+                    <button onclick="readChapter(${i})" class="${can ? 'bg-blue-600 shadow-blue-500/20' : 'bg-white/5 border border-white/10'} px-6 py-3 rounded-xl text-[10px] font-black shadow-lg">
+                        ${can ? 'READ' : 'BUY (' + c.price + ' C)'}
+                    </button>
                 </div>`;
             }).join('');
         }
@@ -371,56 +1048,232 @@
             const c = allC[idx];
             const uRef = db.collection('users').doc(auth.currentUser.uid);
             const uDoc = await uRef.get();
-            const bought = uDoc.data().bought || [];
+            const can = c.price === 0 || (uDoc.data().vips || []).includes(curB) || (uDoc.data().bought || []).includes(c.id);
 
-            if(c.price > 0 && !bought.includes(c.id)) {
-                if(uDoc.data().coins < c.price) return showNoti("Coin မလုံလောက်ပါ", 'error');
-                if(!confirm("ဤအပိုင်းကို ဝယ်ယူမည်လား?")) return;
+            if(!can) {
+                if(uDoc.data().coins < c.price) return showNoti("Insufficient Balance", 'error');
+                if(!confirm(`Unlock this chapter for ${c.price} Coins?`)) return;
                 
-                await uRef.update({
+                await uRef.update({ 
                     coins: firebase.firestore.FieldValue.increment(-c.price),
-                    bought: firebase.firestore.FieldValue.arrayUnion(c.id)
+                    spent: firebase.firestore.FieldValue.increment(c.price),
+                    bought: firebase.firestore.FieldValue.arrayUnion(c.id),
+                    history: firebase.firestore.FieldValue.arrayUnion({ type: 'Unlock', title: c.title, amt: c.price, date: new Date().toLocaleString() })
                 });
-                showNoti("ဝယ်ယူမှု အောင်မြင်သည်");
+                await db.collection('books').doc(curB).update({ sales: firebase.firestore.FieldValue.increment(c.price) });
+                showNoti("Chapter Unlocked!");
                 loadChaps(); return;
             }
-            
+            curI = idx;
             document.getElementById('readerBody').innerText = c.content;
             showSection('readerSection');
+            document.getElementById('pBtn').onclick = () => idx > 0 && readChapter(idx - 1);
+            document.getElementById('nBtn').onclick = () => idx < allC.length - 1 && readChapter(idx + 1);
         }
 
-        // ADMIN LOADER
-        function loadAdminData() {
-            db.collection('users').get().then(s => document.getElementById('totalUserCount').innerText = s.size);
-            db.collection('coinRequests').where('status','==','pending').onSnapshot(snap => {
-                document.getElementById('tab-pay').innerHTML = snap.docs.map(doc => `
-                    <div class="glass p-5">
-                        <p class="text-[9px] font-black gold-text uppercase">${doc.data().email}</p>
-                        <p class="text-xl font-black">${doc.data().amt} C</p>
-                        <button onclick="approveDep('${doc.id}', '${doc.data().uid}', ${doc.data().amt})" class="w-full btn-gold py-2 rounded-xl text-[9px] mt-2">APPROVE</button>
+        // COMMENT ENGINE
+        async function postComment() {
+            const txt = document.getElementById('comInput').value.trim();
+            if(!txt) return;
+            await db.collection('books').doc(curB).collection('comments').add({
+                email: auth.currentUser.email, text: txt, date: new Date(), uid: auth.currentUser.uid
+            });
+            document.getElementById('comInput').value = "";
+            showNoti("Comment Posted");
+            loadComments();
+        }
+
+        function loadComments() {
+            db.collection('books').doc(curB).collection('comments').orderBy('date', 'desc').onSnapshot(snap => {
+                document.getElementById('commentList').innerHTML = snap.docs.map(doc => `
+                    <div class="comment-item animate-in">
+                        <div class="flex justify-between mb-2">
+                            <p class="text-[10px] font-black text-blue-400">${doc.data().email}</p>
+                            ${auth.currentUser.email === 'xztka49@gmail.com' ? `<button onclick="deleteComment('${doc.id}')" class="text-[9px] text-red-500 font-black">DELETE</button>` : ''}
+                        </div>
+                        <p class="text-sm opacity-80 leading-relaxed">${doc.data().text}</p>
                     </div>`).join('');
             });
         }
 
+        async function deleteComment(id) { if(confirm("Permanently delete?")) await db.collection('books').doc(curB).collection('comments').doc(id).delete(); }
+
+        // ADMIN FEATURES
         function setAdminTab(t) {
-            ['tab-nov', 'tab-pay'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            document.querySelectorAll('.adm-t').forEach(b => b.classList.remove('bg-blue-600'));
+            event.target.classList.add('bg-blue-600');
+            ['tab-req', 'tab-nov', 'tab-usr', 'tab-gft'].forEach(id => document.getElementById(id).classList.add('hidden'));
             document.getElementById('tab-' + t).classList.remove('hidden');
         }
 
-        function openNovelForm() { showSection('novelFormSection'); }
+        async function loadAdminData() {
+            db.collection('coinRequests').where('status', '==', 'pending').onSnapshot(snap => {
+                document.getElementById('tab-req').innerHTML = snap.docs.map(doc => `
+                    <div class="glass p-8">
+                        <p class="text-xs font-black text-blue-400">${doc.data().email}</p>
+                        <p class="text-3xl font-black text-yellow-500 my-4">${doc.data().amt} C</p>
+                        <p class="text-[10px] opacity-40 font-bold">${doc.data().buyerName} | TID: ${doc.data().transId}</p>
+                        <div class="flex gap-3 mt-6">
+                            <button onclick="approveDep('${doc.id}', '${doc.data().uid}', ${doc.data().amt})" class="flex-1 py-4 bg-green-600 rounded-xl text-[10px] font-black uppercase shadow-lg">Approve</button>
+                            <button onclick="db.collection('coinRequests').doc('${doc.id}').update({status:'rejected'})" class="flex-1 py-4 bg-red-600 rounded-xl text-[10px] font-black uppercase shadow-lg">Reject</button>
+                        </div>
+                    </div>`).join('') || "<p class='text-center opacity-30 py-20 font-black'>Requests Cleared</p>";
+            });
+            db.collection('users').limit(50).onSnapshot(snap => {
+                allU = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                document.getElementById('totalUsers').innerText = snap.size;
+                renderUserList(allU);
+            });
+            db.collection('books').onSnapshot(snap => {
+                document.getElementById('admNovelList').innerHTML = snap.docs.map(doc => `
+                    <div class="glass p-5 flex justify-between items-center">
+                        <div class="w-1/2">
+                            <p class="text-[11px] font-black truncate">${doc.data().title}</p>
+                            <p class="text-[10px] font-bold text-green-500">Earned: ${doc.data().sales || 0} C</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editNovel('${doc.id}')" class="bg-blue-600 px-5 py-2 rounded-lg text-[9px] font-black">EDIT</button>
+                            <button onclick="deleteNovel('${doc.id}')" class="bg-red-600 px-5 py-2 rounded-lg text-[9px] font-black">DEL</button>
+                        </div>
+                    </div>`).join('');
+            });
+        }
+
+        function renderUserList(users) {
+            document.getElementById('admUserList').innerHTML = users.map(u => `
+                <div class="glass p-5 flex justify-between items-center">
+                    <div class="w-2/3">
+                        <p class="text-[11px] font-black truncate">${u.email}</p>
+                        <p class="text-[10px] font-bold text-yellow-500">${u.coins || 0} C Balance</p>
+                    </div>
+                    <button onclick="giftUserManual('${u.id}')" class="bg-white/5 border border-white/10 px-5 py-2 rounded-lg text-[10px] font-black">ADD</button>
+                </div>`).join('');
+        }
+
+        function searchUsers() {
+            const t = document.getElementById('userSearchInput').value.toLowerCase();
+            renderUserList(allU.filter(u => u.email.toLowerCase().includes(t)));
+        }
+
+        async function approveDep(id, uid, amt) {
+            await db.collection('users').doc(uid).update({ 
+                coins: firebase.firestore.FieldValue.increment(amt),
+                history: firebase.firestore.FieldValue.arrayUnion({ type: 'Deposit', amt, date: new Date().toLocaleString() })
+            });
+            await db.collection('coinRequests').doc(id).update({ status: 'approved' });
+            showNoti("Payment Approved");
+        }
+
+        function openNovelForm(id = null) {
+            curE = id; showSection('novelFormSection');
+            if(id) {
+                const b = allB.find(x => x.id === id);
+                document.getElementById('nTitle').value = b.title;
+                document.getElementById('nCover').value = b.cover;
+                document.getElementById('nVipPrice').value = b.vipPrice;
+            } else {
+                document.getElementById('nTitle').value = ""; document.getElementById('nCover').value = ""; document.getElementById('nVipPrice').value = "5000";
+            }
+        }
+
         async function saveNovel() {
             const d = { 
                 title: document.getElementById('nTitle').value, 
                 cover: document.getElementById('nCover').value, 
                 genre: document.getElementById('nGenre').value, 
-                vipPrice: parseInt(document.getElementById('nVipPrice').value) || 0,
-                views: 0, sales: 0 
+                vipPrice: parseInt(document.getElementById('nVipPrice').value), 
+                sales: 0 
             };
-            await db.collection('books').add(d);
-            loadAllBooks(); showSection('homeSection');
+            if(curE) await db.collection('books').doc(curE).update(d);
+            else await db.collection('books').add(d);
+            showNoti("Asset Updated"); showSection('adminDashboard'); loadAllBooks();
         }
 
-        function openChapterForm() { showSection('chapterForm'); }
+        async function deleteNovel(id) { if(confirm("Confirm deletion?")) await db.collection('books').doc(id).delete(); }
+
+        // UTILITIES & MISC
+        async function transferCoins() {
+            const email = document.getElementById('tRecipient').value.trim();
+            const amt = parseInt(document.getElementById('tAmount').value);
+            if(email === auth.currentUser.email || amt < 100) return showNoti("Invalid Request", 'error');
+            const targetSnap = await db.collection('users').where('email', '==', email).get();
+            if(targetSnap.empty) return showNoti("User not found", 'error');
+            
+            const uRef = db.collection('users').doc(auth.currentUser.uid);
+            const uDoc = await uRef.get();
+            if(uDoc.data().coins < amt) return showNoti("Insufficient Coins", 'error');
+
+            const batch = db.batch();
+            batch.update(uRef, { 
+                coins: firebase.firestore.FieldValue.increment(-amt),
+                history: firebase.firestore.FieldValue.arrayUnion({ type: 'Transfer Sent', to: email, amt, date: new Date().toLocaleString() }) 
+            });
+            batch.update(targetSnap.docs[0].ref, { 
+                coins: firebase.firestore.FieldValue.increment(amt),
+                history: firebase.firestore.FieldValue.arrayUnion({ type: 'Transfer Received', from: auth.currentUser.email, amt, date: new Date().toLocaleString() }) 
+            });
+            await batch.commit();
+            showNoti("Coins Transferred");
+            showSection('homeSection');
+        }
+
+        async function redeemGift() {
+            const code = document.getElementById('gCodeInput').value.trim().toUpperCase();
+            const snap = await db.collection('gifts').doc(code).get();
+            if(!snap.exists || snap.data().used) return showNoti("Invalid Voucher", 'error');
+            
+            await db.collection('gifts').doc(code).update({ used: true, usedBy: auth.currentUser.email });
+            await db.collection('users').doc(auth.currentUser.uid).update({
+                coins: firebase.firestore.FieldValue.increment(snap.data().amt),
+                history: firebase.firestore.FieldValue.arrayUnion({ type: 'Gift Redeemed', amt: snap.data().amt, date: new Date().toLocaleString() })
+            });
+            showNoti(`Gained ${snap.data().amt} Coins!`);
+            showSection('homeSection');
+        }
+
+        async function giftUserManual(uid) {
+            const amt = parseInt(prompt("Amount to add:")); if(!amt) return;
+            await db.collection('users').doc(uid).update({ 
+                coins: firebase.firestore.FieldValue.increment(amt),
+                history: firebase.firestore.FieldValue.arrayUnion({ type: 'Admin Gift', amt, date: new Date().toLocaleString() }) 
+            });
+            showNoti("Gift Added");
+        }
+
+        async function generateGift() {
+            const amt = parseInt(document.getElementById('genAmt').value); if(!amt) return;
+            const code = Array(3).fill(0).map(() => Math.random().toString(36).substring(2,6).toUpperCase()).join('-');
+            await db.collection('gifts').doc(code).set({ amt, used: false, date: new Date() });
+            showNoti("Code: " + code); document.getElementById('genAmt').value = "";
+        }
+
+        async function buyVip() {
+            const bDoc = await db.collection('books').doc(curB).get();
+            const p = bDoc.data().vipPrice || 5000;
+            const uRef = db.collection('users').doc(auth.currentUser.uid);
+            const uDoc = await uRef.get();
+            if(uDoc.data().coins < p) return showNoti("Low Balance", 'error');
+            
+            await uRef.update({
+                coins: firebase.firestore.FieldValue.increment(-p),
+                vips: firebase.firestore.FieldValue.arrayUnion(curB),
+                history: firebase.firestore.FieldValue.arrayUnion({ type: 'VIP Unlock', title: bDoc.data().title, amt: p, date: new Date().toLocaleString() })
+            });
+            await db.collection('books').doc(curB).update({ sales: firebase.firestore.FieldValue.increment(p) });
+            showNoti("VIP Status Granted");
+            loadChaps();
+        }
+
+        async function submitDeposit() {
+            const amt = parseInt(document.getElementById('coinPackage').value), name = document.getElementById('payName').value, tid = document.getElementById('payTid').value;
+            if(!name || tid.length < 5) return showNoti("Details Missing", 'error');
+            await db.collection('coinRequests').add({ 
+                uid: auth.currentUser.uid, email: auth.currentUser.email, amt, buyerName: name, transId: tid, status: 'pending', date: new Date() 
+            });
+            showNoti("Confirmation Sent");
+            showSection('homeSection');
+        }
+
         async function saveChapter() {
             const d = { 
                 title: document.getElementById('cTitle').value, 
@@ -429,9 +1282,44 @@
                 date: new Date() 
             };
             await db.collection('books').doc(curB).collection('chapters').add(d);
-            loadChaps(); showSection('chapterView');
+            showNoti("Asset Published");
+            showSection('chapterView');
+            loadChaps();
+        }
+
+        async function toggleBookmark() {
+            const uRef = db.collection('users').doc(auth.currentUser.uid);
+            const uDoc = await uRef.get();
+            const bks = uDoc.data().bookmarks || [];
+            if(bks.includes(curB)) await uRef.update({ bookmarks: firebase.firestore.FieldValue.arrayRemove(curB) });
+            else await uRef.update({ bookmarks: firebase.firestore.FieldValue.arrayUnion(curB) });
+            openBook(curB);
+        }
+
+        async function loadBookmarks() {
+            const uDoc = await db.collection('users').doc(auth.currentUser.uid).get();
+            const ids = uDoc.data().bookmarks || [];
+            const filtered = allB.filter(b => ids.includes(b.id));
+            document.getElementById('bookmarkGrid').innerHTML = filtered.map(b => `
+                <div class="glass overflow-hidden" onclick="openBook('${b.id}')">
+                    <img src="${b.cover}" class="h-44 w-full object-cover">
+                    <div class="p-4"><p class="font-black text-[11px] truncate">${b.title}</p></div>
+                </div>`).join('') || "<p class='col-span-2 text-center py-20 opacity-20 font-black'>No Bookmarks Saved</p>";
+        }
+
+        function renderHistory(h) {
+            document.getElementById('historyList').innerHTML = h.reverse().map(i => `
+                <div class="glass p-6 flex justify-between items-center animate-in">
+                    <div><p class="text-[10px] font-black text-blue-400 uppercase tracking-widest">${i.type}</p><p class="text-[9px] opacity-30">${i.date}</p></div>
+                    <p class="font-black text-sm">${i.amt} C</p>
+                </div>`).join('');
+        }
+
+        function loadAds() {
+            db.collection('settings').doc('ads').get().then(doc => {
+                if(doc.exists) document.getElementById('adSlider').innerHTML = doc.data().images.map(i => `<img src="${i}" class="min-w-full h-full object-cover snap-center shadow-lg">`).join('');
+            });
         }
     </script>
 </body>
 </html>
-
