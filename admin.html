@@ -1,64 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fantinal Admin V5 - Master</title>
+    <title>Fantinal Admin Master V6</title>
     <style>
         :root { --gold: #D4AF37; --bg: #0B1120; --card: #111827; --blue: #3B82F6; --red: #EF4444; --green: #10B981; }
         body { background: var(--bg); color: white; font-family: sans-serif; padding: 20px; }
         .box { background: var(--card); padding: 20px; border: 1px solid var(--gold); border-radius: 12px; margin-bottom: 25px; }
-        h2 { color: var(--gold); border-bottom: 1px solid #374151; padding-bottom: 10px; margin-top: 0; }
+        h2 { color: var(--gold); border-bottom: 1px solid #374151; padding-bottom: 10px; margin-top: 0; font-size: 1.1rem; }
         input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; background: #1F2937; border: 1px solid #374151; color: white; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: var(--gold); border: none; font-weight: bold; border-radius: 6px; cursor: pointer; color: black; }
+        button { width: 100%; padding: 12px; background: var(--gold); border: none; font-weight: bold; border-radius: 6px; cursor: pointer; color: black; transition: 0.3s; }
+        button:hover { opacity: 0.8; }
         .list-item { background: #1F2937; padding: 12px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; border-left: 4px solid var(--gold); }
         .btn-group { display: flex; gap: 8px; }
-        .btn-sm { padding: 6px 12px; border-radius: 4px; border: none; color: white; cursor: pointer; font-size: 0.8rem; }
+        .btn-sm { padding: 8px 14px; border-radius: 4px; border: none; color: white; cursor: pointer; font-size: 0.8rem; width: auto; }
         
-        #edit-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; width: 90%; max-width: 500px; background: var(--card); border: 2px solid var(--blue); padding: 25px; border-radius: 12px; }
+        /* Modal */
+        #edit-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; width: 90%; max-width: 500px; background: var(--card); border: 2px solid var(--blue); padding: 25px; border-radius: 12px; box-shadow: 0 0 30px rgba(0,0,0,1); }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 900; }
+        .copy-box { background: #000; padding: 10px; border-radius: 6px; color: var(--green); display: flex; justify-content: space-between; align-items: center; border: 1px dashed var(--green); margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div style="max-width: 800px; margin: auto;">
-    <h1 style="color: var(--gold); text-align: center;">FANTINAL ADMIN V5</h1>
+<div style="max-width: 850px; margin: auto;">
+    <h1 style="color: var(--gold); text-align: center;">FANTINAL ADMIN V6</h1>
 
     <div class="box" style="border-color: var(--green);">
-        <h2 style="color: var(--green);">🎟️ Gift Code Generator</h2>
+        <h2 style="color: var(--green);">🎟️ Gift Code System (Generate & Copy)</h2>
         <div style="display:flex; gap:10px;">
             <input type="number" id="g-amt" placeholder="Enter Coin Amount">
             <button onclick="createGiftCode()" style="background:var(--green); color:white; width:150px;">Generate</button>
         </div>
-        <div id="code-display" style="margin-top:15px; text-align:center; color:var(--green); font-size:1.2rem; font-weight:bold;"></div>
+        <div id="copy-area" style="display:none;">
+            <div class="copy-box">
+                <span id="code-text" style="font-family: monospace; font-weight: bold;"></span>
+                <button onclick="copyCode()" style="width:auto; padding:5px 10px; font-size:0.7rem; background:var(--green); color:white;">COPY</button>
+            </div>
+        </div>
     </div>
 
     <div class="box">
-        <h2>📖 Add Novel</h2>
-        <input type="text" id="n-title" placeholder="Title">
-        <input type="text" id="n-author" placeholder="Author">
+        <h2>📖 Add New Novel</h2>
+        <input type="text" id="n-title" placeholder="Novel Title">
+        <input type="text" id="n-author" placeholder="Author Name">
         <textarea id="n-desc" placeholder="Novel Description" rows="2"></textarea>
         <input type="text" id="n-cover" placeholder="Cover Image URL">
         <button onclick="uploadNovel()">UPLOAD NOVEL</button>
+        
+        <h3 style="margin-top: 25px; font-size: 1rem; color: var(--red);">⚙️ Delete Novels</h3>
+        <div id="novel-delete-list"></div>
     </div>
 
-    <div class="box">
-        <h2>📑 Chapter Manager (Add & Edit)</h2>
-        <select id="sel-novel" onchange="listChs()"><option value="">-- Select Novel --</option></select>
-        <div id="ch-list" style="margin: 15px 0;"></div>
+    <div class="box" style="border-color: var(--blue);">
+        <h2 style="color: var(--blue);">📑 Chapter Manager (Edit/Delete)</h2>
+        <select id="sel-novel" onchange="listChapters()"><option value="">-- Select Novel to Manage --</option></select>
+        <div id="ch-list-container" style="margin: 15px 0;"></div>
+        
         <hr style="border: 0.5px solid #4B5563; margin: 20px 0;">
-        <h4>Add New Chapter</h4>
+        <h4 id="ch-form-title">Add New Chapter</h4>
         <input type="number" id="c-num" placeholder="Chapter No.">
         <input type="text" id="c-title" placeholder="Chapter Title">
-        <textarea id="c-content" placeholder="Content..." rows="6"></textarea>
-        <input type="number" id="c-cost" placeholder="Coins Cost">
+        <textarea id="c-content" placeholder="Paste story content here..." rows="8"></textarea>
+        <input type="number" id="c-cost" placeholder="Coins Cost (0 for free)">
         <button onclick="uploadChapter()" style="background:var(--blue); color:white;">PUBLISH CHAPTER</button>
     </div>
 </div>
 
 <div class="overlay" id="overlay" onclick="closeEdit()"></div>
 <div id="edit-modal">
-    <h2 style="color: var(--blue);">Edit Chapter</h2>
+    <h2 style="color: var(--blue);">Edit Chapter Content</h2>
     <div id="edit-form"></div>
-    <button onclick="saveUpdate()" style="background: var(--blue); color: white;">SAVE UPDATE</button>
+    <button onclick="saveUpdate()" style="background: var(--blue); color: white; margin-top: 10px;">SAVE CHANGES</button>
     <button onclick="closeEdit()" style="background: #4B5563; color: white; margin-top: 10px;">CANCEL</button>
 </div>
 
@@ -78,25 +90,40 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    async function refreshData() {
+    async function loadNovels() {
         const snap = await getDocs(collection(db, "novels"));
         const sel = document.getElementById('sel-novel');
-        sel.innerHTML = '<option value="">-- Select Novel --</option>';
+        const delList = document.getElementById('novel-delete-list');
+        sel.innerHTML = '<option value="">-- Select Novel to Manage --</option>';
+        delList.innerHTML = "";
+        
         snap.forEach(d => {
-            sel.innerHTML += `<option value="${d.id}">${d.data().title}</option>`;
+            const data = d.data();
+            sel.innerHTML += `<option value="${d.id}">${data.title}</option>`;
+            delList.innerHTML += `<div class="list-item"><span>${data.title}</span><button class="btn-sm" style="background:var(--red)" onclick="delNovel('${d.id}')">Delete Novel</button></div>`;
         });
     }
-    refreshData();
+    loadNovels();
 
+    // Gift Code with Copy
     window.createGiftCode = async () => {
         const amt = document.getElementById('g-amt').value;
-        if(!amt) return alert("Enter amount!");
+        if(!amt) return alert("Enter coin amount!");
         const code = "FAN-" + Math.random().toString(36).substr(2, 6).toUpperCase();
         await addDoc(collection(db, "gift_codes"), { code, amount: Number(amt), isUsed: false });
-        document.getElementById('code-display').innerText = "Code Created: " + code;
-        alert("Success!");
+        
+        document.getElementById('code-text').innerText = code;
+        document.getElementById('copy-area').style.display = 'block';
+        alert("Gift Code Created!");
     };
 
+    window.copyCode = () => {
+        const text = document.getElementById('code-text').innerText;
+        navigator.clipboard.writeText(text);
+        alert("Code Copied: " + text);
+    };
+
+    // Novel Actions
     window.uploadNovel = async () => {
         await addDoc(collection(db, "novels"), {
             title: document.getElementById('n-title').value,
@@ -105,19 +132,29 @@
             cover: document.getElementById('n-cover').value,
             createdAt: serverTimestamp()
         });
-        alert("Saved!"); refreshData();
+        alert("Novel Uploaded!"); loadNovels();
     };
 
-    window.listChs = async () => {
+    window.delNovel = async (id) => {
+        if(confirm("Are you sure? This will delete the novel permanent!")) {
+            await deleteDoc(doc(db, "novels", id));
+            loadNovels();
+        }
+    };
+
+    // Chapter Actions
+    window.listChapters = async () => {
         const nid = document.getElementById('sel-novel').value;
-        const list = document.getElementById('ch-list');
-        if(!nid) return list.innerHTML = "";
+        const container = document.getElementById('ch-list-container');
+        if(!nid) return container.innerHTML = "";
+        
         const q = query(collection(db, "novels", nid, "chapters"), orderBy("num", "asc"));
         const snap = await getDocs(q);
-        list.innerHTML = "";
+        container.innerHTML = "";
+        
         snap.forEach(d => {
             const c = d.data();
-            list.innerHTML += `<div class="list-item">
+            container.innerHTML += `<div class="list-item" style="border-left-color: var(--blue)">
                 <span>Ch-${c.num}: ${c.title}</span>
                 <div class="btn-group">
                     <button class="btn-sm" style="background:var(--blue)" onclick="openEditCh('${nid}', '${d.id}', ${c.num}, '${c.title}', \`${c.content.replace(/`/g, '\\`')}\`, ${c.cost})">Edit</button>
@@ -129,6 +166,7 @@
 
     window.uploadChapter = async () => {
         const nid = document.getElementById('sel-novel').value;
+        if(!nid) return alert("Please select a novel first!");
         await addDoc(collection(db, "novels", nid, "chapters"), {
             num: Number(document.getElementById('c-num').value),
             title: document.getElementById('c-title').value,
@@ -136,9 +174,10 @@
             cost: Number(document.getElementById('c-cost').value),
             createdAt: serverTimestamp()
         });
-        alert("Published!"); listChs();
+        alert("Chapter Published!"); listChapters();
     };
 
+    // Global Edit Logic
     let editContext = {};
     window.openEditCh = (nid, cid, num, title, content, cost) => {
         editContext = { nid, cid };
@@ -147,7 +186,7 @@
         document.getElementById('edit-form').innerHTML = `
             <input type="number" id="up-num" value="${num}">
             <input type="text" id="up-title" value="${title}">
-            <textarea id="up-content" rows="10">${content}</textarea>
+            <textarea id="up-content" rows="12">${content}</textarea>
             <input type="number" id="up-cost" value="${cost}">
         `;
     };
@@ -160,7 +199,7 @@
             content: document.getElementById('up-content').value,
             cost: Number(document.getElementById('up-cost').value)
         });
-        alert("Updated!"); closeEdit(); listChs();
+        alert("Updated Successfully!"); closeEdit(); listChapters();
     };
 
     window.closeEdit = () => {
@@ -168,7 +207,12 @@
         document.getElementById('overlay').style.display = 'none';
     };
 
-    window.delCh = async (nid, cid) => { if(confirm("Delete?")) { await deleteDoc(doc(db, "novels", nid, "chapters", cid)); listChs(); } };
+    window.delCh = async (nid, cid) => {
+        if(confirm("Delete this chapter?")) {
+            await deleteDoc(doc(db, "novels", nid, "chapters", cid));
+            listChapters();
+        }
+    };
 </script>
 </body>
 </html>
