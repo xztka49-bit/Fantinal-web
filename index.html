@@ -1,373 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fantinal Pro - Premium Edition</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
-        :root { --primary: #60a5fa; --secondary: #c084fc; --bg: #030712; --card: rgba(15, 23, 42, 0.7); --text: #f8fafc; }
-        .light-mode { --bg: #f1f5f9; --card: rgba(255, 255, 255, 0.9); --text: #0f172a; }
-        body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow-x: hidden; }
-        .glass { background: var(--card); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 32px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
-        .sidebar { position: fixed; left: -100%; top: 0; width: 85%; height: 100%; background: var(--bg); z-index: 1000; transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1); border-right: 1px solid rgba(255,255,255,0.1); }
-        .sidebar.active { left: 0; }
-        .btn-grad { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; transition: 0.3s ease; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); }
-        .btn-grad:hover { transform: translateY(-2px); }
-        .cat-tab { padding: 12px 24px; border-radius: 50px; font-size: 12px; font-weight: 800; white-space: nowrap; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
-        .cat-tab.active { background: #3b82f6; color: white; box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); }
-        .noti-toast { position: fixed; top: 25px; right: 25px; z-index: 9999; animation: slideIn 0.5s ease-out; border-radius: 24px; }
-        @keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
-        input, select, textarea { width: 100%; padding: 18px; margin-bottom: 14px; border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: inherit; outline: none; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .qr-card { background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.1); }
-    </style>
-</head>
-<body>
-    <div id="notiBox" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3"></div>
-    <div id="overlay" class="fixed inset-0 bg-black/80 hidden z-[900] backdrop-blur-md" onclick="toggleMenu()"></div>
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
-    <div id="sidebar" class="sidebar p-8 overflow-y-auto no-scrollbar">
-        <div class="flex justify-between items-center mb-12">
-            <div>
-                <h2 class="text-3xl font-black italic tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">LUXURY</h2>
-                <p class="text-[10px] font-bold opacity-40">MEMBERSHIP PRIVILEGE</p>
-            </div>
-            <button onclick="toggleMenu()" class="p-4 bg-red-500/10 text-red-500 rounded-full">✕</button>
-        </div>
-        <div class="glass p-8 mb-10">
-            <p id="userEmail" class="text-xs text-blue-400 font-bold mb-6 truncate italic">loading...</p>
-            <div class="grid grid-cols-2 gap-6">
-                <div><p class="text-[10px] uppercase font-black opacity-40 mb-1">Available</p><p id="uBalance" class="text-3xl font-black text-yellow-500 tracking-tighter">0 C</p></div>
-                <div><p class="text-[10px] uppercase font-black opacity-40 mb-1 text-right">Lifetime Spent</p><p id="uSpent" class="text-3xl font-black text-red-400 text-right tracking-tighter">0 C</p></div>
-            </div>
-            <button onclick="showSection('historySection')" class="w-full mt-8 py-4 bg-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-white/5">View Billing History</button>
-        </div>
-        <div class="space-y-4">
-            <button onclick="showSection('depositSection')" class="w-full btn-grad py-5 rounded-3xl font-black text-sm tracking-widest">DEPOSIT COINS</button>
-            <button onclick="showSection('giftRedeemSection')" class="w-full bg-slate-800/50 border border-white/5 text-white py-5 rounded-3xl font-black text-sm tracking-widest">REDEEM GIFT</button>
-            <div class="pt-10 space-y-3">
-                <button onclick="toggleTheme()" class="w-full bg-blue-500/5 text-blue-400 py-4 rounded-2xl font-bold text-xs uppercase border border-blue-500/10">Switch Appearance</button>
-                <button onclick="auth.signOut()" class="w-full py-4 text-red-500/60 font-black text-[10px] uppercase tracking-[0.2em]">Logout Session</button>
-            </div>
-        </div>
+const firebaseConfig = {
+  apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
+  authDomain: "fantinal-publishing-5b960.firebaseapp.com",
+  projectId: "fantinal-publishing-5b960",
+  storageBucket: "fantinal-publishing-5b960.firebasestorage.app",
+  messagingSenderId: "961612304854",
+  appId: "1:961612304854:web:6bf7b03072ed83b58b9477",
+  measurementId: "G-3X5NP67TX7"
+};
+
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+import { auth, db } from "./firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore";
+
+export const signUpUser = async (email, password, username) => {
+  try {
+    const res = await createUserWithEmailAndPassword(auth, email, password);
+    const user = res.user;
+
+    // Firestore ထဲမှာ User Profile တည်ဆောက်ခြင်း
+    await setDoc(doc(db, "users", user.uid), {
+      uid: user.uid,
+      username: username,
+      email: email,
+      coin_balance: 0, // အစပိုင်းမှာ 0 ပေးထားမယ်
+      role: "user",    // Default role
+      vip_level: 0,    // Phase 3 အတွက် ကြိုထည့်ထားခြင်း
+      created_at: new Date()
+    });
+
+    return { success: true };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+};
+import React, { useState } from 'react';
+import { signUpUser } from './AuthService';
+
+function Signup() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    const result = await signUpUser(email, password, username);
+    if (result.success) {
+      alert("အကောင့်ဖွင့်ခြင်း အောင်မြင်သည်!");
+    } else {
+      alert("မှားယွင်းမှုရှိသည်: " + result.message);
+    }
+  };
+
+  return (
+    <div style={{ padding: '20px', background: '#0B1120', color: 'white', height: '100vh' }}>
+      <h2>Create Luxury Account</h2>
+      <form onSubmit={handleSignup}>
+        <input type="text" placeholder="Username" onChange={(e) => setUsername(e.target.value)} required /><br/><br/>
+        <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required /><br/><br/>
+        <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required /><br/><br/>
+        <button type="submit" style={{ background: '#D4AF37', color: 'black', padding: '10px 20px', border: 'none', cursor: 'pointer' }}>
+          Sign Up
+        </button>
+      </form>
     </div>
+  );
+}
 
-    <nav class="sticky top-0 z-50 px-6 py-5 bg-inherit backdrop-blur-2xl border-b border-white/5 flex justify-between items-center">
-        <div class="flex items-center gap-5">
-            <button onclick="toggleMenu()" class="p-4 glass rounded-2xl"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
-            <h1 class="text-2xl font-black italic tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500" onclick="location.reload()">FANTINAL</h1>
-        </div>
-        <div id="adminBadge" class="hidden px-5 py-2 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-full text-[9px] font-black uppercase shadow-xl animate-pulse">Admin Control</div>
-    </nav>
-
-    <main class="max-w-md mx-auto p-6 pb-40">
-        <div id="authSection" class="hidden py-10">
-            <div class="text-center mb-12"><h2 class="text-4xl font-black mb-2">Welcome Back</h2><p class="text-sm opacity-50 font-bold">Sign in to continue</p></div>
-            <div class="flex gap-2 bg-slate-900/60 p-2 rounded-3xl mb-10 border border-white/5">
-                <button onclick="switchAuth('login')" id="btnLog" class="flex-1 py-4 rounded-2xl font-black text-xs transition-all bg-blue-600">LOGIN</button>
-                <button onclick="switchAuth('reg')" id="btnReg" class="flex-1 py-4 rounded-2xl font-black text-xs transition-all">JOIN US</button>
-            </div>
-            <div id="loginForm" class="glass p-10">
-                <input type="email" id="lEmail" placeholder="Email Address">
-                <input type="password" id="lPass" placeholder="Password">
-                <button onclick="login()" class="w-full btn-grad py-5 rounded-2xl font-black mt-4 uppercase text-xs">Authorize Entry</button>
-            </div>
-            <div id="regForm" class="glass p-10 hidden">
-                <input type="email" id="rEmail" placeholder="New Email Address">
-                <input type="password" id="rPass" placeholder="Secure Password">
-                <button onclick="register()" class="w-full btn-grad py-5 rounded-2xl font-black mt-4 uppercase text-xs">Create Identity</button>
-            </div>
-        </div>
-
-        <div id="homeSection" class="hidden">
-            <div id="adSlider" class="flex overflow-x-auto gap-4 mb-12 no-scrollbar h-60 rounded-[40px] shadow-2xl"></div>
-            <div class="flex overflow-x-auto no-scrollbar gap-3 mb-10 pb-2">
-                <button onclick="filterBooks('All')" class="cat-tab active">All Library</button>
-                <button onclick="filterBooks('Fan Fiction')" class="cat-tab">Fan Fiction</button>
-                <button onclick="filterBooks('Life')" class="cat-tab">Life</button>
-                <button onclick="filterBooks('True Story')" class="cat-tab">True Story</button>
-                <button onclick="filterBooks('Mega')" class="cat-tab">Mega</button>
-            </div>
-            <div id="bookGrid" class="grid grid-cols-2 gap-6"></div>
-            <div id="adminBtn" class="hidden mt-16"><button onclick="showSection('adminDashboard')" class="w-full py-6 glass border-red-500/30 text-red-500 font-black text-[10px] uppercase tracking-[0.3em]">Administrator Management</button></div>
-        </div>
-
-        <div id="depositSection" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] uppercase flex items-center gap-2">← Return</button>
-            <div class="glass p-10">
-                <h2 class="text-3xl font-black mb-10 italic text-blue-400">Add Wealth</h2>
-                <div class="grid grid-cols-1 gap-4 mb-10">
-                    <div class="qr-card p-6 rounded-[30px] text-center">
-                        <img src="https://img.sanishtech.com/u/b80997ba169794aaad6fd4146e649353.jpeg" alt="KPay" class="w-40 h-40 mx-auto mb-4 rounded-3xl border-4 border-white/5 object-cover">
-                        <p class="text-[11px] font-black text-blue-400">KBZ PAY QR</p>
-                    </div>
-                    <div class="qr-card p-6 rounded-[30px] text-center">
-                        <img src="https://img.sanishtech.com/u/6ed8971d622b39fae5c2baea16b2be4c.jpeg" alt="Wave" class="w-40 h-40 mx-auto mb-4 rounded-3xl border-4 border-white/5 object-cover">
-                        <p class="text-[11px] font-black text-yellow-500">WAVEPAY QR</p>
-                    </div>
-                </div>
-                <select id="coinPackage" class="font-bold">
-                    <option value="1000">1,000 MMK (1,000 C)</option>
-                    <option value="5000">5,000 MMK (5,000 C)</option>
-                    <option value="10000">10,000 MMK (10,000 C)</option>
-                    <option value="30000">30,000 MMK (30,000 C)</option>
-                </select>
-                <input type="text" id="payName" placeholder="Payer Name">
-                <input type="text" id="payTid" placeholder="Transaction ID (Last 6 Digits)">
-                <button onclick="submitDeposit()" class="w-full btn-grad py-5 rounded-2xl font-black text-xs uppercase mt-4">Confirm Transfer</button>
-            </div>
-        </div>
-
-        <div id="adminDashboard" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] uppercase">← System Exit</button>
-            <div class="flex overflow-x-auto no-scrollbar gap-2 mb-10 bg-slate-900/60 p-2 rounded-[25px]">
-                <button onclick="setAdminTab('req')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase bg-blue-600">Requests</button>
-                <button onclick="setAdminTab('nov')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase">Novels</button>
-                <button onclick="setAdminTab('usr')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase">Users</button>
-                <button onclick="setAdminTab('gft')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase">Gifts</button>
-                <button onclick="setAdminTab('ads')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase">Ads</button>
-                <button onclick="setAdminTab('fin')" class="adm-t flex-1 py-3 rounded-2xl text-[9px] font-black uppercase">Finance</button>
-            </div>
-            <div id="tab-req" class="space-y-4"></div>
-            <div id="tab-nov" class="hidden">
-                <button onclick="openNovelForm()" class="w-full btn-grad py-5 rounded-3xl font-black text-[10px] mb-10">+ REGISTER NEW NOVEL</button>
-                <div id="admNovelList" class="space-y-4"></div>
-            </div>
-            <div id="tab-usr" class="hidden"><div id="admUserList" class="space-y-3"></div></div>
-            <div id="tab-gft" class="hidden">
-                <div class="glass p-10 mb-8 border-purple-500/20"><input type="number" id="genAmt" placeholder="Coin Amount"><button onclick="generateGift()" class="w-full bg-purple-600 py-4 rounded-2xl font-black text-[10px] uppercase">Forge Gift Code</button></div>
-                <div id="admGiftList" class="space-y-3"></div>
-            </div>
-            <div id="tab-ads" class="hidden">
-                <div class="glass p-8 space-y-4"><input type="text" id="adU1" placeholder="Ad 1 URL"><input type="text" id="adU2" placeholder="Ad 2 URL"><input type="text" id="adU3" placeholder="Ad 3 URL"><button onclick="updateAds()" class="w-full btn-grad py-4 rounded-2xl font-black text-[10px]">Update Visuals</button></div>
-            </div>
-            <div id="tab-fin" class="hidden"><div class="glass p-10 text-center border-green-500/30 mb-8"><p class="text-[10px] font-black uppercase text-green-500 mb-2">Total MMK</p><h2 id="totalFinance" class="text-4xl font-black">0 MMK</h2></div></div>
-        </div>
-
-        <div id="historySection" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] uppercase">← Return</button>
-            <div id="historyList" class="space-y-4"></div>
-        </div>
-
-        <div id="chapterView" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] uppercase">← Back</button>
-            <div class="glass p-10 mb-10 border-yellow-500/20 flex justify-between items-center">
-                <div><p class="text-[9px] font-black opacity-40 mb-1">Lifetime VIP</p><h3 id="vipPriceTag" class="text-4xl font-black text-yellow-500">0 C</h3></div>
-                <button id="vipBtn" onclick="buyVip()" class="bg-gradient-to-br from-yellow-500 to-amber-700 text-white px-8 py-4 rounded-[20px] text-[10px] font-black">ELEVATE</button>
-            </div>
-            <div id="admChapAdd" class="hidden mb-10"><button onclick="showSection('chapterForm')" class="w-full py-5 glass border-blue-500/20 text-blue-400 font-black text-[10px]">+ APPEND NEW CHAPTER</button></div>
-            <div id="chapterList" class="space-y-4"></div>
-        </div>
-
-        <div id="chapterForm" class="hidden">
-            <input type="text" id="cTitle" placeholder="Segment Title" class="font-black">
-            <textarea id="cContent" rows="15" placeholder="Draft your content here..."></textarea>
-            <div class="flex gap-4"><input type="number" id="cPrice" placeholder="Value (0=Free)" class="flex-1"><button onclick="saveChapter()" class="flex-[2] btn-grad py-4 rounded-2xl font-black uppercase text-[10px]">Authorize Publication</button></div>
-            <button onclick="showSection('chapterView')" class="w-full py-6 text-gray-500 font-bold text-[10px]">Discard</button>
-        </div>
-
-        <div id="giftRedeemSection" class="hidden">
-            <button onclick="showSection('homeSection')" class="text-blue-400 mb-10 font-black text-[10px] uppercase">← Return</button>
-            <div class="glass p-12 text-center">
-                <h2 class="text-4xl font-black mb-10 text-purple-400 italic">GIFT CARD</h2>
-                <input type="text" id="gCodeInput" placeholder="XXXX-XXXX-XXXX" class="text-center font-black uppercase py-6 text-xl">
-                <button onclick="redeemGift()" class="w-full btn-grad py-5 rounded-2xl font-black mt-6 uppercase text-xs">REDEEM VOUCHER</button>
-            </div>
-        </div>
-
-        <div id="readerSection" class="hidden fixed inset-0 bg-inherit z-[2000] p-8 overflow-y-auto no-scrollbar">
-            <div class="max-w-md mx-auto">
-                <div class="flex justify-between items-center mb-12"><button onclick="showSection('chapterView')" class="p-5 bg-white/5 text-red-500 rounded-full">✕</button><p class="text-[10px] font-bold text-blue-400">READING MODE</p></div>
-                <div id="readerBody" class="whitespace-pre-wrap leading-[2.5] text-xl font-medium pb-32 text-justify"></div>
-                <div class="fixed bottom-0 left-0 right-0 p-8 flex gap-4 max-w-md mx-auto z-10">
-                    <button id="pBtn" class="flex-1 glass py-5 font-black text-[10px]">BACK</button>
-                    <button id="nBtn" class="flex-1 btn-grad py-5 rounded-3xl font-black text-[10px]">FORWARD</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="novelFormSection" class="hidden">
-            <h2 class="text-3xl font-black mb-10">Novel Asset</h2>
-            <input type="text" id="nTitle" placeholder="Asset Title">
-            <input type="text" id="nCover" placeholder="Cover Image URL">
-            <select id="nGenre" class="font-bold">
-                <option value="Fan Fiction">Fan Fiction</option><option value="Life">Life</option><option value="True Story">True Story</option><option value="Mega">Mega</option>
-            </select>
-            <button onclick="saveNovel()" class="w-full btn-grad py-5 rounded-2xl font-black uppercase text-xs">Commit Changes</button>
-            <button onclick="showSection('adminDashboard')" class="w-full py-5 text-gray-500 font-bold text-[10px] mt-2">Abort Session</button>
-        </div>
-    </main>
-
-    <script>
-        // CONFIG
-        const firebaseConfig = {
-            apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
-            authDomain: "fantinal-publishing-5b960.firebaseapp.com",
-            projectId: "fantinal-publishing-5b960",
-            storageBucket: "fantinal-publishing-5b960.firebasestorage.app",
-            messagingSenderId: "961612304854",
-            appId: "1:961612304854:web:6bf7b03072ed83b58b9477"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth(), db = firebase.firestore();
-        let curB = "", curE = null, allC = [], curI = 0;
-
-        // UI HELPERS
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('hidden'); }
-        function showSection(id) { document.querySelectorAll('main > div').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); window.scrollTo(0,0); document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.add('hidden'); }
-        function switchAuth(t) { document.getElementById('loginForm').classList.toggle('hidden', t==='reg'); document.getElementById('regForm').classList.toggle('hidden', t==='login'); document.getElementById('btnLog').classList.toggle('bg-blue-600', t==='login'); document.getElementById('btnReg').classList.toggle('bg-blue-600', t==='reg'); }
-        function setAdminTab(t) { document.querySelectorAll('.adm-t').forEach(b => b.classList.remove('bg-blue-600')); event.target.classList.add('bg-blue-600'); ['req','nov','usr','gft','ads','fin'].forEach(x => document.getElementById('tab-'+x).classList.add('hidden')); document.getElementById('tab-'+t).classList.remove('hidden'); if(t==='usr') loadUsers(); if(t==='nov') loadAdmNovels(); if(t==='gft') loadGifts(); if(t==='fin') loadFinance(); }
-        function toggleTheme() { document.body.classList.toggle('light-mode'); }
-
-        // CORE LOGIC
-        auth.onAuthStateChanged(user => {
-            if(user) {
-                document.getElementById('userEmail').innerText = user.email;
-                const isAdmin = user.email === 'xztka49@gmail.com';
-                if(isAdmin) { ['adminBadge','adminBtn','admChapAdd'].forEach(id => document.getElementById(id).classList.remove('hidden')); loadAdminReqs(); }
-                db.collection('users').doc(user.uid).onSnapshot(doc => { if(doc.exists) { 
-                    document.getElementById('uBalance').innerText = (doc.data().coins || 0) + " C"; 
-                    document.getElementById('uSpent').innerText = (doc.data().spent || 0) + " C"; 
-                    if(doc.data().history) loadHistory(doc.data().history);
-                }});
-                showSection('homeSection'); filterBooks('All'); loadAds();
-            } else showSection('authSection');
-        });
-
-        async function submitDeposit() {
-            const amt = parseInt(document.getElementById('coinPackage').value), name = document.getElementById('payName').value, tid = document.getElementById('payTid').value;
-            if(!name || tid.length < 5) return alert("Fill details correctly.");
-            await db.collection('coinRequests').add({ uid: auth.currentUser.uid, email: auth.currentUser.email, amt, buyerName: name, transId: tid, status: 'pending', date: new Date() });
-            alert("Deposit Request Sent."); showSection('homeSection');
-        }
-
-        function loadAdminReqs() {
-            db.collection('coinRequests').where('status','==','pending').onSnapshot(snap => {
-                document.getElementById('tab-req').innerHTML = snap.docs.map(doc => `
-                    <div class="glass p-8 border-white/5 relative">
-                        <div class="mb-6"><p class="font-black">${doc.data().buyerName}</p><p class="text-[10px] opacity-40">${doc.data().email}</p></div>
-                        <div class="flex gap-3"><button onclick="approveDep('${doc.id}', '${doc.data().uid}', ${doc.data().amt}, 'approved')" class="flex-1 bg-blue-600 py-3 rounded-xl text-[9px] font-black">APPROVE</button>
-                        <button onclick="approveDep('${doc.id}', '', 0, 'rejected')" class="flex-1 bg-red-500/10 text-red-500 py-3 rounded-xl text-[9px] font-black">DECLINE</button></div>
-                    </div>`).join('') || "<p class='text-center py-24 opacity-20'>CLEAR</p>";
-            });
-        }
-
-        async function approveDep(id, uid, amt, status) {
-            try {
-                if(status === 'approved' && uid) {
-                    const userRef = db.collection('users').doc(uid);
-                    await userRef.update({ 
-                        coins: firebase.firestore.FieldValue.increment(amt),
-                        history: firebase.firestore.FieldValue.arrayUnion({type:'Deposit', amt, date: new Date().toLocaleString()})
-                    });
-                    await db.collection('admin').doc('fin').set({ total: firebase.firestore.FieldValue.increment(amt) }, {merge:true});
-                }
-                await db.collection('coinRequests').doc(id).update({ status });
-                alert("Transaction Processed.");
-            } catch(e) { alert("Error: " + e.message); }
-        }
-
-        // NOVELS, VIP, CHAPTERS
-        async function filterBooks(cat) {
-            const snap = (cat === 'All') ? await db.collection('books').get() : await db.collection('books').where('genre','==',cat).get();
-            document.getElementById('bookGrid').innerHTML = snap.docs.map(doc => `
-                <div class="glass overflow-hidden group relative" onclick="openBook('${doc.id}')">
-                    <img src="${doc.data().cover}" class="h-56 w-full object-cover">
-                    <div class="p-5"><p class="font-black text-[12px] truncate">${doc.data().title}</p></div>
-                </div>`).join('');
-        }
-
-        async function openBook(id) {
-            curB = id; showSection('chapterView');
-            db.collection('books').doc(id).onSnapshot(doc => { if(doc.exists) document.getElementById('vipPriceTag').innerText = (doc.data().vipPrice || 5000) + " C"; });
-            loadChaps();
-        }
-
-        async function buyVip() {
-            const uRef = db.collection('users').doc(auth.currentUser.uid), bDoc = await db.collection('books').doc(curB).get();
-            const uDoc = await uRef.get(), price = bDoc.data().vipPrice || 5000;
-            if((uDoc.data().vips || []).includes(curB)) return alert("Already VIP!");
-            if(uDoc.data().coins < price) return alert("Low Coins!");
-            if(!confirm(`Pay ${price} C for VIP?`)) return;
-            await uRef.update({ coins: firebase.firestore.FieldValue.increment(-price), spent: firebase.firestore.FieldValue.increment(price), vips: firebase.firestore.FieldValue.arrayUnion(curB), history: firebase.firestore.FieldValue.arrayUnion({type:'VIP Unlock', title: bDoc.data().title, amt: price, date: new Date().toLocaleString()})});
-            alert("VIP Activated!"); loadChaps();
-        }
-
-        async function loadChaps() {
-            const snap = await db.collection('books').doc(curB).collection('chapters').orderBy('date','asc').get();
-            const uDoc = await db.collection('users').doc(auth.currentUser.uid).get();
-            const isVip = (uDoc.data().vips || []).includes(curB), bought = uDoc.data().bought || [];
-            allC = snap.docs.map(d => ({id: d.id, ...d.data()}));
-            document.getElementById('chapterList').innerHTML = allC.map((c, i) => {
-                const can = c.price === 0 || isVip || bought.includes(c.id);
-                return `<div class="glass p-6 flex justify-between items-center">
-                    <div><p class="text-xs font-black">${c.title}</p></div>
-                    <button onclick="readC(${i}, ${can})" class="${can?'bg-blue-600':'bg-white/5'} px-6 py-2 rounded-xl text-[9px] font-black">${can?'READ':'BUY ('+c.price+'C)'}</button>
-                </div>`;
-            }).join('');
-        }
-
-        async function readC(idx, can) {
-            if(!can) {
-                const c = allC[idx], uRef = db.collection('users').doc(auth.currentUser.uid), uDoc = await uRef.get();
-                if(uDoc.data().coins < c.price) return alert("Low Coins!");
-                if(!confirm("Buy Chapter?")) return;
-                await uRef.update({ coins: firebase.firestore.FieldValue.increment(-c.price), bought: firebase.firestore.FieldValue.arrayUnion(c.id), history: firebase.firestore.FieldValue.arrayUnion({type:'Chapter Buy', title: c.title, amt: c.price, date: new Date().toLocaleString()})});
-                can = true;
-            }
-            if(can) { curI = idx; document.getElementById('readerBody').innerText = allC[idx].content; showSection('readerSection'); 
-            document.getElementById('pBtn').onclick = () => idx > 0 && readC(idx-1, true);
-            document.getElementById('nBtn').onclick = () => idx < allC.length-1 && readC(idx+1, true); }
-        }
-
-        // ADMIN FEATURES
-        async function saveNovel() {
-            const data = { title: document.getElementById('nTitle').value, cover: document.getElementById('nCover').value, genre: document.getElementById('nGenre').value };
-            if(curE) await db.collection('books').doc(curE).update(data);
-            else await db.collection('books').add({ ...data, views: 0, sales: 0, vipPrice: 5000, date: new Date() });
-            showSection('adminDashboard'); filterBooks('All');
-        }
-
-        async function saveChapter() {
-            const t = document.getElementById('cTitle').value, c = document.getElementById('cContent').value, p = parseInt(document.getElementById('cPrice').value);
-            await db.collection('books').doc(curB).collection('chapters').add({ title: t, content: c, price: p || 0, date: new Date() });
-            showSection('chapterView'); loadChaps();
-        }
-
-        async function loadUsers() {
-            const snap = await db.collection('users').get();
-            document.getElementById('admUserList').innerHTML = snap.docs.map(doc => `<div class="glass p-4 flex justify-between text-[10px]"><span>${doc.data().email}</span><span class="text-yellow-500 font-bold">${doc.data().coins} C</span></div>`).join('');
-        }
-
-        async function generateGift() {
-            const amt = parseInt(document.getElementById('genAmt').value);
-            const code = "FTN-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-            await db.collection('giftCodes').doc(code).set({ code, amount: amt, status: 'unused', createdAt: new Date() });
-            alert("Code: " + code); loadGifts();
-        }
-
-        async function redeemGift() {
-            const code = document.getElementById('gCodeInput').value.trim();
-            const ref = db.collection('giftCodes').doc(code), doc = await ref.get();
-            if(!doc.exists || doc.data().status !== 'unused') return alert("Invalid Code");
-            await db.collection('users').doc(auth.currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(doc.data().amount), history: firebase.firestore.FieldValue.arrayUnion({type:'Gift Redeem', amt: doc.data().amount, date: new Date().toLocaleString()})});
-            await ref.update({ status: 'used' });
-            alert("Coins Added!"); showSection('homeSection');
-        }
-
-        async function loadAds() {
-            const d = await db.collection('settings').doc('ads').get();
-            if(d.exists) document.getElementById('adSlider').innerHTML = d.data().images.filter(i=>i).map(i => `<img src="${i}" class="min-w-full h-full object-cover">`).join('');
-        }
-
-        async function login() { try { await auth.signInWithEmailAndPassword(document.getElementById('lEmail').value, document.getElementById('lPass').value); } catch(e) { alert(e.message); } }
-        async function register() { try { const res = await auth.createUserWithEmailAndPassword(document.getElementById('rEmail').value, document.getElementById('rPass').value); await db.collection('users').doc(res.user.uid).set({ email: res.user.email, coins: 0, spent: 0, vips: [], bought: [], history: [] }); } catch(e) { alert(e.message); } }
-        function loadHistory(h) { document.getElementById('historyList').innerHTML = h.reverse().map(i => `<div class="glass p-6 flex justify-between"><div><p class="text-[10px] text-blue-400">${i.type}</p><p class="text-[9px] opacity-40">${i.date}</p></div><p class="font-black">${i.amt} C</p></div>`).join(''); }
-    </script>
-</body>
-</html>
+export default Signup;
