@@ -5,29 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fantinal Publishing</title>
     <style>
-        :root { --gold: #D4AF37; --bg: #0B1120; --card: #111827; --text: #E5E7EB; }
+        :root { --gold: #D4AF37; --bg: #0B1120; --card: #111827; --text: #E5E7EB; --green: #10B981; }
         body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; }
         
-        /* Views */
+        /* Views Management */
         .view { display: none; padding: 20px; animation: fadeIn 0.4s; }
         header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(212, 175, 55, 0.3); padding-bottom: 15px; margin-bottom: 20px; }
-        .logo { color: var(--gold); font-size: 1.4rem; font-weight: bold; cursor: pointer; }
+        .logo { color: var(--gold); font-size: 1.4rem; font-weight: bold; letter-spacing: 2px; cursor: pointer; }
         .user-stats { background: rgba(212, 175, 55, 0.15); padding: 8px 15px; border-radius: 30px; border: 1px solid var(--gold); font-size: 0.85rem; cursor: pointer; }
 
-        /* Novel List */
+        /* Novel Grid & Cards */
         .novel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
-        .novel-card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid #1F2937; cursor: pointer; }
+        .novel-card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid #1F2937; cursor: pointer; transition: 0.3s; }
+        .novel-card:hover { border-color: var(--gold); transform: translateY(-5px); }
         .novel-card img { width: 100%; height: 210px; object-fit: cover; }
         .novel-info { padding: 10px; font-weight: bold; font-size: 0.85rem; color: var(--gold); }
 
-        /* Chapters & Reader */
-        .chapter-item { padding: 15px; border-bottom: 1px solid #1F2937; display: flex; justify-content: space-between; cursor: pointer; }
+        /* Chapter List & Reader */
+        .chapter-item { padding: 15px; border-bottom: 1px solid #1F2937; display: flex; justify-content: space-between; cursor: pointer; transition: 0.2s; }
         .chapter-item:hover { background: #111827; }
-        #reader-content { line-height: 1.8; font-size: 1.1rem; max-width: 800px; margin: auto; text-align: justify; white-space: pre-wrap; }
+        #reader-content { line-height: 1.8; font-size: 1.15rem; max-width: 700px; margin: auto; text-align: justify; white-space: pre-wrap; padding-bottom: 50px; }
 
-        /* General UI */
-        button { background: var(--gold); border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .back-btn { background: transparent; color: var(--gold); border: 1px solid var(--gold); margin-bottom: 20px; }
+        /* Forms & Buttons */
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #1F2937; border: 1px solid #374151; color: white; border-radius: 8px; box-sizing: border-box; }
+        button { background: var(--gold); border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        button:active { transform: scale(0.98); }
+        .back-btn { background: transparent; color: var(--gold); border: 1px solid var(--gold); margin-bottom: 20px; padding: 8px 15px; }
+        
+        /* Gift Code Section */
+        .gift-section { background: rgba(16, 185, 129, 0.1); border: 1px dashed var(--green); padding: 20px; border-radius: 12px; margin-top: 30px; }
         
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -35,11 +41,11 @@
 <body>
 
 <div id="auth-view" class="view" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-    <div style="background: var(--card); padding: 2rem; border-radius: 15px; border: 1px solid var(--gold); width: 300px; text-align: center;">
-        <h2 style="color:var(--gold)">FANTINAL</h2>
-        <input type="email" id="email" placeholder="Email" style="width:100%; padding:10px; margin:10px 0; background:#1F2937; border:1px solid #374151; color:white;">
-        <input type="password" id="pw" placeholder="Password" style="width:100%; padding:10px; margin:10px 0; background:#1F2937; border:1px solid #374151; color:white;">
-        <button onclick="handleLogin()" style="width:100%">SIGN IN</button>
+    <div style="background: var(--card); padding: 2.5rem; border-radius: 15px; border: 1px solid var(--gold); width: 320px; text-align: center;">
+        <h2 style="color:var(--gold); margin-bottom: 20px;">FANTINAL</h2>
+        <input type="email" id="email" placeholder="Email Address">
+        <input type="password" id="pw" placeholder="Password">
+        <button onclick="handleLogin()" style="width:100%; margin-top: 10px;">SIGN IN</button>
     </div>
 </div>
 
@@ -47,38 +53,50 @@
     <header>
         <div class="logo">FANTINAL</div>
         <div class="user-stats" onclick="showView('shop-view')">
-            <span id="u-name">...</span> | 🪙 <span id="u-coins">0</span>
+            <span id="u-name">Reader</span> | 🪙 <span id="u-coins">0</span>
         </div>
     </header>
-    <h3>Latest Business Novels</h3>
+    <h3 style="margin-bottom: 20px; color: var(--gold);">Recommended Novels</h3>
     <div class="novel-grid" id="novel-list"></div>
 </div>
 
 <div id="detail-view" class="view">
-    <button class="back-btn" onclick="showView('home-view')">← Back to Library</button>
-    <div id="novel-header" style="display:flex; gap:20px; margin-bottom:30px;"></div>
-    <h4>Chapters</h4>
+    <button class="back-btn" onclick="showView('home-view')">← Back</button>
+    <div id="novel-header" style="display:flex; gap:20px; margin-bottom:30px; background: var(--card); padding: 15px; border-radius: 12px;"></div>
+    <h4 style="border-left: 4px solid var(--gold); padding-left: 10px;">Table of Contents</h4>
     <div id="chapter-list"></div>
 </div>
 
 <div id="reader-view" class="view">
-    <header>
-        <button class="back-btn" onclick="goBackToDetail()" style="margin:0">← Close</button>
+    <header style="position: sticky; top: 0; background: var(--bg); z-index: 10;">
+        <button class="back-btn" onclick="showView('detail-view')" style="margin:0">← Close</button>
         <span id="reader-title" style="color:var(--gold); font-weight:bold;"></span>
     </header>
     <div id="reader-content"></div>
 </div>
 
 <div id="shop-view" class="view">
-    <button class="back-btn" onclick="showView('home-view')">← Close Shop</button>
-    <h2 style="color: var(--gold)">Coin Top-up (Demo)</h2>
-    <button onclick="addDemoCoins(1000)">Get 1,000 Coins</button>
+    <button class="back-btn" onclick="showView('home-view')">← Back to Home</button>
+    <h2 style="color: var(--gold)">Coin Wallet</h2>
+    
+    <div style="background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+        <p>Current Balance: <span style="color: var(--gold); font-weight: bold;">🪙 <span id="shop-coins">0</span></span></p>
+    </div>
+
+    <div class="gift-section">
+        <h4 style="margin-top: 0; color: var(--green);">Redeem Gift Code</h4>
+        <p style="font-size: 0.8rem; color: #9CA3AF;">သင်ရရှိထားသော Gift Code (FAN-XXXXXX) ကို ရိုက်ထည့်ပါ။</p>
+        <input type="text" id="gift-input" placeholder="FAN-XXXXXX" style="text-transform: uppercase;">
+        <button onclick="redeemCode()" style="background: var(--green); color: white; width: 100%;">Redeem Now</button>
+    </div>
+
+    <p style="text-align: center; color: #4B5563; font-size: 0.8rem; margin-top: 30px;">Top-up with KPay/WavePay coming soon!</p>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, doc, onSnapshot, collection, query, orderBy, getDocs, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getFirestore, doc, onSnapshot, collection, query, orderBy, getDocs, updateDoc, increment, getDoc, where, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
@@ -86,7 +104,8 @@
     projectId: "fantinal-publishing-5b960",
     storageBucket: "fantinal-publishing-5b960.firebasestorage.app",
     messagingSenderId: "961612304854",
-    appId: "1:961612304854:web:6bf7b03072ed83b58b9477"
+    appId: "1:961612304854:web:6bf7b03072ed83b58b9477",
+    measurementId: "G-3X5NP67TX7"
   };
 
   const app = initializeApp(firebaseConfig);
@@ -94,13 +113,16 @@
   const db = getFirestore(app);
   let userUid, currentNovelId;
 
+  // Track User Session
   onAuthStateChanged(auth, (user) => {
     if (user) {
       userUid = user.uid;
       showView('home-view');
       onSnapshot(doc(db, "users", user.uid), (s) => {
-        document.getElementById('u-name').innerText = s.data().username;
-        document.getElementById('u-coins').innerText = s.data().coin_balance;
+        const data = s.data();
+        document.getElementById('u-name').innerText = data.username || "Reader";
+        document.getElementById('u-coins').innerText = data.coin_balance || 0;
+        document.getElementById('shop-coins').innerText = data.coin_balance || 0;
       });
       loadNovels();
     } else { showView('auth-view'); }
@@ -109,6 +131,7 @@
   window.showView = (id) => {
     document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
     document.getElementById(id).style.display = 'block';
+    window.scrollTo(0,0);
   };
 
   async function loadNovels() {
@@ -129,7 +152,10 @@
   async function openNovel(id, n) {
     currentNovelId = id;
     showView('detail-view');
-    document.getElementById('novel-header').innerHTML = `<img src="${n.cover}" width="100"><div><h3>${n.title}</h3><p>${n.desc}</p></div>`;
+    document.getElementById('novel-header').innerHTML = `
+        <img src="${n.cover}" width="100" style="border-radius:8px;">
+        <div><h3 style="margin:0; color:var(--gold);">${n.title}</h3><p style="font-size:0.85rem; color:#9CA3AF;">${n.desc}</p></div>
+    `;
     
     const q = query(collection(db, "novels", id, "chapters"), orderBy("num", "asc"));
     const snap = await getDocs(q);
@@ -139,17 +165,17 @@
       const ch = c.data();
       cList.innerHTML += `<div class="chapter-item" onclick="readChapter('${c.id}', ${ch.cost})">
         <span>Chapter ${ch.num}: ${ch.title}</span>
-        <span style="color:var(--gold)">${ch.cost > 0 ? '🪙 '+ch.cost : 'FREE'}</span>
+        <span style="color:var(--gold); font-weight:bold;">${ch.cost > 0 ? '🪙 '+ch.cost : 'FREE'}</span>
       </div>`;
     });
   }
 
   window.readChapter = async (cId, cost) => {
-    const userDoc = await getDoc(doc(db, "users", userUid));
-    const coins = userDoc.data().coin_balance;
+    const userSnap = await getDoc(doc(db, "users", userUid));
+    const currentCoins = userSnap.data().coin_balance || 0;
 
-    if (cost > 0 && coins < cost) {
-      alert("Coins မလုံလောက်ပါ။ ကျေးဇူးပြု၍ Coin ဝယ်ယူပါ။");
+    if (cost > 0 && currentCoins < cost) {
+      alert("Coins မလုံလောက်ပါ။ Gift Code သုံးပါ သို့မဟုတ် Coin ဝယ်ယူပါ။");
       showView('shop-view');
       return;
     }
@@ -162,13 +188,39 @@
     const cSnap = await getDoc(doc(db, "novels", currentNovelId, "chapters", cId));
     const cData = cSnap.data();
     showView('reader-view');
-    document.getElementById('reader-title').innerText = "Chapter " + cData.num;
+    document.getElementById('reader-title').innerText = "Chapter " + cData.num + " - " + cData.title;
     document.getElementById('reader-content').innerText = cData.content;
   };
 
-  window.goBackToDetail = () => showView('detail-view');
-  window.addDemoCoins = async (amt) => await updateDoc(doc(db, "users", userUid), { coin_balance: increment(amt) });
-  window.handleLogin = async () => await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pw').value).catch(e => alert(e.message));
+  // REDEEM GIFT CODE LOGIC
+  window.redeemCode = async () => {
+    const codeInput = document.getElementById('gift-input').value.trim().toUpperCase();
+    if(!codeInput) return;
+
+    const q = query(collection(db, "gift_codes"), where("code", "==", codeInput), where("isUsed", "==", false), limit(1));
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      alert("မှားယွင်းနေပါသည် သို့မဟုတ် အသုံးပြုပြီးသား Code ဖြစ်နေပါသည်။");
+      return;
+    }
+
+    const codeDoc = snap.docs[0];
+    const rewardAmt = codeDoc.data().amount;
+
+    try {
+      await updateDoc(doc(db, "users", userUid), { coin_balance: increment(rewardAmt) });
+      await updateDoc(doc(db, "gift_codes", codeDoc.id), { isUsed: true });
+      alert(`အောင်မြင်ပါသည်! 🪙 ${rewardAmt} Coins ရရှိပါသည်။`);
+      document.getElementById('gift-input').value = "";
+    } catch (e) { alert("Error: " + e.message); }
+  };
+
+  window.handleLogin = async () => {
+    const email = document.getElementById('email').value;
+    const pw = document.getElementById('pw').value;
+    await signInWithEmailAndPassword(auth, email, pw).catch(e => alert("အီးမေးလ် သို့မဟုတ် Password မှားနေပါသည်။"));
+  };
 </script>
 
 </body>
