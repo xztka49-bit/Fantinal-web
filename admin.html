@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fantinal Admin Master V6.1</title>
+    <title>Fantinal Admin Master V6.2</title>
     <style>
         :root { --gold: #D4AF37; --bg: #0B1120; --card: #111827; --blue: #3B82F6; --red: #EF4444; --green: #10B981; }
         body { background: var(--bg); color: white; font-family: sans-serif; padding: 20px; }
@@ -9,8 +9,11 @@
         h2 { color: var(--gold); border-bottom: 1px solid #374151; padding-bottom: 10px; margin-top: 0; font-size: 1.1rem; }
         input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; background: #1F2937; border: 1px solid #374151; color: white; border-radius: 6px; box-sizing: border-box; }
         button { width: 100%; padding: 12px; background: var(--gold); border: none; font-weight: bold; border-radius: 6px; cursor: pointer; color: black; transition: 0.3s; }
+        button:active { transform: scale(0.98); }
         .list-item { background: #1F2937; padding: 12px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; border-left: 4px solid var(--gold); }
         .btn-sm { padding: 8px 14px; border-radius: 4px; border: none; color: white; cursor: pointer; font-size: 0.8rem; width: auto; margin-left: 5px;}
+        
+        /* Modal UI */
         #edit-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; width: 90%; max-width: 500px; background: var(--card); border: 2px solid var(--blue); padding: 25px; border-radius: 12px; box-shadow: 0 0 30px rgba(0,0,0,1); }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 900; }
         .copy-box { background: #000; padding: 10px; border-radius: 6px; color: var(--green); display: flex; justify-content: space-between; align-items: center; border: 1px dashed var(--green); margin-top: 10px; }
@@ -18,7 +21,7 @@
 </head>
 <body>
     <div style="max-width: 850px; margin: auto;">
-        <h1 style="color: var(--gold); text-align: center;">FANTINAL MASTER CONTROL</h1>
+        <h1 style="color: var(--gold); text-align: center; letter-spacing: 2px;">FANTINAL MASTER CONTROL</h1>
 
         <div class="box" style="border-color: var(--green);">
             <h2 style="color: var(--green);">🎟️ Gift Code Generator</h2>
@@ -26,30 +29,51 @@
                 <input type="number" id="g-amt" placeholder="Enter Coin Amount">
                 <button onclick="createGiftCode()" style="background:var(--green); color:white; width:150px;">Generate</button>
             </div>
-            <div id="copy-area" style="display:none;"><div class="copy-box"><span id="code-text" style="font-family: monospace;"></span><button onclick="copyCode()" style="width:auto; padding:5px 10px; background:var(--green); color:white;">COPY</button></div></div>
+            <div id="copy-area" style="display:none;">
+                <div class="copy-box"><span id="code-text" style="font-family: monospace; font-weight: bold;"></span><button onclick="copyCode()" style="width:auto; padding:5px 10px; background:var(--green); color:white;">COPY</button></div>
+            </div>
+        </div>
+
+        <div class="box" style="border-color: var(--blue);">
+            <h2 style="color: var(--blue);">💰 Coin Packages Setup</h2>
+            <div style="display:flex; gap:10px; margin-bottom: 15px;">
+                <input type="number" id="pkg-coins" placeholder="Coins (e.g. 1000)">
+                <input type="number" id="pkg-price" placeholder="Price (MMK)">
+                <button onclick="addPackage()" style="background:var(--blue); color:white; width:150px;">Add Pkg</button>
+            </div>
+            <div id="pkg-list"></div>
         </div>
 
         <div class="box">
             <h2>📖 Novel Management</h2>
             <div id="novel-delete-list"></div>
             <hr style="border:0.5px solid #374151; margin:20px 0;">
-            <h4>Add New Novel</h4>
-            <input type="text" id="n-title" placeholder="Title">
-            <input type="text" id="n-author" placeholder="Author">
-            <textarea id="n-desc" placeholder="Description"></textarea>
-            <input type="text" id="n-cover" placeholder="Cover URL">
+            <h4>Add / Update Novel</h4>
+            <input type="text" id="n-title" placeholder="Novel Title">
+            <input type="text" id="n-author" placeholder="Author Name">
+            <select id="n-cat">
+                <option value="Action">Action</option>
+                <option value="Romance">Romance</option>
+                <option value="Horror">Horror</option>
+                <option value="Business">Business</option>
+            </select>
+            <textarea id="n-desc" placeholder="Novel Description" rows="3"></textarea>
+            <input type="text" id="n-cover" placeholder="Cover Image URL">
+            <input type="number" id="n-vip" placeholder="VIP Lifetime Price (Coins)">
             <button onclick="uploadNovel()">UPLOAD NOVEL</button>
         </div>
 
         <div class="box" style="border-color: var(--blue);">
             <h2 style="color: var(--blue);">📑 Chapter Manager</h2>
-            <select id="sel-novel" onchange="listChapters()"><option value="">-- Select Novel --</option></select>
+            <select id="sel-novel" onchange="listChapters()"><option value="">-- Select Novel to Manage --</option></select>
             <div id="ch-list-container"></div>
             <hr style="border:0.5px solid #374151; margin:20px 0;">
-            <h4>Add New Chapter</h4>
-            <input type="number" id="c-num" placeholder="No.">
-            <input type="text" id="c-title" placeholder="Title">
-            <textarea id="c-content" rows="8" placeholder="Content..."></textarea>
+            <h4>Publish New Chapter</h4>
+            <div style="display:flex; gap:10px;">
+                <input type="number" id="c-num" placeholder="No." style="width:80px;">
+                <input type="text" id="c-title" placeholder="Chapter Title">
+            </div>
+            <textarea id="c-content" rows="8" placeholder="Write or Paste chapter content here..."></textarea>
             <input type="number" id="c-cost" placeholder="Cost (0 for Free)">
             <button onclick="uploadChapter()" style="background:var(--blue); color:white;">PUBLISH CHAPTER</button>
         </div>
@@ -59,30 +83,125 @@
     <div id="edit-modal">
         <h2 style="color: var(--blue);">Edit Chapter</h2>
         <div id="edit-form"></div>
-        <button onclick="saveUpdate()" style="background: var(--blue); color: white; margin-top: 10px;">SAVE</button>
+        <div style="display:flex; gap:10px;">
+            <button onclick="closeEdit()" style="background: #374151; color: white;">CANCEL</button>
+            <button onclick="saveUpdate()" style="background: var(--blue); color: white;">SAVE CHANGES</button>
+        </div>
     </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = { apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0", authDomain: "fantinal-publishing-5b960.firebaseapp.com", projectId: "fantinal-publishing-5b960", storageBucket: "fantinal-publishing-5b960.firebasestorage.app", messagingSenderId: "961612304854", appId: "1:961612304854:web:6bf7b03072ed83b58b9477" };
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // --- Init Data ---
+    async function init() {
+        loadNovels();
+        loadPackages();
+    }
+
+    // --- Novel Section ---
     async function loadNovels() {
         const snap = await getDocs(collection(db, "novels"));
         const sel = document.getElementById('sel-novel');
         const delList = document.getElementById('novel-delete-list');
-        sel.innerHTML = '<option value="">-- Select Novel --</option>';
+        sel.innerHTML = '<option value="">-- Select Novel to Manage --</option>';
         delList.innerHTML = "";
         snap.forEach(d => {
-            sel.innerHTML += `<option value="${d.id}">${d.data().title}</option>`;
-            delList.innerHTML += `<div class="list-item"><span>${d.data().title}</span><button class="btn-sm" style="background:var(--red)" onclick="delNovel('${d.id}')">Delete</button></div>`;
+            const n = d.data();
+            sel.innerHTML += `<option value="${d.id}">${n.title}</option>`;
+            delList.innerHTML += `<div class="list-item">
+                <span><b>${n.title}</b> (${n.category || 'N/A'})</span>
+                <button class="btn-sm" style="background:var(--red)" onclick="delNovel('${d.id}')">Delete</button>
+            </div>`;
         });
     }
-    loadNovels();
 
+    window.uploadNovel = async () => {
+        const title = document.getElementById('n-title').value;
+        if(!title) return alert("Title required!");
+        await addDoc(collection(db, "novels"), {
+            title: title,
+            author: document.getElementById('n-author').value,
+            category: document.getElementById('n-cat').value,
+            desc: document.getElementById('n-desc').value,
+            cover: document.getElementById('n-cover').value,
+            vipPrice: Number(document.getElementById('n-vip').value) || 5000,
+            createdAt: serverTimestamp()
+        });
+        alert("Novel Uploaded!");
+        loadNovels();
+    };
+
+    window.delNovel = async (id) => { if(confirm("Delete this novel and all its data?")) { await deleteDoc(doc(db, "novels", id)); loadNovels(); } };
+
+    // --- Chapter Section ---
+    window.listChapters = async () => {
+        const nid = document.getElementById('sel-novel').value;
+        const container = document.getElementById('ch-list-container');
+        if(!nid) return container.innerHTML = "";
+        
+        const q = query(collection(db, "novels", nid, "chapters"), orderBy("num", "asc"));
+        const snap = await getDocs(q);
+        container.innerHTML = "";
+        snap.forEach(d => {
+            const c = d.data();
+            container.innerHTML += `
+                <div class="list-item">
+                    <span>Ch-${c.num}: ${c.title} [${c.cost} Coins]</span>
+                    <div>
+                        <button class="btn-sm" style="background:var(--blue)" onclick="openEditCh('${nid}','${d.id}',${c.num},'${c.title}',\`${c.content.replace(/`/g,'\\`').replace(/\$/g,'\\$')}\`,${c.cost})">Edit</button>
+                        <button class="btn-sm" style="background:var(--red)" onclick="delCh('${nid}','${d.id}')">Del</button>
+                    </div>
+                </div>`;
+        });
+    };
+
+    window.uploadChapter = async () => {
+        const nid = document.getElementById('sel-novel').value;
+        if(!nid) return alert("Select a novel first!");
+        await addDoc(collection(db, "novels", nid, "chapters"), {
+            num: Number(document.getElementById('c-num').value),
+            title: document.getElementById('c-title').value,
+            content: document.getElementById('c-content').value,
+            cost: Number(document.getElementById('c-cost').value) || 0,
+            createdAt: serverTimestamp()
+        });
+        alert("Chapter Published!");
+        listChapters();
+    };
+
+    // --- Edit System ---
+    let editContext = {};
+    window.openEditCh = (nid, cid, num, title, content, cost) => {
+        editContext = { nid, cid };
+        document.getElementById('edit-modal').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('edit-form').innerHTML = `
+            <input type="number" id="up-num" value="${num}" placeholder="Ch No.">
+            <input type="text" id="up-title" value="${title}" placeholder="Title">
+            <textarea id="up-content" rows="10" placeholder="Content">${content}</textarea>
+            <input type="number" id="up-cost" value="${cost}" placeholder="Cost">`;
+    };
+
+    window.saveUpdate = async () => {
+        await updateDoc(doc(db, "novels", editContext.nid, "chapters", editContext.cid), {
+            num: Number(document.getElementById('up-num').value),
+            title: document.getElementById('up-title').value,
+            content: document.getElementById('up-content').value,
+            cost: Number(document.getElementById('up-cost').value)
+        });
+        alert("Updated Successfully!");
+        closeEdit(); listChapters();
+    };
+
+    window.closeEdit = () => { document.getElementById('edit-modal').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; };
+    window.delCh = async (nid, cid) => { if(confirm("Delete Chapter?")) { await deleteDoc(doc(db, "novels", nid, "chapters", cid)); listChapters(); } };
+
+    // --- Gift Code & Packages ---
     window.createGiftCode = async () => {
         const amt = document.getElementById('g-amt').value;
         if(!amt) return alert("Enter amount!");
@@ -94,46 +213,30 @@
 
     window.copyCode = () => { navigator.clipboard.writeText(document.getElementById('code-text').innerText); alert("Copied!"); };
 
-    window.uploadNovel = async () => {
-        await addDoc(collection(db, "novels"), { title: document.getElementById('n-title').value, author: document.getElementById('n-author').value, desc: document.getElementById('n-desc').value, cover: document.getElementById('n-cover').value, createdAt: serverTimestamp() });
-        alert("Success!"); loadNovels();
+    window.addPackage = async () => {
+        const coins = document.getElementById('pkg-coins').value;
+        const price = document.getElementById('pkg-price').value;
+        if(!coins || !price) return alert("Fill all fields");
+        await addDoc(collection(db, "coin_packages"), { coins: Number(coins), price: Number(price) });
+        loadPackages();
+        document.getElementById('pkg-coins').value = ""; document.getElementById('pkg-price').value = "";
     };
 
-    window.delNovel = async (id) => { if(confirm("Delete Novel?")) { await deleteDoc(doc(db, "novels", id)); loadNovels(); } };
-
-    window.listChapters = async () => {
-        const nid = document.getElementById('sel-novel').value;
-        if(!nid) return document.getElementById('ch-list-container').innerHTML = "";
-        const q = query(collection(db, "novels", nid, "chapters"), orderBy("num", "asc"));
-        const snap = await getDocs(q);
-        document.getElementById('ch-list-container').innerHTML = "";
-        snap.forEach(d => {
-            const c = d.data();
-            document.getElementById('ch-list-container').innerHTML += `<div class="list-item"><span>Ch-${c.num}: ${c.title}</span><div><button class="btn-sm" style="background:var(--blue)" onclick="openEditCh('${nid}','${d.id}',${c.num},'${c.title}',\`${c.content.replace(/`/g,'\\`')}\`,${c.cost})">Edit</button><button class="btn-sm" style="background:var(--red)" onclick="delCh('${nid}','${d.id}')">Del</button></div></div>`;
+    async function loadPackages() {
+        const pSnap = await getDocs(collection(db, "coin_packages"));
+        const list = document.getElementById('pkg-list');
+        list.innerHTML = "";
+        pSnap.forEach(d => {
+            list.innerHTML += `<div class="list-item">
+                <span><b>${d.data().coins} Coins</b> - ${d.data().price} MMK</span>
+                <button class="btn-sm" style="background:var(--red)" onclick="delPkg('${d.id}')">Delete</button>
+            </div>`;
         });
-    };
+    }
 
-    window.uploadChapter = async () => {
-        const nid = document.getElementById('sel-novel').value;
-        await addDoc(collection(db, "novels", nid, "chapters"), { num: Number(document.getElementById('c-num').value), title: document.getElementById('c-title').value, content: document.getElementById('c-content').value, cost: Number(document.getElementById('c-cost').value), createdAt: serverTimestamp() });
-        alert("Published!"); listChapters();
-    };
+    window.delPkg = async (id) => { if(confirm("Delete Package?")) { await deleteDoc(doc(db, "coin_packages", id)); loadPackages(); } };
 
-    let editContext = {};
-    window.openEditCh = (nid, cid, num, title, content, cost) => {
-        editContext = { nid, cid };
-        document.getElementById('edit-modal').style.display = 'block';
-        document.getElementById('overlay').style.display = 'block';
-        document.getElementById('edit-form').innerHTML = `<input type="number" id="up-num" value="${num}"><input type="text" id="up-title" value="${title}"><textarea id="up-content" rows="10">${content}</textarea><input type="number" id="up-cost" value="${cost}">`;
-    };
-
-    window.saveUpdate = async () => {
-        await updateDoc(doc(db, "novels", editContext.nid, "chapters", editContext.cid), { num: Number(document.getElementById('up-num').value), title: document.getElementById('up-title').value, content: document.getElementById('up-content').value, cost: Number(document.getElementById('up-cost').value) });
-        alert("Updated!"); closeEdit(); listChapters();
-    };
-
-    window.closeEdit = () => { document.getElementById('edit-modal').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; };
-    window.delCh = async (nid, cid) => { if(confirm("Delete?")) { await deleteDoc(doc(db, "novels", nid, "chapters", cid)); listChapters(); } };
+    init();
 </script>
 </body>
 </html>
