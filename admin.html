@@ -1,73 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fantinal Admin - Full Content Manager</title>
+    <title>Fantinal Admin - Content Manager</title>
     <style>
-        :root { --gold: #D4AF37; --bg: #0B1120; --card: #111827; --blue: #3B82F6; --red: #EF4444; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding: 20px; margin: 0; }
+        :root { --gold: #D4AF37; --bg: #0B1120; --card: #111827; }
+        body { background: var(--bg); color: white; font-family: sans-serif; padding: 20px; }
         .container { max-width: 800px; margin: auto; }
-        .box { background: var(--card); padding: 20px; border: 1px solid var(--gold); border-radius: 12px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        h2 { color: var(--gold); margin-top: 0; font-size: 1.2rem; border-bottom: 1px solid #374151; padding-bottom: 10px; }
-        
+        .box { background: var(--card); padding: 20px; border: 1px solid var(--gold); border-radius: 12px; margin-bottom: 25px; }
+        h2 { color: var(--gold); border-bottom: 1px solid #374151; padding-bottom: 10px; margin-top: 0; }
         input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; background: #1F2937; border: 1px solid #374151; color: white; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: var(--gold); border: none; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; margin-top: 5px; }
-        button:hover { opacity: 0.9; transform: translateY(-1px); }
-        
-        .list-item { background: #1F2937; padding: 12px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; border-left: 3px solid var(--gold); }
-        .btn-group { display: flex; gap: 5px; }
-        .edit-btn { background: var(--blue); width: auto; padding: 6px 12px; font-size: 0.8rem; }
-        .del-btn { background: var(--red); width: auto; padding: 6px 12px; font-size: 0.8rem; }
-        .cancel-btn { background: #4B5563; }
-        
-        #edit-chapter-modal { display: none; border-color: var(--blue); position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100; width: 90%; max-width: 500px; }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 90; }
+        button { width: 100%; padding: 12px; background: var(--gold); border: none; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 5px; }
+        .list-item { background: #1F2937; padding: 12px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; border-left: 4px solid var(--gold); }
+        .edit-btn { background: #3B82F6; width: auto; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px; border: none; color: white; cursor: pointer; }
     </style>
 </head>
 <body>
-
 <div class="container">
-    <h1 style="color: var(--gold); text-align: center;">FANTINAL ADMIN V3.5</h1>
+    <h1 style="color: var(--gold); text-align: center;">FANTINAL ADMIN</h1>
 
     <div class="box">
-        <h2>📖 Manage Novels</h2>
+        <h2>📖 Add New Novel</h2>
+        <input type="text" id="n-title" placeholder="Novel Title">
+        <input type="text" id="n-author" placeholder="Author Name">
+        <textarea id="n-desc" placeholder="Novel Description" rows="3"></textarea>
+        <input type="text" id="n-cover" placeholder="Cover Image URL (e.g. https://...)">
+        <button onclick="saveNovel()">UPLOAD NOVEL</button>
+    </div>
+
+    <div class="box">
+        <h2>⚙️ Manage Novels</h2>
         <div id="novel-list-admin">Loading...</div>
     </div>
 
     <div class="box">
-        <h2>📑 Manage Chapters</h2>
-        <select id="novel-select-for-chapters" onchange="loadChaptersForEdit()">
-            <option value="">-- Select Novel to see chapters --</option>
-        </select>
-        <div id="chapter-list-admin" style="margin-top: 15px;"></div>
-    </div>
-
-    <div class="box">
-        <h2>➕ Add New Chapter</h2>
+        <h2>📑 Add New Chapter</h2>
         <select id="novel-select-add-chapter"></select>
-        <input type="number" id="c-num" placeholder="Chapter No. (e.g. 5)">
+        <input type="number" id="c-num" placeholder="Chapter No.">
         <input type="text" id="c-title" placeholder="Chapter Title">
-        <textarea id="c-content" placeholder="Content text here..." rows="8"></textarea>
+        <textarea id="c-content" placeholder="Story Content..." rows="8"></textarea>
         <input type="number" id="c-cost" placeholder="Coins Cost (0 for Free)">
         <button onclick="saveChapter()">PUBLISH CHAPTER</button>
     </div>
 </div>
 
-<div class="overlay" id="overlay" onclick="closeChapterEdit()"></div>
-<div id="edit-chapter-modal" class="box">
-    <h2 style="color: var(--blue);">Edit Chapter</h2>
-    <input type="hidden" id="edit-c-id">
-    <input type="hidden" id="edit-c-nid">
-    <input type="number" id="edit-c-num" placeholder="Chapter No.">
-    <input type="text" id="edit-c-title" placeholder="Chapter Title">
-    <textarea id="edit-c-content" rows="10"></textarea>
-    <input type="number" id="edit-c-cost" placeholder="Cost">
-    <button style="background: var(--blue);" onclick="updateChapter()">UPDATE CHAPTER</button>
-    <button class="cancel-btn" onclick="closeChapterEdit()">CANCEL</button>
-</div>
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, serverTimestamp, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
@@ -81,95 +59,35 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // Load Novels into Lists
-  async function loadAdminData() {
+  async function loadData() {
     const snap = await getDocs(collection(db, "novels"));
     const listDiv = document.getElementById('novel-list-admin');
-    const select1 = document.getElementById('novel-select-for-chapters');
-    const select2 = document.getElementById('novel-select-add-chapter');
-    
+    const select = document.getElementById('novel-select-add-chapter');
     listDiv.innerHTML = "";
-    select1.innerHTML = '<option value="">-- Select Novel to see chapters --</option>';
-    select2.innerHTML = '<option value="">-- Select Novel to add chapter --</option>';
+    select.innerHTML = '<option value="">-- Select Novel --</option>';
 
     snap.forEach(d => {
       const n = d.data();
-      listDiv.innerHTML += `
-        <div class="list-item">
-            <span>${n.title}</span>
-            <div class="btn-group">
-                <button class="del-btn" onclick="deleteNovel('${d.id}')">Del</button>
-            </div>
-        </div>`;
-      select1.innerHTML += `<option value="${d.id}">${n.title}</option>`;
-      select2.innerHTML += `<option value="${d.id}">${n.title}</option>`;
+      listDiv.innerHTML += `<div class="list-item"><span>${n.title}</span><button class="edit-btn" style="background:#EF4444" onclick="deleteNovel('${d.id}')">Delete</button></div>`;
+      select.innerHTML += `<option value="${d.id}">${n.title}</option>`;
     });
   }
-  loadAdminData();
+  loadData();
 
-  // Load Chapters for specific Novel
-  window.loadChaptersForEdit = async () => {
-    const nid = document.getElementById('novel-select-for-chapters').value;
-    const listDiv = document.getElementById('chapter-list-admin');
-    if(!nid) { listDiv.innerHTML = ""; return; }
-    
-    listDiv.innerHTML = "Loading chapters...";
-    const q = query(collection(db, "novels", nid, "chapters"), orderBy("num", "asc"));
-    const snap = await getDocs(q);
-    
-    listDiv.innerHTML = "";
-    snap.forEach(d => {
-      const c = d.data();
-      listDiv.innerHTML += `
-        <div class="list-item">
-            <span>Ch-${c.num}: ${c.title}</span>
-            <div class="btn-group">
-                <button class="edit-btn" onclick="openChapterEdit('${nid}', '${d.id}', ${c.num}, '${c.title}', \`${c.content.replace(/`/g, '\\`')}\`, ${c.cost})">Edit</button>
-                <button class="del-btn" onclick="deleteChapter('${nid}', '${d.id}')">Del</button>
-            </div>
-        </div>`;
+  window.saveNovel = async () => {
+    const title = document.getElementById('n-title').value;
+    if(!title) return alert("Title is required!");
+    await addDoc(collection(db, "novels"), {
+      title: title,
+      author: document.getElementById('n-author').value,
+      desc: document.getElementById('n-desc').value,
+      cover: document.getElementById('n-cover').value,
+      createdAt: serverTimestamp()
     });
+    alert("Novel Added!");
+    loadData();
   };
 
-  // Chapter Edit Functions
-  window.openChapterEdit = (nid, cid, num, title, content, cost) => {
-    document.getElementById('edit-chapter-modal').style.display = 'block';
-    document.getElementById('overlay').style.display = 'block';
-    document.getElementById('edit-c-nid').value = nid;
-    document.getElementById('edit-c-id').value = cid;
-    document.getElementById('edit-c-num').value = num;
-    document.getElementById('edit-c-title').value = title;
-    document.getElementById('edit-c-content').value = content;
-    document.getElementById('edit-c-cost').value = cost;
-  };
-
-  window.closeChapterEdit = () => {
-    document.getElementById('edit-chapter-modal').style.display = 'none';
-    document.getElementById('overlay').style.display = 'none';
-  };
-
-  window.updateChapter = async () => {
-    const nid = document.getElementById('edit-c-nid').value;
-    const cid = document.getElementById('edit-c-id').value;
-    await updateDoc(doc(db, "novels", nid, "chapters", cid), {
-      num: Number(document.getElementById('edit-c-num').value),
-      title: document.getElementById('edit-c-title').value,
-      content: document.getElementById('edit-c-content').value,
-      cost: Number(document.getElementById('edit-c-cost').value)
-    });
-    alert("Chapter Updated!");
-    closeChapterEdit();
-    loadChaptersForEdit();
-  };
-
-  window.deleteChapter = async (nid, cid) => {
-    if(confirm("Delete this chapter?")) {
-      await deleteDoc(doc(db, "novels", nid, "chapters", cid));
-      loadChaptersForEdit();
-    }
-  };
-
-  // Add Chapter Logic
   window.saveChapter = async () => {
     const nid = document.getElementById('novel-select-add-chapter').value;
     if(!nid) return alert("Select a novel!");
@@ -180,14 +98,13 @@
       cost: Number(document.getElementById('c-cost').value),
       createdAt: serverTimestamp()
     });
-    alert("New Chapter Published!");
-    location.reload();
+    alert("Chapter Published!");
   };
 
   window.deleteNovel = async (id) => {
     if(confirm("Delete this novel?")) {
-        await deleteDoc(doc(db, "novels", id));
-        loadAdminData();
+      await deleteDoc(doc(db, "novels", id));
+      loadData();
     }
   };
 </script>
