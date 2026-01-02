@@ -11,7 +11,7 @@
         input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; background: #1F2937; border: 1px solid #374151; color: white; border-radius: 6px; box-sizing: border-box; }
         button { width: 100%; padding: 12px; background: var(--gold); border: none; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 5px; }
         .list-item { background: #1F2937; padding: 12px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; border-left: 4px solid var(--gold); }
-        .edit-btn { background: #3B82F6; width: auto; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px; border: none; color: white; cursor: pointer; }
+        .del-btn { background: #EF4444; width: auto; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px; border: none; color: white; }
     </style>
 </head>
 <body>
@@ -23,13 +23,8 @@
         <input type="text" id="n-title" placeholder="Novel Title">
         <input type="text" id="n-author" placeholder="Author Name">
         <textarea id="n-desc" placeholder="Novel Description" rows="3"></textarea>
-        <input type="text" id="n-cover" placeholder="Cover Image URL (e.g. https://...)">
+        <input type="text" id="n-cover" placeholder="Cover Image URL">
         <button onclick="saveNovel()">UPLOAD NOVEL</button>
-    </div>
-
-    <div class="box">
-        <h2>⚙️ Manage Novels</h2>
-        <div id="novel-list-admin">Loading...</div>
     </div>
 
     <div class="box">
@@ -40,6 +35,11 @@
         <textarea id="c-content" placeholder="Story Content..." rows="8"></textarea>
         <input type="number" id="c-cost" placeholder="Coins Cost (0 for Free)">
         <button onclick="saveChapter()">PUBLISH CHAPTER</button>
+    </div>
+
+    <div class="box">
+        <h2>⚙️ Manage Novels</h2>
+        <div id="novel-list-admin">Loading...</div>
     </div>
 </div>
 
@@ -68,7 +68,7 @@
 
     snap.forEach(d => {
       const n = d.data();
-      listDiv.innerHTML += `<div class="list-item"><span>${n.title}</span><button class="edit-btn" style="background:#EF4444" onclick="deleteNovel('${d.id}')">Delete</button></div>`;
+      listDiv.innerHTML += `<div class="list-item"><span>${n.title}</span><button class="del-btn" onclick="deleteNovel('${d.id}')">Delete</button></div>`;
       select.innerHTML += `<option value="${d.id}">${n.title}</option>`;
     });
   }
@@ -76,16 +76,13 @@
 
   window.saveNovel = async () => {
     const title = document.getElementById('n-title').value;
-    if(!title) return alert("Title is required!");
+    if(!title) return alert("Title required!");
     await addDoc(collection(db, "novels"), {
-      title: title,
-      author: document.getElementById('n-author').value,
-      desc: document.getElementById('n-desc').value,
-      cover: document.getElementById('n-cover').value,
+      title: title, author: document.getElementById('n-author').value,
+      desc: document.getElementById('n-desc').value, cover: document.getElementById('n-cover').value,
       createdAt: serverTimestamp()
     });
-    alert("Novel Added!");
-    loadData();
+    alert("Novel Added!"); loadData();
   };
 
   window.saveChapter = async () => {
@@ -102,10 +99,7 @@
   };
 
   window.deleteNovel = async (id) => {
-    if(confirm("Delete this novel?")) {
-      await deleteDoc(doc(db, "novels", id));
-      loadData();
-    }
+    if(confirm("Delete this novel?")) { await deleteDoc(doc(db, "novels", id)); loadData(); }
   };
 </script>
 </body>
