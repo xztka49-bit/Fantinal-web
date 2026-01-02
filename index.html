@@ -6,33 +6,32 @@
     <title>Fantinal Publishing</title>
     <style>
         :root { --gold: #D4AF37; --bg: #0B1120; --card: #111827; --text: #E5E7EB; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; overflow-x: hidden; }
         
-        /* Auth Screen */
-        #auth-screen { display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .auth-container { background: var(--card); padding: 2rem; border-radius: 15px; border: 1px solid var(--gold); width: 320px; text-align: center; }
-        
-        /* Main Dashboard */
-        #main-dashboard { display: none; padding: 20px; animation: fadeIn 0.5s; }
+        /* Layouts */
+        #main-dashboard, #novel-detail, #coin-shop { display: none; padding: 20px; animation: fadeIn 0.4s; }
         header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(212, 175, 55, 0.3); padding-bottom: 15px; margin-bottom: 20px; }
-        .logo { color: var(--gold); font-size: 1.4rem; font-weight: bold; letter-spacing: 2px; }
-        .user-stats { background: rgba(212, 175, 55, 0.15); padding: 8px 15px; border-radius: 30px; border: 1px solid var(--gold); font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
+        .logo { color: var(--gold); font-size: 1.4rem; font-weight: bold; letter-spacing: 2px; cursor: pointer; }
+        .user-stats { background: rgba(212, 175, 55, 0.15); padding: 8px 15px; border-radius: 30px; border: 1px solid var(--gold); font-size: 0.85rem; cursor: pointer; }
 
         /* Novel Grid */
         .novel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
-        .novel-card { background: var(--card); border-radius: 12px; overflow: hidden; transition: 0.3s; border: 1px solid #1F2937; cursor: pointer; }
-        .novel-card:hover { transform: translateY(-5px); border-color: var(--gold); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .novel-cover { width: 100%; height: 210px; background: #1F2937; object-fit: cover; display: block; }
+        .novel-card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid #1F2937; cursor: pointer; }
+        .novel-card img { width: 100%; height: 210px; object-fit: cover; }
         .novel-info { padding: 10px; }
-        .novel-title { font-weight: 600; font-size: 0.85rem; color: var(--gold); margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .novel-author { font-size: 0.7rem; color: #9CA3AF; }
+        .novel-title { font-weight: bold; font-size: 0.85rem; color: var(--gold); }
 
-        /* Form Styling */
+        /* Shop & Detail UI */
+        .shop-item { background: #1F2937; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--gold); }
+        .buy-btn { background: var(--gold); border: none; padding: 5px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .chapter-item { padding: 15px; border-bottom: 1px solid #1F2937; display: flex; justify-content: space-between; cursor: pointer; }
+        .chapter-item:hover { background: #111827; }
+
+        /* Auth styling stays same as before */
+        #auth-screen { display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .auth-container { background: var(--card); padding: 2rem; border-radius: 15px; border: 1px solid var(--gold); width: 320px; text-align: center; }
         input { width: 100%; padding: 12px; margin: 8px 0; background: #1F2937; border: 1px solid #374151; color: white; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: var(--gold); border: none; color: black; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
-        .tabs { display: flex; justify-content: space-around; margin-bottom: 1rem; border-bottom: 1px solid #374151; }
-        .tab { padding: 10px; cursor: pointer; color: #9CA3AF; font-size: 0.9rem; }
-        .tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); }
+        button { width: 100%; padding: 12px; background: var(--gold); border: none; font-weight: bold; border-radius: 8px; cursor: pointer; }
         
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -41,43 +40,53 @@
 
 <div id="auth-screen">
     <div class="auth-container">
-        <h2 style="color:var(--gold); margin-top:0;">FANTINAL</h2>
-        <div class="tabs">
-            <div id="tab-login" class="tab active" onclick="switchTab('login')">LOGIN</div>
-            <div id="tab-signup" class="tab" onclick="switchTab('signup')">SIGNUP</div>
-        </div>
-        <div id="login-fields">
-            <input type="email" id="email" placeholder="Email">
-            <input type="password" id="pw" placeholder="Password">
-            <button onclick="handleLogin()">SIGN IN</button>
-        </div>
-        <div id="signup-fields" style="display:none">
-            <input type="text" id="reg-user" placeholder="Username">
-            <input type="email" id="reg-email" placeholder="Email">
-            <input type="password" id="reg-pw" placeholder="Password">
-            <button onclick="handleSignup()">CREATE ACCOUNT</button>
-        </div>
+        <h2 style="color:var(--gold)">FANTINAL</h2>
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="pw" placeholder="Password">
+        <button onclick="handleLogin()">SIGN IN</button>
     </div>
 </div>
 
 <div id="main-dashboard">
     <header>
-        <div class="logo">FANTINAL</div>
-        <div class="user-stats">
-            <span id="display-name">Loading...</span> | 🪙 <span id="coin-balance">0</span>
+        <div class="logo" onclick="showSection('main-dashboard')">FANTINAL</div>
+        <div class="user-stats" onclick="showSection('coin-shop')">
+            <span id="display-name">User</span> | 🪙 <span id="coin-balance">0</span>
         </div>
     </header>
+    <h3>Business Library</h3>
+    <div class="novel-grid" id="novel-list"></div>
+</div>
 
-    <h3 style="font-size: 1.1rem; margin-bottom: 15px;">Explore Novels</h3>
-    <div class="novel-grid" id="novel-list">
-        <p style="color: #9CA3AF;">Loading novels...</p>
+<div id="novel-detail">
+    <button onclick="showSection('main-dashboard')" style="width: auto; padding: 5px 15px; margin-bottom: 20px;">← Back</button>
+    <div id="detail-content"></div>
+    <hr style="border: 0; border-top: 1px solid #374151; margin: 20px 0;">
+    <h4>Chapters</h4>
+    <div id="chapter-list"></div>
+</div>
+
+<div id="coin-shop">
+    <button onclick="showSection('main-dashboard')" style="width: auto; padding: 5px 15px; margin-bottom: 20px;">← Close Shop</button>
+    <h2 style="color: var(--gold)">Premium Coins</h2>
+    <div class="shop-item">
+        <span>🪙 1,000 Coins</span>
+        <button class="buy-btn" onclick="buyCoins(1000)">Buy Now</button>
+    </div>
+    <div class="shop-item">
+        <span>🪙 5,000 Coins</span>
+        <button class="buy-btn" onclick="buyCoins(5000)">Buy Now</button>
+    </div>
+    <div class="shop-item">
+        <span>🪙 10,000 Coins</span>
+        <button class="buy-btn" onclick="buyCoins(10000)">Buy Now</button>
     </div>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getFirestore, doc, onSnapshot, collection, query, orderBy, getDocs, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
@@ -91,83 +100,74 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+  let currentUser = null;
 
-  // Auth State Listener
-  onAuthStateChanged(auth, async (user) => {
+  onAuthStateChanged(auth, (user) => {
     if (user) {
-      document.getElementById('auth-screen').style.display = 'none';
-      document.getElementById('main-dashboard').style.display = 'block';
-      
-      // User Data Real-time Sync (Fix undefined)
-      onSnapshot(doc(db, "users", user.uid), (docSnap) => {
-        if (docSnap.exists()) {
-          const userData = docSnap.data();
-          document.getElementById('display-name').innerText = userData.username || "Reader";
-          document.getElementById('coin-balance').innerText = userData.coin_balance ?? 0;
-        }
+      currentUser = user;
+      showSection('main-dashboard');
+      onSnapshot(doc(db, "users", user.uid), (snap) => {
+        document.getElementById('display-name').innerText = snap.data().username;
+        document.getElementById('coin-balance').innerText = snap.data().coin_balance;
       });
-
-      // Load Novels from Firebase
       loadNovels();
     } else {
       document.getElementById('auth-screen').style.display = 'flex';
-      document.getElementById('main-dashboard').style.display = 'none';
     }
   });
 
-  function loadNovels() {
-    const novelList = document.getElementById('novel-list');
+  window.showSection = (id) => {
+    ['main-dashboard', 'novel-detail', 'coin-shop', 'auth-screen'].forEach(s => document.getElementById(s).style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+  }
+
+  async function loadNovels() {
     const q = query(collection(db, "novels"), orderBy("createdAt", "desc"));
-    
-    onSnapshot(q, (snapshot) => {
-      novelList.innerHTML = "";
-      if (snapshot.empty) {
-        novelList.innerHTML = "<p style='color:#9CA3AF;'>ဝတ္ထုများ မရှိသေးပါ။</p>";
-        return;
-      }
-      snapshot.forEach((doc) => {
-        const novel = doc.data();
-        novelList.innerHTML += `
-          <div class="novel-card">
-              <img src="${novel.cover || 'https://via.placeholder.com/150x210/111827/D4AF37?text=Fantinal'}" class="novel-cover" onerror="this.src='https://via.placeholder.com/150x210/111827/D4AF37?text=Image+Error'">
-              <div class="novel-info">
-                  <div class="novel-title">${novel.title || 'Untitled'}</div>
-                  <div class="novel-author">By ${novel.author || 'Unknown'}</div>
-              </div>
-          </div>
-        `;
-      });
+    const snap = await getDocs(q);
+    const container = document.getElementById('novel-list');
+    container.innerHTML = "";
+    snap.forEach(d => {
+      const n = d.data();
+      const div = document.createElement('div');
+      div.className = 'novel-card';
+      div.onclick = () => openNovel(d.id, n);
+      div.innerHTML = `<img src="${n.cover}"> <div class="novel-info"><div class="novel-title">${n.title}</div></div>`;
+      container.appendChild(div);
     });
   }
 
+  async function openNovel(id, data) {
+    showSection('novel-detail');
+    document.getElementById('detail-content').innerHTML = `
+        <img src="${data.cover}" style="width:120px; float:left; margin-right:15px; border-radius:8px;">
+        <h3>${data.title}</h3>
+        <p style="color:#9CA3AF; font-size:0.9rem;">${data.desc}</p>
+    `;
+    const q = query(collection(db, "novels", id, "chapters"), orderBy("num", "asc"));
+    const snap = await getDocs(q);
+    const list = document.getElementById('chapter-list');
+    list.innerHTML = "";
+    snap.forEach(c => {
+      const ch = c.data();
+      list.innerHTML += `<div class="chapter-item">
+        <span>Chapter ${ch.num}: ${ch.title}</span>
+        <span style="color:var(--gold)">${ch.cost > 0 ? '🪙 '+ch.cost : 'FREE'}</span>
+      </div>`;
+    });
+  }
+
+  window.buyCoins = async (amount) => {
+    if(!currentUser) return;
+    await updateDoc(doc(db, "users", currentUser.uid), {
+        coin_balance: increment(amount)
+    });
+    alert(`Success! You received ${amount} coins.`);
+  };
+
   window.handleLogin = async () => {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('pw').value;
-    try { await signInWithEmailAndPassword(auth, email, password); } 
-    catch (e) { alert("Login Error: " + e.message); }
-  };
-
-  window.handleSignup = async () => {
-    const email = document.getElementById('reg-email').value;
-    const password = document.getElementById('reg-pw').value;
-    const username = document.getElementById('reg-user').value;
-    try {
-      const res = await createUserWithEmailAndPassword(auth, email, password);
-      await setDoc(doc(db, "users", res.user.uid), { 
-        username: username, 
-        coin_balance: 0, 
-        role: 'user',
-        uid: res.user.uid 
-      });
-    } catch (e) { alert("Signup Error: " + e.message); }
-  };
-
-  window.switchTab = (tab) => {
-    document.getElementById('login-fields').style.display = tab === 'login' ? 'block' : 'none';
-    document.getElementById('signup-fields').style.display = tab === 'signup' ? 'block' : 'none';
-    document.getElementById('tab-login').classList.toggle('active', tab === 'login');
-    document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
-  };
+    try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pw').value); }
+    catch(e) { alert(e.message); }
+  }
 </script>
 </body>
 </html>
