@@ -3,53 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fantinal Publishing - Login & Signup</title>
+    <title>Fantinal Publishing</title>
     <style>
         :root { --gold: #D4AF37; --bg: #0B1120; --card: #111827; --text: #E5E7EB; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background: var(--card); padding: 2.5rem; border-radius: 15px; border: 1px solid var(--gold); width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .tabs { display: flex; justify-content: space-around; margin-bottom: 1.5rem; border-bottom: 1px solid #374151; }
-        .tab { padding: 10px; cursor: pointer; color: #9CA3AF; transition: 0.3s; }
-        .tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); font-weight: bold; }
-        .form-group { display: none; }
-        .form-group.active { display: block; }
-        h2 { text-align: center; color: var(--gold); margin-top: 0; font-size: 1.5rem; letter-spacing: 1px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; background: #1F2937; border: 1px solid #374151; color: white; border-radius: 8px; box-sizing: border-box; outline: none; }
-        input:focus { border-color: var(--gold); }
-        button { width: 100%; padding: 12px; background: var(--gold); border: none; color: black; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; margin-top: 10px; text-transform: uppercase; }
-        button:hover { background: #B8962E; transform: translateY(-2px); }
-        .info { text-align: center; font-size: 0.8rem; margin-top: 15px; color: #9CA3AF; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; }
+        
+        /* Auth Screen */
+        #auth-screen { display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .auth-container { background: var(--card); padding: 2.5rem; border-radius: 15px; border: 1px solid var(--gold); width: 350px; text-align: center; }
+        
+        /* Main Dashboard */
+        #main-dashboard { display: none; padding: 20px; }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--gold); padding-bottom: 15px; margin-bottom: 30px; }
+        .logo { color: var(--gold); font-size: 1.5rem; font-weight: bold; letter-spacing: 2px; }
+        .user-stats { background: rgba(212, 175, 55, 0.1); padding: 8px 15px; border-radius: 20px; border: 1px solid var(--gold); font-size: 0.9rem; }
+
+        /* Novel Grid */
+        .novel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
+        .novel-card { background: var(--card); border-radius: 10px; overflow: hidden; transition: 0.3s; border: 1px solid #1F2937; cursor: pointer; position: relative; }
+        .novel-card:hover { transform: translateY(-10px); border-color: var(--gold); }
+        .novel-cover { width: 100%; height: 220px; background: #1F2937; object-fit: cover; }
+        .novel-info { padding: 10px; }
+        .novel-title { font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; color: var(--gold); }
+        .novel-author { font-size: 0.75rem; color: #9CA3AF; }
+        .vip-tag { position: absolute; top: 10px; right: 10px; background: var(--gold); color: black; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+
+        /* General UI */
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #1F2937; border: 1px solid #374151; color: white; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: var(--gold); border: none; color: black; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .tabs { display: flex; justify-content: space-around; margin-bottom: 1rem; border-bottom: 1px solid #374151; }
+        .tab { padding: 10px; cursor: pointer; color: #9CA3AF; }
+        .tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>FANTINAL</h2>
-    <div class="tabs">
-        <div class="tab active" onclick="switchTab('login')">LOGIN</div>
-        <div class="tab" onclick="switchTab('signup')">SIGNUP</div>
+<div id="auth-screen">
+    <div class="auth-container">
+        <h2 style="color:var(--gold)">FANTINAL</h2>
+        <div class="tabs">
+            <div id="tab-login" class="tab active" onclick="switchTab('login')">LOGIN</div>
+            <div id="tab-signup" class="tab" onclick="switchTab('signup')">SIGNUP</div>
+        </div>
+        <div id="login-fields">
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="pw" placeholder="Password">
+            <button onclick="handleLogin()">SIGN IN</button>
+        </div>
+        <div id="signup-fields" style="display:none">
+            <input type="text" id="reg-user" placeholder="Username">
+            <input type="email" id="reg-email" placeholder="Email">
+            <input type="password" id="reg-pw" placeholder="Password">
+            <button onclick="handleSignup()">CREATE ACCOUNT</button>
+        </div>
     </div>
+</div>
 
-    <div id="login-form" class="form-group active">
-        <input type="email" id="login-email" placeholder="Email Address">
-        <input type="password" id="login-pw" placeholder="Password">
-        <button onclick="handleLogin()">Sign In</button>
+<div id="main-dashboard">
+    <header>
+        <div class="logo">FANTINAL</div>
+        <div class="user-stats">
+            <span id="display-name">User</span> | 🪙 <span id="coin-balance">0</span> Coins
+        </div>
+    </header>
+
+    <h3>Business Novels</h3>
+    <div class="novel-grid" id="novel-list">
+        <div class="novel-card">
+            <div class="vip-tag">TOP</div>
+            <img src="https://via.placeholder.com/160x220/111827/D4AF37?text=CEO+Life" class="novel-cover">
+            <div class="novel-info">
+                <div class="novel-title">The Billionaire's Strategy</div>
+                <div class="novel-author">By Fantinal Team</div>
+            </div>
+        </div>
+        <div class="novel-card">
+            <img src="https://via.placeholder.com/160x220/111827/D4AF37?text=Startup" class="novel-cover">
+            <div class="novel-info">
+                <div class="novel-title">Startup Leveling Up</div>
+                <div class="novel-author">By Fantinal Team</div>
+            </div>
+        </div>
     </div>
-
-    <div id="signup-form" class="form-group">
-        <input type="text" id="reg-user" placeholder="Username">
-        <input type="email" id="reg-email" placeholder="Email Address">
-        <input type="password" id="reg-pw" placeholder="Password">
-        <button onclick="handleSignup()">Create Account</button>
-    </div>
-
-    <div class="info">Premium Business Novels Experience</div>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
@@ -64,51 +105,51 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // Tab Switching
-  window.switchTab = (tab) => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.form-group').forEach(f => f.classList.remove('active'));
-      if(tab === 'login') {
-          document.querySelector('.tab:nth-child(1)').classList.add('active');
-          document.getElementById('login-form').classList.add('active');
-      } else {
-          document.querySelector('.tab:nth-child(2)').classList.add('active');
-          document.getElementById('signup-form').classList.add('active');
+  // Login အခြေအနေကို စောင့်ကြည့်ခြင်း
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('main-dashboard').style.display = 'block';
+      
+      // User Data ဆွဲယူခြင်း
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (userDoc.exists()) {
+        document.getElementById('display-name').innerText = userDoc.data().username;
+        document.getElementById('coin-balance').innerText = userDoc.data().coin_balance;
       }
-  }
+    }
+  });
 
-  // Signup Logic
+  window.handleLogin = async () => {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('pw').value;
+    try { await signInWithEmailAndPassword(auth, email, password); } 
+    catch (e) { alert(e.message); }
+  };
+
   window.handleSignup = async () => {
     const email = document.getElementById('reg-email').value;
     const password = document.getElementById('reg-pw').value;
-    const username = document.getElementById('reg-user').value;
-
+    const user = document.getElementById('reg-user').value;
     try {
       const res = await createUserWithEmailAndPassword(auth, email, password);
-      await setDoc(doc(db, "users", res.user.uid), {
-        uid: res.user.uid,
-        username: username,
-        coin_balance: 0,
-        role: "user",
-        created_at: new Date()
-      });
-      alert("Account Created! You can now login.");
-      switchTab('login');
-    } catch (error) { alert(error.message); }
+      await setDoc(doc(db, "users", res.user.uid), { username: user, coin_balance: 0, role: 'user' });
+    } catch (e) { alert(e.message); }
   };
 
-  // Login Logic
-  window.handleLogin = async () => {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-pw').value;
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert("Login Successful! Welcome to Fantinal.");
-      // ဒီနေရာမှာ Home Page ကို သွားမယ့် code ထည့်ရမယ် (ဥပမာ window.location.href = 'home.html')
-    } catch (error) { alert(error.message); }
+  window.switchTab = (tab) => {
+    if(tab === 'login') {
+        document.getElementById('login-fields').style.display = 'block';
+        document.getElementById('signup-fields').style.display = 'none';
+        document.getElementById('tab-login').classList.add('active');
+        document.getElementById('tab-signup').classList.remove('active');
+    } else {
+        document.getElementById('login-fields').style.display = 'none';
+        document.getElementById('signup-fields').style.display = 'block';
+        document.getElementById('tab-signup').classList.add('active');
+        document.getElementById('tab-login').classList.remove('active');
+    }
   };
 </script>
-
 </body>
 </html>
