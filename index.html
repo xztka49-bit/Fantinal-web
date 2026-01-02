@@ -3,106 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fantinal - All in One</title>
+    <title>Fantinal Premium</title>
     <style>
-        :root { --gold: #D4AF37; --bg: #0B1120; --card: #111827; --text: #E5E7EB; --green: #10B981; --red: #EF4444; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 60px; }
+        :root { --gold: #D4AF37; --bg: #0B1120; --card: #111827; --text: #E5E7EB; --green: #10B981; --red: #EF4444; --glass: rgba(17, 24, 39, 0.95); }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; overflow-x: hidden; }
         
-        .view { display: none; padding: 20px; animation: fadeIn 0.3s; }
-        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding: 15px 20px; background: var(--card); sticky: top; }
-        .logo { color: var(--gold); font-size: 1.4rem; font-weight: bold; cursor: pointer; }
-        
-        /* Navigation Bar */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #1F2937; z-index: 100; }
-        .nav-item { color: #9CA3AF; text-align: center; font-size: 0.75rem; cursor: pointer; text-decoration: none; }
-        .nav-item.active { color: var(--gold); }
+        /* Navigation & Header */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--card); border-bottom: 1px solid rgba(212, 175, 55, 0.2); position: sticky; top: 0; z-index: 100; }
+        .menu-icon { font-size: 24px; color: var(--gold); cursor: pointer; }
+        .logo { color: var(--gold); font-size: 1.3rem; font-weight: bold; letter-spacing: 1px; }
+        .top-coin-display { background: rgba(212, 175, 55, 0.1); padding: 5px 12px; border-radius: 20px; border: 1px solid var(--gold); color: var(--gold); font-size: 0.9rem; font-weight: bold; }
 
-        /* Novel Grid */
-        .novel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding-top: 10px; }
-        .novel-card { background: var(--card); border-radius: 10px; overflow: hidden; border: 1px solid #1F2937; cursor: pointer; }
-        .novel-card img { width: 100%; height: 200px; object-fit: cover; }
-        .novel-info { padding: 10px; text-align: center; }
-        .novel-title { color: var(--gold); font-weight: bold; font-size: 0.85rem; height: 2.4em; overflow: hidden; }
+        /* Sidebar Drawer */
+        .drawer { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--glass); z-index: 1000; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-right: 1px solid var(--gold); backdrop-filter: blur(10px); }
+        .drawer.active { left: 0; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; z-index: 999; }
+        .drawer-header { padding: 30px 20px; text-align: center; border-bottom: 1px solid #1F2937; }
+        .drawer-menu { padding: 20px; }
+        .menu-item { padding: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; border-radius: 8px; transition: 0.2s; margin-bottom: 5px; }
+        .menu-item:hover { background: rgba(212, 175, 55, 0.1); color: var(--gold); }
+        
+        /* Views */
+        .view { display: none; padding: 20px; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* Lists */
-        .item-row { background: var(--card); padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #1F2937; }
-        
-        #reader-content { line-height: 1.8; font-size: 1.15rem; white-space: pre-wrap; text-align: justify; }
-        input { width: 100%; padding: 12px; margin: 10px 0; background: #1F2937; border: 1px solid #374151; color: white; border-radius: 8px; box-sizing: border-box; }
-        button { background: var(--gold); color: black; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
-        .back-btn { background: none; color: var(--gold); border: 1px solid var(--gold); padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-bottom: 10px; }
-        
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* Novel Grid & Premium Cards */
+        .novel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
+        .novel-card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid #1F2937; transition: 0.3s; position: relative; }
+        .novel-card:active { transform: scale(0.95); }
+        .novel-card img { width: 100%; height: 220px; object-fit: cover; display: block; }
+        .novel-info { padding: 12px; background: linear-gradient(to top, var(--card), transparent); }
+        .novel-title { color: var(--gold); font-weight: bold; font-size: 0.85rem; height: 2.5em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+        /* Detail & Chapter UI */
+        .novel-detail-header { display: flex; gap: 15px; padding: 20px; background: var(--card); border-radius: 15px; margin-bottom: 25px; border: 1px solid #1F2937; }
+        .chapter-row { background: var(--card); padding: 16px; border-radius: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--gold); cursor: pointer; }
+        .chapter-row:hover { background: #1F2937; }
+
+        /* UI Elements */
+        input { width: 100%; padding: 14px; margin: 10px 0; background: #1F2937; border: 1px solid #374151; color: white; border-radius: 10px; box-sizing: border-box; outline: none; }
+        input:focus { border-color: var(--gold); }
+        button { background: var(--gold); color: #000; border: none; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s; }
+        button:active { transform: scale(0.98); }
+        .back-btn { display: inline-block; color: var(--gold); margin-bottom: 15px; cursor: pointer; font-weight: bold; }
+
+        /* Reader Mode */
+        #reader-content { line-height: 2; font-size: 1.2rem; text-align: justify; white-space: pre-wrap; color: #D1D5DB; }
     </style>
 </head>
 <body>
 
-<header id="main-header" style="display:none;">
+<div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
+<div class="drawer" id="sidebar">
+    <div class="drawer-header">
+        <div style="font-size: 50px; margin-bottom: 10px;">👤</div>
+        <h3 id="side-username" style="margin: 0; color: var(--gold);">Reader</h3>
+        <p id="side-email" style="font-size: 0.75rem; color: #9CA3AF; margin: 5px 0;"></p>
+        <div style="margin-top: 15px; font-weight: bold; color: var(--gold);">🪙 <span id="side-coins">0</span></div>
+    </div>
+    <div class="drawer-menu">
+        <div class="menu-item" onclick="showView('home-view'); toggleDrawer();">🏠 Home</div>
+        <div class="menu-item" onclick="showView('shop-view'); toggleDrawer();">🪙 Coin Shop</div>
+        <div class="menu-item" onclick="showView('profile-view'); loadMyLibrary(); toggleDrawer();">📖 My Library</div>
+        <div class="menu-item" style="color: var(--red); margin-top: 50px;" onclick="auth.signOut()">🚪 Logout</div>
+    </div>
+</div>
+
+<header id="appHeader" style="display:none;">
+    <div class="menu-icon" onclick="toggleDrawer()">☰</div>
     <div class="logo">FANTINAL</div>
-    <div style="color: var(--gold); font-weight:bold;">🪙 <span id="top-coins">0</span></div>
+    <div class="top-coin-display">🪙 <span id="topCoins">0</span></div>
 </header>
 
-<div id="auth-view" class="view">
-    <div style="max-width:300px; margin: 100px auto; text-align:center;">
-        <h2 style="color:var(--gold)">FANTINAL LOGIN</h2>
-        <input type="email" id="email" placeholder="Email">
+<div id="auth-view" class="view" style="display: block;">
+    <div style="max-width: 320px; margin: 80px auto; text-align: center;">
+        <h1 style="color: var(--gold); letter-spacing: 3px;">FANTINAL</h1>
+        <p style="color: #6B7280; margin-bottom: 30px;">Premium Novel Publishing</p>
+        <input type="email" id="email" placeholder="Email Address">
         <input type="password" id="pw" placeholder="Password">
-        <button onclick="handleLogin()">SIGN IN</button>
+        <button onclick="handleLogin()" style="margin-top: 10px;">SIGN IN</button>
     </div>
 </div>
 
 <div id="home-view" class="view">
-    <h3 style="margin-top:0;">Explore Novels</h3>
+    <h2 style="font-size: 1.2rem; border-left: 4px solid var(--gold); padding-left: 10px; margin-bottom: 20px;">Latest Novels</h2>
     <div class="novel-grid" id="novel-list"></div>
 </div>
 
 <div id="detail-view" class="view">
-    <button class="back-btn" onclick="showView('home-view')">← Back</button>
-    <div id="novel-header" style="display:flex; gap:15px; background:var(--card); padding:15px; border-radius:12px;"></div>
-    <h4>Chapters</h4>
+    <div class="back-btn" onclick="showView('home-view')">← Back to Explore</div>
+    <div id="novel-header-content"></div>
+    <h3 style="margin-top: 30px;">Chapters</h3>
     <div id="chapter-list"></div>
 </div>
 
 <div id="reader-view" class="view">
-    <button class="back-btn" onclick="showView('detail-view')">← Close</button>
-    <h3 id="reader-title" style="color:var(--gold)"></h3>
+    <div class="back-btn" onclick="showView('detail-view')">← Back to Detail</div>
+    <h2 id="reader-title" style="color: var(--gold);"></h2>
+    <hr style="border: 0.5px solid #1F2937; margin: 20px 0;">
     <div id="reader-content"></div>
 </div>
 
 <div id="shop-view" class="view">
-    <h3>Coin Wallet</h3>
-    <div style="background:var(--card); padding:20px; border-radius:12px; text-align:center; border:1px solid var(--gold); margin-bottom:20px;">
-        <p>Current Coins</p>
-        <h1 style="color:var(--gold); margin:0;">🪙 <span id="shop-coins">0</span></h1>
+    <div class="back-btn" onclick="showView('home-view')">← Back</div>
+    <h2>Coin Wallet</h2>
+    <div style="background: var(--card); padding: 30px; border-radius: 15px; text-align: center; border: 1px solid var(--gold); margin-bottom: 20px;">
+        <span style="color: #9CA3AF; font-size: 0.9rem;">Balance</span>
+        <h1 style="color: var(--gold); margin: 5px 0; font-size: 2.5rem;">🪙 <span id="shopCoins">0</span></h1>
     </div>
-    <div style="background:rgba(16,185,129,0.1); padding:20px; border-radius:12px; border:1px dashed var(--green);">
-        <h4 style="margin-top:0; color:var(--green);">Redeem Gift Code</h4>
-        <input type="text" id="gift-input" placeholder="FAN-XXXXXX">
-        <button onclick="redeemCode()" style="background:var(--green); color:white;">Redeem Now</button>
+    <div style="background: rgba(16, 185, 129, 0.05); padding: 25px; border-radius: 15px; border: 1px dashed var(--green);">
+        <h4 style="margin: 0 0 15px 0; color: var(--green);">Redeem Gift Code</h4>
+        <input type="text" id="giftInput" placeholder="FAN-XXXXXX" style="text-align: center; text-transform: uppercase;">
+        <button onclick="redeemCode()" style="background: var(--green); color: white;">Redeem Coins</button>
     </div>
 </div>
 
 <div id="profile-view" class="view">
-    <h3>My Profile</h3>
-    <div style="background:var(--card); padding:20px; border-radius:12px; text-align:center; margin-bottom:20px;">
-        <div style="font-size:40px;">👤</div>
-        <h2 id="p-name" style="margin:10px 0;">Reader</h2>
-        <button onclick="auth.signOut()" style="background:var(--red); color:white; width:auto; padding:5px 15px; font-size:0.8rem;">Logout</button>
-    </div>
-    <h4>📖 Purchased Chapters</h4>
-    <div id="my-library"></div>
+    <div class="back-btn" onclick="showView('home-view')">← Back</div>
+    <h2>My Library</h2>
+    <p style="color: #6B7280; font-size: 0.9rem; margin-bottom: 20px;">Purchased chapters are listed here.</p>
+    <div id="my-library-list"></div>
 </div>
-
-<nav class="nav-bar" id="main-nav" style="display:none;">
-    <div class="nav-item" onclick="showView('home-view')">🏠<br>Home</div>
-    <div class="nav-item" onclick="showView('shop-view')">🪙<br>Shop</div>
-    <div class="nav-item" onclick="showView('profile-view'); loadProfile();">👤<br>Profile</div>
-</nav>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, onSnapshot, collection, query, orderBy, getDocs, updateDoc, increment, getDoc, setDoc, where, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, collection, query, orderBy, getDocs, updateDoc, increment, getDoc, setDoc, where, limit, serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = { 
         apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0", 
@@ -116,27 +142,16 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+
     let userUid, currentNovelId, currentNovelTitle;
 
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            userUid = user.uid;
-            document.getElementById('main-header').style.display = 'flex';
-            document.getElementById('main-nav').style.display = 'flex';
-            showView('home-view');
-            onSnapshot(doc(db, "users", user.uid), (s) => {
-                const bal = s.data()?.coin_balance || 0;
-                document.getElementById('top-coins').innerText = bal;
-                document.getElementById('shop-coins').innerText = bal;
-                document.getElementById('p-name').innerText = s.data()?.username || "Reader";
-            });
-            loadNovels();
-        } else {
-            document.getElementById('main-header').style.display = 'none';
-            document.getElementById('main-nav').style.display = 'none';
-            showView('auth-view');
-        }
-    });
+    // --- Core Navigation ---
+    window.toggleDrawer = () => {
+        const side = document.getElementById('sidebar');
+        const over = document.getElementById('drawerOverlay');
+        side.classList.toggle('active');
+        over.style.display = side.classList.contains('active') ? 'block' : 'none';
+    };
 
     window.showView = (id) => {
         document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
@@ -144,49 +159,99 @@
         window.scrollTo(0,0);
     };
 
+    // --- Auth Logic ---
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            userUid = user.uid;
+            document.getElementById('appHeader').style.display = 'flex';
+            document.getElementById('side-email').innerText = user.email;
+            showView('home-view');
+            
+            onSnapshot(doc(db, "users", user.uid), (s) => {
+                const bal = s.data()?.coin_balance || 0;
+                document.getElementById('topCoins').innerText = bal;
+                document.getElementById('side-coins').innerText = bal;
+                document.getElementById('shopCoins').innerText = bal;
+                document.getElementById('side-username').innerText = s.data()?.username || "Reader";
+            });
+            loadNovels();
+        } else {
+            document.getElementById('appHeader').style.display = 'none';
+            showView('auth-view');
+        }
+    });
+
+    window.handleLogin = async () => {
+        const email = document.getElementById('email').value;
+        const pw = document.getElementById('pw').value;
+        if(!email || !pw) return alert("Fill all fields");
+        signInWithEmailAndPassword(auth, email, pw).catch(e => alert(e.message));
+    };
+
+    // --- Novels Logic ---
     async function loadNovels() {
         const snap = await getDocs(query(collection(db, "novels"), orderBy("createdAt", "desc")));
         const list = document.getElementById('novel-list');
         list.innerHTML = "";
         snap.forEach(d => {
             const n = d.data();
-            list.innerHTML += `
-                <div class="novel-card" onclick="openNovel('${d.id}', \`${n.title}\`, '${n.cover}', \`${n.desc}\`)">
-                    <img src="${n.cover}">
-                    <div class="novel-info"><div class="novel-title">${n.title}</div></div>
-                </div>`;
+            const card = document.createElement('div');
+            card.className = 'novel-card';
+            // Card ကို နှိပ်ရင် အလုပ်လုပ်အောင် တိုက်ရိုက် onclick ထည့်သည်
+            card.onclick = () => openNovel(d.id, n.title, n.cover, n.desc);
+            card.innerHTML = `
+                <img src="${n.cover}">
+                <div class="novel-info"><div class="novel-title">${n.title}</div></div>
+            `;
+            list.appendChild(card);
         });
     }
 
     window.openNovel = async (id, title, cover, desc) => {
-        currentNovelId = id; currentNovelTitle = title;
+        currentNovelId = id; 
+        currentNovelTitle = title;
         showView('detail-view');
-        document.getElementById('novel-header').innerHTML = `<img src="${cover}" width="80" height="110" style="object-fit:cover; border-radius:8px;"><div style="flex:1"><h3 style="margin:0; color:var(--gold);">${title}</h3><p style="font-size:0.75rem; color:#9CA3AF;">${desc}</p></div>`;
+        document.getElementById('novel-header-content').innerHTML = `
+            <div class="novel-detail-header">
+                <img src="${cover}" width="90" height="130" style="object-fit:cover; border-radius:8px; border:1px solid var(--gold);">
+                <div style="flex:1">
+                    <h2 style="margin:0; color:var(--gold); font-size:1.1rem;">${title}</h2>
+                    <p style="font-size:0.8rem; color:#9CA3AF; margin-top:8px;">${desc}</p>
+                </div>
+            </div>`;
         
         const snap = await getDocs(query(collection(db, "novels", id, "chapters"), orderBy("num", "asc")));
         const cList = document.getElementById('chapter-list');
         cList.innerHTML = "";
         snap.forEach(c => {
             const ch = c.data();
-            cList.innerHTML += `<div class="item-row" onclick="checkUnlock('${c.id}', ${ch.cost})">
-                <span>Chapter ${ch.num}: ${ch.title}</span>
-                <span style="color:var(--gold); font-weight:bold;">${ch.cost > 0 ? '🪙 '+ch.cost : 'FREE'}</span>
-            </div>`;
+            cList.innerHTML += `
+                <div class="chapter-row" onclick="checkUnlock('${c.id}', ${ch.cost})">
+                    <span>Chapter ${ch.num}: ${ch.title}</span>
+                    <span style="color:var(--gold); font-weight:bold;">${ch.cost > 0 ? '🪙 '+ch.cost : 'FREE'}</span>
+                </div>`;
         });
     };
 
+    // --- Unlock Logic ---
     window.checkUnlock = async (cId, cost) => {
         const unlockRef = doc(db, "users", userUid, "unlocked_chapters", cId);
         const unlockSnap = await getDoc(unlockRef);
+        
         if (unlockSnap.exists() || cost === 0) return renderChapter(cId);
 
         const userSnap = await getDoc(doc(db, "users", userUid));
         const coins = userSnap.data()?.coin_balance || 0;
-        if (coins < cost) { alert("Coins မလုံလောက်ပါ။ Shop တွင် ဖြည့်ပါ။"); showView('shop-view'); return; }
+        if (coins < cost) {
+            alert("Coins မလုံလောက်ပါ။ Shop တွင် ဖြည့်ပေးပါ။");
+            showView('shop-view');
+            return;
+        }
 
-        if (confirm(`${cost} Coins သုံးပြီး Unlock လုပ်မလား?`)) {
+        if (confirm(`${cost} Coins သုံးပြီး ဖတ်ရှုမလား?`)) {
             const chSnap = await getDoc(doc(db, "novels", currentNovelId, "chapters", cId));
             const chData = chSnap.data();
+            
             await updateDoc(doc(db, "users", userUid), { coin_balance: increment(-cost) });
             await setDoc(unlockRef, { 
                 novelId: currentNovelId, novelTitle: currentNovelTitle, 
@@ -200,43 +265,44 @@
     async function renderChapter(cId) {
         const snap = await getDoc(doc(db, "novels", currentNovelId, "chapters", cId));
         showView('reader-view');
-        document.getElementById('reader-title').innerText = "Chapter " + snap.data().num;
+        document.getElementById('reader-title').innerText = "Chapter " + snap.data().num + ": " + snap.data().title;
         document.getElementById('reader-content').innerText = snap.data().content;
     }
 
+    // --- Shop & Profile Logic ---
     window.redeemCode = async () => {
-        const code = document.getElementById('gift-input').value.trim().toUpperCase();
+        const code = document.getElementById('giftInput').value.trim().toUpperCase();
         if(!code) return;
+        
         const q = query(collection(db, "gift_codes"), where("code", "==", code), where("isUsed", "==", false), limit(1));
         const snap = await getDocs(q);
-        if (snap.empty) return alert("Code မမှန်ပါ သို့မဟုတ် အသုံးပြုပြီးသားဖြစ်နေသည်။");
+        
+        if (snap.empty) return alert("Code မမှန်ပါ သို့မဟုတ် အသုံးပြုပြီးသားဖြစ်သည်။");
         
         const gift = snap.docs[0];
         await updateDoc(doc(db, "users", userUid), { coin_balance: increment(gift.data().amount) });
         await updateDoc(doc(db, "gift_codes", gift.id), { isUsed: true });
-        alert("Success! " + gift.data().amount + " Coins added.");
-        document.getElementById('gift-input').value = "";
+        // သုံးခဲ့တဲ့ history သိမ်းမယ်
+        await addDoc(collection(db, "users", userUid, "used_codes"), { code, amount: gift.data().amount, usedAt: serverTimestamp() });
+        
+        alert("အောင်မြင်ပါသည်! " + gift.data().amount + " Coins ထည့်သွင်းပြီးပါပြီ။");
+        document.getElementById('giftInput').value = "";
     };
 
-    window.loadProfile = async () => {
-        const pList = document.getElementById('my-library');
-        pList.innerHTML = "Loading library...";
-        const snap = await getDocs(collection(db, "users", userUid, "unlocked_chapters"));
-        pList.innerHTML = snap.empty ? "<p style='text-align:center; color:#6B7280;'>No purchases yet.</p>" : "";
+    window.loadMyLibrary = async () => {
+        const libList = document.getElementById('my-library-list');
+        libList.innerHTML = "<p>Loading your library...</p>";
+        const snap = await getDocs(query(collection(db, "users", userUid, "unlocked_chapters"), orderBy("unlockedAt", "desc")));
+        
+        libList.innerHTML = snap.empty ? "<p style='text-align:center; color:#4B5563; margin-top:40px;'>No purchased chapters yet.</p>" : "";
         snap.forEach(d => {
             const data = d.data();
-            pList.innerHTML += `
-                <div class="item-row">
-                    <div><b>${data.novelTitle}</b><br><small>Ch-${data.chapterNum}: ${data.chapterTitle}</small></div>
+            libList.innerHTML += `
+                <div class="chapter-row">
+                    <div><b>${data.novelTitle}</b><br><small style="color:#9CA3AF">Chapter ${data.chapterNum}: ${data.chapterTitle}</small></div>
                     <div style="color:var(--gold); font-size:0.8rem;">Unlocked</div>
                 </div>`;
         });
-    };
-
-    window.handleLogin = async () => {
-        const email = document.getElementById('email').value;
-        const pw = document.getElementById('pw').value;
-        signInWithEmailAndPassword(auth, email, pw).catch(e => alert("Login Failed: " + e.message));
     };
 </script>
 </body>
