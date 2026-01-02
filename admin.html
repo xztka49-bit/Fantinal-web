@@ -1,45 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fantinal Admin - V2</title>
+    <title>Fantinal Admin V3 - Manager</title>
     <style>
-        body { background: #0B1120; color: white; font-family: sans-serif; padding: 20px; }
-        .box { background: #111827; padding: 20px; border: 1px solid #D4AF37; border-radius: 10px; max-width: 500px; margin: 20px auto; }
+        :root { --gold: #D4AF37; --bg: #0B1120; --card: #111827; }
+        body { background: var(--bg); color: white; font-family: sans-serif; padding: 20px; }
+        .box { background: var(--card); padding: 20px; border: 1px solid var(--gold); border-radius: 10px; max-width: 600px; margin: 20px auto; }
         input, textarea, select { width: 100%; padding: 12px; margin: 10px 0; background: #1F2937; border: 1px solid #374151; color: white; border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #D4AF37; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; }
+        button { width: 100%; padding: 12px; background: var(--gold); border: none; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 5px; }
+        .list-item { background: #1F2937; padding: 10px; margin: 5px 0; display: flex; justify-content: space-between; align-items: center; border-radius: 5px; }
+        .edit-btn { background: #3B82F6; width: auto; padding: 5px 10px; font-size: 0.8rem; }
+        .del-btn { background: #EF4444; width: auto; padding: 5px 10px; font-size: 0.8rem; margin-left: 5px; }
     </style>
 </head>
 <body>
 
-<div class="box">
-    <h2>1. Upload Novel</h2>
-    <input type="text" id="n-title" placeholder="Title">
-    <input type="text" id="n-author" placeholder="Author">
-    <textarea id="n-desc" placeholder="Description"></textarea>
-    <input type="text" id="n-cover" placeholder="Cover URL">
-    <button onclick="saveNovel()">SAVE NOVEL</button>
+<div id="novel-manager" class="box">
+    <h2 style="color:var(--gold)">📖 Novel Management</h2>
+    <div id="novel-list-admin">Loading novels...</div>
+</div>
+
+<div id="edit-modal" class="box" style="display:none; border-color: #3B82F6;">
+    <h2 style="color:#3B82F6">Edit Novel</h2>
+    <input type="hidden" id="edit-id">
+    <input type="text" id="edit-title" placeholder="Title">
+    <input type="text" id="edit-author" placeholder="Author">
+    <textarea id="edit-desc" rows="3"></textarea>
+    <input type="text" id="edit-cover" placeholder="Cover URL">
+    <button onclick="updateNovel()">UPDATE NOW</button>
+    <button style="background:gray" onclick="closeEdit()">CANCEL</button>
 </div>
 
 <div class="box">
-    <h2>2. Add Chapter</h2>
-    <select id="novel-select"><option>Loading Novels...</option></select>
-    <input type="number" id="c-num" placeholder="Chapter Number">
+    <h2>➕ Add New Chapter</h2>
+    <select id="novel-select-chapter"><option>Select Novel</option></select>
+    <input type="number" id="c-num" placeholder="Chapter No.">
     <input type="text" id="c-title" placeholder="Chapter Title">
-    <textarea id="c-content" placeholder="Content" rows="10"></textarea>
-    <input type="number" id="c-cost" placeholder="Cost (Coins)">
-    <button onclick="saveChapter()">PUBLISH CHAPTER</button>
-</div>
-
-<div class="box">
-    <h2>3. Generate Gift Code</h2>
-    <input type="number" id="g-amt" placeholder="Coin Amount (e.g. 5000)">
-    <button style="background: #10B981;" onclick="generateGiftCode()">GENERATE CODE</button>
-    <p id="code-output" style="text-align:center; color:#D4AF37; font-weight:bold; font-size:1.2rem; margin-top:10px;"></p>
+    <textarea id="c-content" placeholder="Content" rows="8"></textarea>
+    <input type="number" id="c-cost" placeholder="Coins Cost">
+    <button onclick="saveChapter()">PUBLISH</button>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
@@ -53,45 +57,79 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // Novel စာရင်းကို Dropdown ထဲ ထည့်ခြင်း
-  async function fetchNovels() {
+  // ဝတ္ထုများစာရင်းဆွဲထုတ်ခြင်း
+  async function refreshAdminList() {
     const snap = await getDocs(collection(db, "novels"));
-    const select = document.getElementById('novel-select');
-    select.innerHTML = "";
-    snap.forEach(doc => {
-      select.innerHTML += `<option value="${doc.id}">${doc.data().title}</option>`;
+    const listDiv = document.getElementById('novel-list-admin');
+    const select = document.getElementById('novel-select-chapter');
+    listDiv.innerHTML = "";
+    select.innerHTML = "<option value=''>Select Novel</option>";
+
+    snap.forEach(d => {
+      const n = d.data();
+      // List for Admin Edit
+      listDiv.innerHTML += `
+        <div class="list-item">
+            <span>${n.title}</span>
+            <div>
+                <button class="edit-btn" onclick="openEdit('${d.id}', '${n.title}', '${n.author}', '${n.desc}', '${n.cover}')">Edit</button>
+                <button class="del-btn" onclick="deleteNovel('${d.id}')">Del</button>
+            </div>
+        </div>`;
+      // Dropdown for Chapter
+      select.innerHTML += `<option value="${d.id}">${n.title}</option>`;
     });
   }
-  fetchNovels();
+  refreshAdminList();
 
-  window.saveNovel = async () => { /* အရင်က code အတိုင်း */ };
-
-  window.saveChapter = async () => {
-    const nid = document.getElementById('novel-select').value;
-    try {
-      await addDoc(collection(db, "novels", nid, "chapters"), {
-        num: Number(document.getElementById('c-num').value),
-        title: document.getElementById('c-title').value,
-        content: document.getElementById('c-content').value,
-        cost: Number(document.getElementById('c-cost').value),
-        createdAt: serverTimestamp()
-      });
-      alert("Chapter Published!");
-    } catch (e) { alert(e.message); }
+  // Edit Novel Open
+  window.openEdit = (id, title, author, desc, cover) => {
+    document.getElementById('edit-modal').style.display = 'block';
+    document.getElementById('edit-id').value = id;
+    document.getElementById('edit-title').value = title;
+    document.getElementById('edit-author').value = author;
+    document.getElementById('edit-desc').value = desc;
+    document.getElementById('edit-cover').value = cover;
+    window.scrollTo(0,0);
   };
 
-  window.generateGiftCode = async () => {
-    const amt = document.getElementById('g-amt').value;
-    const code = "FAN-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-    try {
-      await addDoc(collection(db, "gift_codes"), {
-        code: code,
-        amount: Number(amt),
-        isUsed: false,
-        createdAt: serverTimestamp()
-      });
-      document.getElementById('code-output').innerText = code;
-    } catch (e) { alert(e.message); }
+  window.closeEdit = () => document.getElementById('edit-modal').style.display = 'none';
+
+  // Update Novel Logic
+  window.updateNovel = async () => {
+    const id = document.getElementById('edit-id').value;
+    const ref = doc(db, "novels", id);
+    await updateDoc(ref, {
+      title: document.getElementById('edit-title').value,
+      author: document.getElementById('edit-author').value,
+      desc: document.getElementById('edit-desc').value,
+      cover: document.getElementById('edit-cover').value
+    });
+    alert("Updated!");
+    location.reload();
+  };
+
+  // Delete Novel
+  window.deleteNovel = async (id) => {
+    if(confirm("Are you sure? All chapters will stay but novel link will be gone.")){
+        await deleteDoc(doc(db, "novels", id));
+        refreshAdminList();
+    }
+  };
+
+  // Chapter Logic
+  window.saveChapter = async () => {
+    const nid = document.getElementById('novel-select-chapter').value;
+    if(!nid) return alert("Select novel first!");
+    await addDoc(collection(db, "novels", nid, "chapters"), {
+      num: Number(document.getElementById('c-num').value),
+      title: document.getElementById('c-title').value,
+      content: document.getElementById('c-content').value,
+      cost: Number(document.getElementById('c-cost').value),
+      createdAt: serverTimestamp()
+    });
+    alert("Chapter Published!");
+    location.reload();
   };
 </script>
 </body>
