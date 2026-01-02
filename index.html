@@ -1,76 +1,66 @@
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury Business Novel</title>
+    <style>
+        body { background: #0B1120; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #111827; padding: 2rem; border-radius: 12px; border: 1px solid #D4AF37; width: 300px; }
+        h2 { color: #D4AF37; text-align: center; }
+        input { width: 100%; padding: 10px; margin: 10px 0; background: #1F2937; border: 1px solid #374151; color: white; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #D4AF37; border: none; color: black; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #B8962E; }
+    </style>
+</head>
+<body>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
-  authDomain: "fantinal-publishing-5b960.firebaseapp.com",
-  projectId: "fantinal-publishing-5b960",
-  storageBucket: "fantinal-publishing-5b960.firebasestorage.app",
-  messagingSenderId: "961612304854",
-  appId: "1:961612304854:web:6bf7b03072ed83b58b9477",
-  measurementId: "G-3X5NP67TX7"
-};
+<div class="card">
+    <h2>Luxury Signup</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="handleSignup()">Create Account</button>
+</div>
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-import { auth, db } from "./firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-export const signUpUser = async (email, password, username) => {
-  try {
-    const res = await createUserWithEmailAndPassword(auth, email, password);
-    const user = res.user;
-
-    // Firestore ထဲမှာ User Profile တည်ဆောက်ခြင်း
-    await setDoc(doc(db, "users", user.uid), {
-      uid: user.uid,
-      username: username,
-      email: email,
-      coin_balance: 0, // အစပိုင်းမှာ 0 ပေးထားမယ်
-      role: "user",    // Default role
-      vip_level: 0,    // Phase 3 အတွက် ကြိုထည့်ထားခြင်း
-      created_at: new Date()
-    });
-
-    return { success: true };
-  } catch (error) {
-    return { success: false, message: error.message };
-  }
-};
-import React, { useState } from 'react';
-import { signUpUser } from './AuthService';
-
-function Signup() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
-
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    const result = await signUpUser(email, password, username);
-    if (result.success) {
-      alert("အကောင့်ဖွင့်ခြင်း အောင်မြင်သည်!");
-    } else {
-      alert("မှားယွင်းမှုရှိသည်: " + result.message);
-    }
+  const firebaseConfig = {
+    apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0",
+    authDomain: "fantinal-publishing-5b960.firebaseapp.com",
+    projectId: "fantinal-publishing-5b960",
+    storageBucket: "fantinal-publishing-5b960.firebasestorage.app",
+    messagingSenderId: "961612304854",
+    appId: "1:961612304854:web:6bf7b03072ed83b58b9477"
   };
 
-  return (
-    <div style={{ padding: '20px', background: '#0B1120', color: 'white', height: '100vh' }}>
-      <h2>Create Luxury Account</h2>
-      <form onSubmit={handleSignup}>
-        <input type="text" placeholder="Username" onChange={(e) => setUsername(e.target.value)} required /><br/><br/>
-        <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required /><br/><br/>
-        <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required /><br/><br/>
-        <button type="submit" style={{ background: '#D4AF37', color: 'black', padding: '10px 20px', border: 'none', cursor: 'pointer' }}>
-          Sign Up
-        </button>
-      </form>
-    </div>
-  );
-}
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-export default Signup;
+  window.handleSignup = async () => {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const username = document.getElementById('username').value;
+
+    try {
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+      await setDoc(doc(db, "users", res.user.uid), {
+        uid: res.user.uid,
+        username: username,
+        coin_balance: 0,
+        role: "user",
+        created_at: new Date()
+      });
+      alert("Account Created Successfully!");
+    } catch (error) {
+      alert("Error: " + error.message);
+    }
+  };
+</script>
+
+</body>
+</html>
