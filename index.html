@@ -92,8 +92,8 @@
         .name-purple { color: #d946ef; font-weight: 800; text-shadow: 0 0 8px rgba(217,70,239,0.6); }
         .name-red { color: #ff3e3e; font-weight: 900; text-shadow: 0 0 10px rgba(255,62,62,0.8); }
 
-        /* VIP TAGS */
-        .vip-tag { padding: 3px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 900; margin-right: 8px; text-transform: uppercase; }
+        /* VIP TAGS (Enhanced for Chat Visibility) */
+        .vip-tag { padding: 3px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 900; margin-right: 8px; text-transform: uppercase; display: inline-block; vertical-align: middle; }
         .t0 { background: var(--v0); } .t1 { background: var(--v1); } .t2 { background: var(--v2); }
         .t3 { background: var(--v3); color: #000; } .t4 { background: var(--v4); color: #000; }
         .t5 { background: var(--v5); } .t6 { background: var(--v6); border: 1px solid #fff; }
@@ -137,7 +137,7 @@
 </head>
 <body>
 
-<header style="padding: 15px 20px; border-bottom: 1px solid rgba(212,175,55,0.2); display: flex; justify-content: space-between; align-items: center; background: var(--card); sticky; top: 0; z-index: 1000;">
+<header style="padding: 15px 20px; border-bottom: 1px solid rgba(212,175,55,0.2); display: flex; justify-content: space-between; align-items: center; background: var(--card); position: sticky; top: 0; z-index: 1000;">
     <div class="logo" style="color:var(--gold); font-size: 1.2rem;">FANTINAL</div>
     <div id="authBox">
         <button id="loginBtn" onclick="login()" class="btn-gold" style="padding: 8px 18px; border-radius: 25px; font-size: 0.75rem;">SIGN IN</button>
@@ -328,7 +328,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, collection, query, getDocs, getDoc, updateDoc, increment, setDoc, addDoc, where, orderBy, limit, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, collection, query, getDocs, getDoc, updateDoc, increment, setDoc, addDoc, where, orderBy, limit, serverTimestamp, deleteDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     // PROJECT CONFIG
@@ -360,19 +360,24 @@
         6: [200, 400, 600, 800, 1000, 1200, 1400]
     };
 
-    // --- AUTHENTICATION ---
+    // --- AUTHENTICATION (COIN SECURITY FIX) ---
     window.login = () => signInWithPopup(auth, provider);
 
     onAuthStateChanged(auth, async (user) => {
         if(user) {
             currentUser = user;
             const userRef = doc(db, "users", user.uid);
+            
+            // Database Sync Safety: Ensure row exists immediately upon login
+            const snapInitial = await getDoc(userRef);
+            if(!snapInitial.exists()) {
+                await setDoc(userRef, { name: user.displayName, email: user.email, coins: 0, spent: 0, claimCount: 0, lastClaim: 0 });
+            }
+
             onSnapshot(userRef, (snap) => {
                 if(snap.exists()) {
                     userData = snap.data();
                     updateMasterUI();
-                } else {
-                    setDoc(userRef, { name: user.displayName, email: user.email, coins: 0, spent: 0, claimCount: 0, lastClaim: 0 });
                 }
             });
             if(user.email === ADMIN_EMAIL) document.getElementById('adminPanelBtn').style.display = 'block';
@@ -384,8 +389,8 @@
         const vip = getVipInfo(userData.spent);
         document.getElementById('loginBtn').style.display = 'none';
         document.getElementById('userHeader').style.display = 'block';
-        document.getElementById('hCoins').innerText = userData.coins.toLocaleString();
-        document.getElementById('sCoins').innerText = userData.coins.toLocaleString();
+        document.getElementById('hCoins').innerText = (userData.coins || 0).toLocaleString();
+        document.getElementById('sCoins').innerText = (userData.coins || 0).toLocaleString();
         document.getElementById('hVip').innerHTML = `<span class="vip-tag ${vip.cls}">${vip.name}</span>`;
         document.getElementById('pName').innerText = userData.name;
         document.getElementById('pVip').innerHTML = `<span class="vip-tag ${vip.cls}" style="font-size:1rem">${vip.name}</span>`;
@@ -394,7 +399,7 @@
         if(vip.lv >= 2) {
             document.getElementById('dailyClaimSection').style.display = 'block';
             const grid = document.getElementById('claimGrid'); grid.innerHTML = "";
-            const dayIdx = userData.claimCount % 7;
+            const dayIdx = (userData.claimCount || 0) % 7;
             claimTable[vip.lv].forEach((amt, i) => {
                 grid.innerHTML += `<div class="day-box ${i === dayIdx ? 'active' : ''}">Day ${i+1}<br>🪙${amt}</div>`;
             });
@@ -419,7 +424,7 @@
     };
     window.handleClaim = async () => {
         const vip = getVipInfo(userData.spent);
-        const amt = claimTable[vip.lv][userData.claimCount % 7];
+        const amt = claimTable[vip.lv][(userData.claimCount || 0) % 7];
         await updateDoc(doc(db, "users", currentUser.uid), {
             coins: increment(amt),
             lastClaim: Date.now(),
@@ -428,7 +433,7 @@
         alert(`Congratulations! You received 🪙${amt} daily coins.`);
     };
 
-    // --- CHAT SYSTEM ---
+    // --- CHAT SYSTEM (VIP TAG FIX) ---
     window.sendChat = async () => {
         const msg = document.getElementById('chatInput').value;
         if(!msg) return;
@@ -438,6 +443,8 @@
             text: msg,
             nCls: vip.nCls,
             fCls: vip.fCls,
+            vName: vip.name, // Added for Tag
+            vCls: vip.cls,   // Added for Tag color
             date: serverTimestamp()
         });
         document.getElementById('chatInput').value = "";
@@ -448,6 +455,7 @@
         snap.forEach(d => {
             const m = d.data();
             box.innerHTML += `<div class="chat-msg ${m.fCls}">
+                <span class="vip-tag ${m.vCls || 't0'}">${m.vName || 'Newbie'}</span>
                 <span class="${m.nCls}">${m.name || 'Null'}</span>: ${m.text}
             </div>`;
         });
@@ -555,7 +563,7 @@
         loadReviews(nid);
     };
 
-    // --- SHOP & TRANSFER & GIFT ---
+    // --- SHOP & TRANSFER (SECURE COIN LOGIC) ---
     const packages = [1000, 2000, 5000, 10000, 30000, 50000];
     packages.forEach(p => {
         document.getElementById('packageGrid').innerHTML += `<div class="card" onclick="openTopup(${p})" style="text-align:center; cursor:pointer; background:#161b22;">🪙 ${p.toLocaleString()}</div>`;
@@ -577,10 +585,18 @@
         const s = await getDocs(q);
         if(s.empty) return alert("User not found!");
         const target = s.docs[0];
-        await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(-amt) });
-        await updateDoc(doc(db, "users", target.id), { coins: increment(amt) });
-        await addDoc(collection(db, "transactions"), { uid: currentUser.uid, type: "Transfer Out", amount: amt, status: "Approved", date: serverTimestamp() });
-        alert("Coins transferred!");
+        
+        // Use Transaction to prevent coin loss
+        try {
+            await runTransaction(db, async (transaction) => {
+                const senderRef = doc(db, "users", currentUser.uid);
+                const receiverRef = doc(db, "users", target.id);
+                transaction.update(senderRef, { coins: increment(-amt) });
+                transaction.update(receiverRef, { coins: increment(amt) });
+            });
+            await addDoc(collection(db, "transactions"), { uid: currentUser.uid, type: "Transfer Out", amount: amt, status: "Approved", date: serverTimestamp() });
+            alert("Coins transferred successfully!");
+        } catch(e) { alert("Transfer error!"); }
     };
 
     window.redeemGift = async () => {
