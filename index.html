@@ -3,192 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FANTINAL - Global Premium Library</title>
+    <title>FANTINAL - Emperor Class Publishing</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #020617; --card: #0f172a; --gold: #d4af37; --text: #f8fafc; --text-dim: #94a3b8;
-            --vip0: #64748b; --vip1: #22c55e; --vip2: #cd7f32; --vip3: #c0c0c0; --vip4: #fbbf24; --vip5: #d946ef; --vip6: #f43f5e;
+            --bg: #010409; --card: #0d1117; --gold: #d4af37; --silver: #c0c0c0; --purple: #a855f7;
+            --text: #f0f6fc; --text-dim: #8b949e; --red: #ff3e3e; --green: #238636;
+            --v0: #8b949e; --v4: #d4af37; --v5: #a855f7; --v6: #ff3e3e;
         }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding-bottom: 90px; }
-        h1, h2, .logo { font-family: 'Cinzel', serif; }
 
-        /* General UI */
-        .view { display: none; padding: 20px; animation: fadeIn 0.4s ease; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding-bottom: 80px; overflow-x: hidden; }
+        h1, h2, h3, .logo { font-family: 'Cinzel', serif; letter-spacing: 2px; }
+
+        /* Luxury Animations */
+        @keyframes glow { 0% { box-shadow: 0 0 5px var(--gold); } 50% { box-shadow: 0 0 20px var(--gold); } 100% { box-shadow: 0 0 5px var(--gold); } }
+        @keyframes pulse-red { 0% { border-color: #ff3e3e; } 50% { border-color: #7f0000; box-shadow: 0 0 15px #ff3e3e; } 100% { border-color: #ff3e3e; } }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        
+        .view { display: none; padding: 20px; animation: slideIn 0.3s ease-out; }
         .active-view { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .card { background: var(--card); border-radius: 15px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
-        .btn { padding: 12px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; width: 100%; }
-        .btn-gold { background: linear-gradient(45deg, var(--gold), #fef08a); color: #000; }
-        input, textarea, select { width: 100%; padding: 12px; margin: 10px 0; background: #1e293b; border: 1px solid #334155; color: white; border-radius: 10px; box-sizing: border-box; }
 
-        /* VIP Tags & Glow */
-        .vip-tag { padding: 3px 8px; border-radius: 5px; font-size: 0.65rem; font-weight: bold; margin-right: 5px; }
-        .v0 { background: var(--vip0); } .v1 { background: var(--vip1); } .v2 { background: var(--vip2); }
-        .v3 { background: var(--vip3); color: #000; } .v4 { background: var(--vip4); color: #000; }
-        .v5 { background: var(--vip5); } .v6 { background: var(--vip6); border: 1px solid #fff; box-shadow: 0 0 10px var(--vip6); }
+        /* UI Elements */
+        .card { background: var(--card); border-radius: 16px; border: 1px solid rgba(212,175,55,0.1); padding: 20px; margin-bottom: 20px; transition: 0.3s; }
+        .card:active { transform: scale(0.98); }
+        .btn { padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
+        .btn:active { transform: scale(0.95); filter: brightness(1.2); }
+        .btn-gold { background: linear-gradient(45deg, #d4af37, #fef08a); color: #000; }
+        input, textarea, select { width: 100%; padding: 14px; margin: 10px 0; background: #161b22; border: 1px solid #30363d; color: white; border-radius: 12px; }
 
-        /* Novel & Reader */
-        .novel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-        .novel-card { border-radius: 12px; overflow: hidden; position: relative; cursor: pointer; transition: 0.3s; }
-        .novel-card:hover { transform: scale(1.03); }
-        .novel-card img { width: 100%; height: 230px; object-fit: cover; }
-        .reader-text { line-height: 2.2; font-size: 1.2rem; white-space: pre-wrap; padding: 15px; text-align: justify; }
+        /* VIP Daily Claim UI */
+        .claim-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 15px; }
+        .claim-day { background: #161b22; padding: 10px 5px; border-radius: 10px; text-align: center; font-size: 0.7rem; border: 1px solid #30363d; }
+        .claim-day.active { border-color: var(--gold); color: var(--gold); }
 
-        /* Chat UI */
-        #chat-box { height: 350px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 10px; display: flex; flex-direction: column-reverse; }
-        .chat-msg { margin-bottom: 8px; font-size: 0.9rem; padding: 8px; border-radius: 8px; background: rgba(255,255,255,0.05); }
+        /* Chat System & Frames */
+        #chat-box { height: 400px; overflow-y: auto; display: flex; flex-direction: column-reverse; gap: 10px; padding: 10px; }
+        .chat-msg { padding: 12px; border-radius: 12px; font-size: 0.9rem; position: relative; }
+        .f-v5 { border: 2px solid var(--purple); background: rgba(168, 85, 247, 0.1); box-shadow: 0 0 10px var(--purple); }
+        .f-v6 { border: 2px solid var(--gold); background: rgba(0,0,0,0.5); animation: pulse-red 2s infinite; }
+        .n-v4 { color: var(--gold); font-weight: bold; }
+        .n-v5 { color: #d946ef; font-weight: bold; text-shadow: 0 0 5px #d946ef; }
+        .n-v6 { color: #ff3e3e; font-weight: 900; text-shadow: 0 0 10px #ff3e3e; }
 
         /* Navigation */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid var(--gold); }
-        .nav-item { color: var(--text-dim); font-size: 0.7rem; text-align: center; cursor: pointer; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: rgba(13,17,23,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid var(--gold); z-index: 1000; }
+        .nav-item { color: var(--text-dim); font-size: 0.75rem; text-align: center; }
         .nav-item.active { color: var(--gold); }
 
-        /* Modal */
-        #vipModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; }
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.8rem; }
+        th { text-align: left; color: var(--gold); padding: 10px; border-bottom: 1px solid #30363d; }
+        td { padding: 10px; border-bottom: 1px solid #161b22; }
     </style>
 </head>
 <body>
 
-<header style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--card); border-bottom: 1px solid var(--gold); position: sticky; top: 0; z-index: 1000;">
-    <div class="logo" style="color:var(--gold); letter-spacing: 2px;">FANTINAL</div>
-    <div id="authBox">
-        <button id="loginBtn" onclick="login()" class="btn-gold" style="padding: 6px 15px; font-size: 0.8rem; width: auto;">SIGN IN</button>
-        <div id="userInfo" style="display:none; text-align: right;">
-            <div style="color:var(--gold); font-weight: bold;">🪙 <span id="uCoins">0</span></div>
-            <div id="uVip"></div>
+<header style="padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--gold);">
+    <div class="logo" style="color:var(--gold)">FANTINAL</div>
+    <div id="auth-status">
+        <button onclick="login()" class="btn-gold" style="padding: 6px 15px; border-radius: 20px;">SIGN IN</button>
+        <div id="uHeader" style="display:none; text-align: right;">
+            <div id="uBalance" style="color:var(--gold); font-weight:bold;">🪙 0</div>
+            <div id="uTag"></div>
         </div>
     </div>
 </header>
 
 <div id="home-view" class="view active-view">
-    <input type="text" id="search" placeholder="Search stories..." oninput="searchStories()" style="border-radius:20px; padding-left: 15px;">
-    <div class="novel-grid" id="novelGrid"></div>
-</div>
-
-<div id="detail-view" class="view">
-    <div onclick="showView('home-view')" style="color:var(--gold); cursor:pointer; margin-bottom:15px;">← BACK</div>
-    <div id="novelContent"></div>
-    <div id="chapterList" class="card"></div>
-</div>
-
-<div id="reader-view" class="view">
-    <div onclick="showView('detail-view')" style="color:var(--gold); cursor:pointer;">← BACK</div>
-    <h2 id="rTitle" style="color:var(--gold); margin-top:20px;"></h2>
-    <div id="rContent" class="reader-text"></div>
-    <div style="display:flex; gap:10px; margin-top:30px;">
-        <button id="prevBtn" class="btn" style="background:#334155;">Previous</button>
-        <button id="nextBtn" class="btn btn-gold">Next Chapter</button>
-    </div>
-</div>
-
-<div id="shop-view" class="view">
-    <div class="card" style="text-align:center; border: 1px solid var(--gold);">
-        <h1 style="color:var(--gold); margin:0;">🪙 <span id="sCoins">0</span></h1>
-        <p style="font-size:0.8rem; color:var(--text-dim);">Wallet Balance</p>
-    </div>
-    <div class="card" style="border-color:var(--green);">
-        <h4 style="color:var(--green); margin:0;">Redeem Gift Code</h4>
-        <input type="text" id="giftCodeInput" placeholder="Enter Code">
-        <button class="btn" style="background:var(--green); color:white;" onclick="redeemGift()">Claim Coins</button>
-    </div>
-    <h3>Coin Packages</h3>
-    <div id="pkgGrid" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
-    
-    <div id="topupForm" class="card" style="display:none; margin-top:20px; border-color:var(--gold);">
-        <h4 style="color:var(--gold)">Payment Details</h4>
-        <p style="font-size:0.8rem;">KBZ/Wave: 09759731746 (THU KHA AUNG)</p>
-        <input type="text" id="topupName" placeholder="Sender Name">
-        <input type="text" id="topupID" placeholder="Last 6 Digits">
-        <button class="btn btn-gold" onclick="submitTopup()">Submit</button>
-    </div>
-</div>
-
-<div id="chat-view" class="view">
-    <h3>Global Chat</h3>
-    <div id="chat-box"></div>
-    <div style="display:flex; gap:10px; margin-top:10px;">
-        <input type="text" id="chatInput" placeholder="Say something...">
-        <button onclick="sendChat()" class="btn-gold" style="width:80px;">Send</button>
-    </div>
+    <input type="text" id="searchBar" placeholder="Search for legends..." oninput="search()">
+    <div id="novelGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;"></div>
 </div>
 
 <div id="profile-view" class="view">
-    <div class="card" style="text-align:center;">
-        <h2 id="pName">Name</h2>
-        <div id="pVip"></div>
-        <p style="font-size:0.9rem; color:var(--text-dim);">Spent: 🪙 <span id="pSpent">0</span></p>
-        <button class="btn btn-gold" onclick="openVipModal()" style="margin-top:10px; width:auto; padding:8px 20px;">VIP Levels Info</button>
-    </div>
-    
-    <div class="card">
-        <h4>Transfer Coins</h4>
-        <input type="text" id="tfEmail" placeholder="Receiver Email">
-        <input type="number" id="tfAmt" placeholder="Amount">
-        <button class="btn" style="background:var(--blue); color:white;" onclick="transferCoins()">Transfer Now</button>
+    <div class="card" style="text-align: center;">
+        <h2 id="dispName">User Name</h2>
+        <div id="dispVip"></div>
+        <button class="btn" style="background:transparent; color:var(--gold); font-size: 0.7rem;" onclick="toggleNameEdit()">[ Edit Name ]</button>
+        <div id="nameEditBox" style="display:none;">
+            <input type="text" id="newName" placeholder="Enter New Username">
+            <button class="btn-gold" onclick="updateUsername()">Update</button>
+        </div>
     </div>
 
-    <h3>History</h3>
-    <div class="card" style="overflow-x:auto;">
-        <table id="histTable" style="width:100%; font-size:0.8rem;">
-            <thead><tr style="text-align:left; color:var(--gold);"><th>Date</th><th>Type</th><th>Amt</th><th>Status</th></tr></thead>
-            <tbody id="histBody"></tbody>
-        </table>
+    <div id="claimContainer" class="card" style="display:none; border-color:var(--green);">
+        <h3 style="margin:0; color:var(--green);">Daily Rewards</h3>
+        <p id="claimStatus" style="font-size: 0.75rem; color: var(--text-dim);"></p>
+        <div class="claim-grid" id="claimGrid"></div>
+        <button id="claimBtn" class="btn btn-gold" style="margin-top:15px;" onclick="handleClaim()">CLAIM NOW</button>
     </div>
 
-    <div id="admBtn" style="display:none; margin-top:20px;">
-        <button class="btn btn-gold" onclick="showView('admin-view')">ADMIN PANEL</button>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <button class="btn" style="background:#1e293b;" onclick="showView('history-view')">Coin History</button>
+        <button class="btn" style="background:#1e293b;" onclick="showView('transfer-view')">Transfer</button>
+    </div>
+
+    <div id="admSection" style="display:none; margin-top:20px;">
+        <button class="btn-gold" onclick="showView('admin-view')">MASTER ADMIN PANEL</button>
+    </div>
+</div>
+
+<div id="history-view" class="view">
+    <div onclick="showView('profile-view')" style="color:var(--gold); cursor:pointer;">← BACK</div>
+    <h3>Transaction History</h3>
+    <div class="card" style="overflow-x:auto;"><table id="histTable"><thead><tr><th>Date</th><th>Type</th><th>Amt</th><th>Status</th></tr></thead><tbody id="histBody"></tbody></table></div>
+</div>
+
+<div id="chat-view" class="view">
+    <h3>Global Discussion</h3>
+    <div id="chat-box" class="card"></div>
+    <div style="display:flex; gap:10px; margin-top:10px;">
+        <input type="text" id="chatInput" placeholder="Write your message...">
+        <button onclick="sendChat()" class="btn-gold" style="width:80px;">SEND</button>
     </div>
 </div>
 
 <div id="admin-view" class="view">
-    <div onclick="showView('profile-view')" style="color:var(--gold); cursor:pointer; margin-bottom:20px;">← BACK</div>
-    <div class="card" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; text-align:center;">
-        <div><h4>Views</h4><span id="aViews">0</span></div>
-        <div><h4>Revenue</h4><span id="aRev">0</span></div>
+    <div onclick="showView('profile-view')" style="color:var(--gold); cursor:pointer;">← BACK</div>
+    
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <button class="btn-gold" onclick="showAdminSub('a-reqs')">Approvals</button>
+        <button class="btn-gold" onclick="showAdminSub('a-vs')">V & S (Analytics)</button>
+        <button class="btn-gold" onclick="showAdminSub('a-novels')">Novels</button>
+        <button class="btn-gold" onclick="showAdminSub('a-gifts')">Gifts</button>
     </div>
-    <div class="card">
+
+    <div id="a-reqs" class="adm-sub card" style="margin-top:20px;">
         <h4>Pending Topups</h4>
         <div id="pendingList"></div>
     </div>
-    <div class="card">
-        <h4>Novels (Add/Edit)</h4>
-        <input type="text" id="anID" placeholder="Novel ID (Empty = New)">
+
+    <div id="a-vs" class="adm-sub card" style="display:none; margin-top:20px;">
+        <h4>Sales & Views Analytics</h4>
+        <div id="vsContent"></div>
+    </div>
+
+    <div id="a-novels" class="adm-sub card" style="display:none; margin-top:20px;">
+        <h4>Novel Manager</h4>
+        <input type="text" id="anID" placeholder="Novel ID (Leave empty for new)">
         <input type="text" id="anTitle" placeholder="Title">
         <input type="text" id="anAut" placeholder="Author">
         <input type="text" id="anCov" placeholder="Cover URL">
-        <textarea id="anDes" placeholder="Desc"></textarea>
-        <input type="number" id="anVipP" placeholder="Full Novel VIP Price">
-        <button class="btn btn-gold" onclick="saveNovel()">Save Novel</button>
-        <div id="admNovelList" style="margin-top:15px;"></div>
-    </div>
-    <div class="card">
-        <h4>Chapters</h4>
+        <textarea id="anDes" placeholder="Description"></textarea>
+        <input type="number" id="anVipP" placeholder="Lifetime VIP Price">
+        <button class="btn-gold" onclick="saveNovel()">SAVE NOVEL</button>
+        <hr style="border:0.5px solid #30363d; margin:20px 0;">
+        <h4>Chapter Edit/Add</h4>
         <select id="anSel"></select>
-        <input type="number" id="acNum" placeholder="Ch Number">
-        <input type="text" id="acTitle" placeholder="Ch Title">
+        <input type="text" id="acID" placeholder="Chapter ID (For Editing)">
+        <input type="number" id="acNum" placeholder="Number">
+        <input type="text" id="acTit" placeholder="Title">
         <textarea id="acCon" rows="5" placeholder="Content"></textarea>
         <input type="number" id="acCost" placeholder="Cost">
-        <button class="btn btn-gold" onclick="saveChapter()">Publish Chapter</button>
+        <button class="btn-gold" onclick="saveChapter()">SAVE CHAPTER</button>
     </div>
-    <div class="card">
-        <h4>Generate Gift Code</h4>
+    
+    <div id="a-gifts" class="adm-sub card" style="display:none; margin-top:20px;">
+        <h4>Gift Coin History</h4>
         <input type="number" id="agAmt" placeholder="Amount">
-        <button class="btn" style="background:var(--green); color:white;" onclick="genGift()">Generate Code</button>
-        <p id="gcRes" style="margin-top:10px; color:var(--green); font-weight:bold;"></p>
+        <button class="btn-gold" onclick="generateGift()">GENERATE CODE</button>
+        <div id="giftHistory" style="margin-top:15px;"></div>
     </div>
 </div>
 
-<div id="vipModal">
-    <div class="card" style="max-width:300px; text-align:left;">
-        <h3 style="color:var(--gold); text-align:center;">VIP Requirements</h3>
-        <p><span class="vip-tag v1">VIP 1</span>: 10,000 Spent</p>
-        <p><span class="vip-tag v2">VIP 2</span>: 50,000</p>
-        <p><span class="vip-tag v3">VIP 3</span>: 120,000</p>
-        <p><span class="vip-tag v4">VIP 4</span>: 400,000 (Master)</p>
-        <p><span class="vip-tag v5">VIP 5</span>: 1,000,000 (King)</p>
-        <p><span class="vip-tag v6">VIP 6</span>: 3,000,000 (Emperor)</p>
-        <button class="btn-gold" onclick="document.getElementById('vipModal').style.display='none'">Close</button>
+<div id="shop-view" class="view">
+    <div class="card" style="text-align:center;">
+        <h1 style="color:var(--gold); margin:0;">🪙 <span id="shopBal">0</span></h1>
+    </div>
+    <div id="pkgGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
+    <div id="payForm" class="card" style="display:none; margin-top:20px; border-color:var(--gold);">
+        <p>Transfer to: <b>09759731746 (KBZPay/Wave)</b></p>
+        <input type="text" id="pNameInput" placeholder="Sender Name">
+        <input type="text" id="pTidInput" placeholder="Last 6 Digits">
+        <button class="btn btn-gold" onclick="submitTopup()">Submit</button>
+    </div>
+</div>
+
+<div id="detail-view" class="view">
+    <div onclick="showView('home-view')" style="color:var(--gold); cursor:pointer;">← BACK</div>
+    <div id="nDetail"></div>
+    <div class="card" id="ratingBox">
+        <h4>Reviews & Ratings</h4>
+        <div id="revList"></div>
+        <div style="display:flex; gap:5px; margin-top:10px;">
+            <select id="rRate" style="width:70px;"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select>
+            <input type="text" id="rText" placeholder="Write a review...">
+            <button onclick="postReview()" class="btn-gold" style="width:70px;">POST</button>
+        </div>
+    </div>
+    <div id="chList" class="card"></div>
+</div>
+
+<div id="reader-view" class="view">
+    <div onclick="showView('detail-view')" style="color:var(--gold); cursor:pointer;">← BACK</div>
+    <h2 id="rhTitle"></h2>
+    <div id="rhContent" style="line-height:2.2; white-space:pre-wrap; font-size:1.1rem;"></div>
+    <div style="display:flex; gap:10px; margin-top:20px;">
+        <button id="prevB" class="btn" style="background:#30363d;">Prev</button>
+        <button id="nextB" class="btn btn-gold">Next</button>
     </div>
 </div>
 
@@ -196,12 +207,12 @@
     <div class="nav-item active" onclick="showView('home-view')">🏠<br>Home</div>
     <div class="nav-item" onclick="showView('shop-view')">💰<br>Shop</div>
     <div class="nav-item" onclick="showView('chat-view')">💬<br>Chat</div>
-    <div class="nav-item" onclick="showView('profile-view')">👤<br>Account</div>
+    <div class="nav-item" onclick="showView('profile-view')">👤<br>Profile</div>
 </nav>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, collection, query, getDocs, getDoc, updateDoc, increment, setDoc, addDoc, where, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, collection, query, getDocs, getDoc, updateDoc, increment, setDoc, addDoc, where, orderBy, limit, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     const config = { apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0", authDomain: "fantinal-publishing-5b960.firebaseapp.com", projectId: "fantinal-publishing-5b960", storageBucket: "fantinal-publishing-5b960.firebasestorage.app", messagingSenderId: "961612304854", appId: "1:961612304854:web:6bf7b03072ed83b58b9477" };
@@ -211,18 +222,28 @@
     const prov = new GoogleAuthProvider();
 
     const ADMIN_EMAIL = "xztka49@gmail.com";
-    let curU = null, uData = null, allNovels = [], curNid = null, curChNum = 0, selectedPkgAmt = 0;
+    let curU = null, uData = null, curNid = null, selectedPkg = 0;
 
+    // --- VIP & Rewards Logic ---
     function getVip(spent) {
-        if(spent >= 3000000) return {v:6, t:"Emperor", c:"v6"};
-        if(spent >= 1000000) return {v:5, t:"King", c:"v5"};
-        if(spent >= 400000) return {v:4, t:"Master", c:"v4"};
-        if(spent >= 120000) return {v:3, t:"Silver", c:"v3"};
-        if(spent >= 50000) return {v:2, t:"Bronze", c:"v2"};
-        if(spent >= 10000) return {v:1, t:"Warrior", c:"v1"};
-        return {v:0, t:"Newbie", c:"v0"};
+        if(spent >= 3000000) return {lv:6, t:"Emperor", c:"v6", nc:"n-v6", fc:"f-v6"};
+        if(spent >= 1000000) return {lv:5, t:"King", c:"v5", nc:"n-v5", fc:"f-v5"};
+        if(spent >= 400000) return {lv:4, t:"Master", c:"v4", nc:"n-v4", fc:""};
+        if(spent >= 120000) return {lv:3, t:"Silver", c:"v3", nc:"", fc:""};
+        if(spent >= 50000) return {lv:2, t:"Bronze", c:"v2", nc:"", fc:""};
+        if(spent >= 10000) return {lv:1, t:"Warrior", c:"v1", nc:"", fc:""};
+        return {lv:0, t:"Newbie", c:"v0", nc:"", fc:""};
     }
 
+    const claimRewards = {
+        2: [25, 50, 75, 100, 125, 150, 175],
+        3: [50, 100, 150, 200, 250, 300, 350],
+        4: [75, 150, 325, 400, 475, 550, 625],
+        5: [100, 200, 300, 400, 500, 600, 700],
+        6: [200, 400, 600, 800, 1000, 1200, 1400]
+    };
+
+    // --- Auth & Sync ---
     window.login = () => signInWithPopup(auth, prov);
 
     onAuthStateChanged(auth, async (user) => {
@@ -232,190 +253,226 @@
             onSnapshot(ref, (s) => {
                 if(s.exists()){
                     uData = s.data();
-                    updateUI();
+                    syncUI();
                 } else {
-                    setDoc(ref, { name: user.displayName, email: user.email, coins: 0, spent: 0 });
+                    setDoc(ref, { name: user.displayName, email: user.email, coins: 0, spent: 0, lastClaim: 0, claimCount: 0 });
                 }
             });
-            if(user.email === ADMIN_EMAIL) document.getElementById('admBtn').style.display = 'block';
+            if(user.email === ADMIN_EMAIL) document.getElementById('admSection').style.display = 'block';
             loadHistory();
         }
     });
 
-    function updateUI() {
+    function syncUI() {
         const vip = getVip(uData.spent);
-        document.getElementById('loginBtn').style.display = 'none';
-        document.getElementById('userInfo').style.display = 'block';
-        document.getElementById('uCoins').innerText = uData.coins;
-        document.getElementById('sCoins').innerText = uData.coins;
-        document.getElementById('uVip').innerHTML = `<span class="vip-tag ${vip.c}">${vip.t}</span>`;
-        document.getElementById('pName').innerText = uData.name;
+        document.getElementById('uHeader').style.display = 'block';
+        document.getElementById('uBalance').innerText = "🪙 " + uData.coins;
+        document.getElementById('shopBal').innerText = uData.coins;
+        document.getElementById('uTag').innerHTML = `<span class="vip-tag ${vip.c}">${vip.t}</span>`;
+        document.getElementById('dispName').innerText = uData.name || "Unknown User";
         document.getElementById('pSpent').innerText = uData.spent;
-        document.getElementById('pVip').innerHTML = `<span class="vip-tag ${vip.c}" style="font-size:1rem">${vip.t}</span>`;
+        document.getElementById('dispVip').innerHTML = `<span class="vip-tag ${vip.c}" style="font-size:1rem">${vip.t}</span>`;
+        
+        // Claim logic
+        if(vip.lv >= 2) {
+            document.getElementById('claimContainer').style.display = 'block';
+            renderClaimUI(vip.lv);
+        }
     }
 
-    // --- COINS & TOPUP ---
-    const pkgs = [1000, 2000, 5000, 10000, 30000, 50000];
-    pkgs.forEach(p => {
-        document.getElementById('pkgGrid').innerHTML += `<div class="card" onclick="selectPkg(${p})" style="cursor:pointer; text-align:center;">🪙 ${p}</div>`;
+    // --- Profile Actions ---
+    window.toggleNameEdit = () => { const e = document.getElementById('nameEditBox'); e.style.display = e.style.display==='none'?'block':'none'; };
+    window.updateUsername = async () => {
+        const n = document.getElementById('newName').value;
+        if(n) { await updateDoc(doc(db, "users", curU.uid), { name: n }); alert("Name Updated!"); toggleNameEdit(); }
+    };
+
+    function renderClaimUI(lv) {
+        const grid = document.getElementById('claimGrid'); grid.innerHTML = "";
+        const rewards = claimRewards[lv];
+        const nextDay = uData.claimCount % 7;
+        rewards.forEach((r, i) => {
+            grid.innerHTML += `<div class="claim-day ${i===nextDay?'active':''}">D${i+1}<br>🪙${r}</div>`;
+        });
+        const canClaim = (Date.now() - (uData.lastClaim || 0)) > 86400000;
+        document.getElementById('claimBtn').disabled = !canClaim;
+        document.getElementById('claimBtn').innerText = canClaim ? "CLAIM NOW" : "ALREADY CLAIMED";
+    }
+
+    window.handleClaim = async () => {
+        const vip = getVip(uData.spent);
+        const nextDay = uData.claimCount % 7;
+        const amt = claimRewards[vip.lv][nextDay];
+        await updateDoc(doc(db, "users", curU.uid), {
+            coins: increment(amt),
+            lastClaim: Date.now(),
+            claimCount: increment(1)
+        });
+        alert(`Claimed ${amt} Coins!`);
+    };
+
+    // --- Chat System ---
+    window.sendChat = async () => {
+        const t = document.getElementById('chatInput').value; if(!t) return;
+        const v = getVip(uData.spent);
+        await addDoc(collection(db, "chat"), { 
+            uid: curU.uid, name: uData.name, text: t, 
+            lv: v.lv, nCls: v.nc, fCls: v.fc, date: serverTimestamp() 
+        });
+        document.getElementById('chatInput').value = "";
+    };
+
+    onSnapshot(query(collection(db, "chat"), orderBy("date", "desc"), limit(30)), (s) => {
+        const b = document.getElementById('chat-box'); b.innerHTML = "";
+        s.forEach(d => {
+            const m = d.data();
+            b.innerHTML += `<div class="chat-msg ${m.fCls}">
+                <span class="${m.nCls}">${m.name || 'Null'}</span>: ${m.text}
+            </div>`;
+        });
     });
-    window.selectPkg = (a) => { selectedPkgAmt = a; document.getElementById('topupForm').style.display = 'block'; };
-    window.submitTopup = async () => {
-        const name = document.getElementById('topupName').value;
-        const tid = document.getElementById('topupID').value;
-        if(!name || tid.length < 6) return alert("Invalid details!");
-        await addDoc(collection(db, "transactions"), { uid: curU.uid, userName: curU.displayName, amount: selectedPkgAmt, tid, sender: name, type: "Topup", status: "Pending", date: serverTimestamp() });
-        alert("Submitted!"); document.getElementById('topupForm').style.display = 'none';
-    };
 
-    // --- TRANSFER COINS ---
-    window.transferCoins = async () => {
-        const email = document.getElementById('tfEmail').value;
-        const amt = Number(document.getElementById('tfAmt').value);
-        if(uData.coins < amt) return alert("Low balance!");
-        const q = query(collection(db, "users"), where("email", "==", email), limit(1));
-        const s = await getDocs(q);
-        if(s.empty) return alert("User not found!");
-        const target = s.docs[0];
-        await updateDoc(doc(db, "users", curU.uid), { coins: increment(-amt) });
-        await updateDoc(doc(db, "users", target.id), { coins: increment(amt) });
-        await addDoc(collection(db, "transactions"), { uid: curU.uid, type: "Transfer Out", amount: amt, status: "Approved", date: serverTimestamp() });
-        alert("Transferred!");
-    };
-
-    // --- NOVELS & CHAPTERS ---
-    async function loadNovels() {
-        onSnapshot(collection(db, "novels"), (snap) => {
-            const grid = document.getElementById('novelGrid'); grid.innerHTML = "";
-            const sel = document.getElementById('anSel'); sel.innerHTML = "";
-            const admL = document.getElementById('admNovelList'); admL.innerHTML = "";
-            let tViews = 0;
-            snap.forEach(d => {
-                const n = d.data(); tViews += (n.views || 0);
-                grid.innerHTML += `<div class="novel-card" onclick="openNovel('${d.id}')"><img src="${n.cover}"></div>`;
-                sel.innerHTML += `<option value="${d.id}">${n.title}</option>`;
-                admL.innerHTML += `<div class="card" style="padding:10px; display:flex; justify-content:space-between;">${n.title} <button onclick="editN('${d.id}')">Edit</button></div>`;
-            });
-            document.getElementById('aViews').innerText = tViews;
+    // --- Admin: V & S Analytics ---
+    async function loadVS() {
+        const nS = await getDocs(collection(db, "novels"));
+        const vBox = document.getElementById('vsContent'); vBox.innerHTML = "";
+        nS.forEach(async d => {
+            const n = d.data();
+            const vipS = await getDocs(collection(db, "users", "unlocked_novels", d.id)); // Lifetime logic
+            vBox.innerHTML += `<div class="card" style="font-size:0.8rem;">
+                <b>${n.title}</b><br>Views: ${n.views || 0} | Lifetime Sales: ${n.lifetimeCount || 0}
+            </div>`;
         });
     }
 
+    // --- Novel: Lifetime VIP Buy ---
+    window.buyLifetime = async (nid, price) => {
+        if(uData.coins < price) return alert("Not enough coins!");
+        if(confirm(`Unlock ALL chapters for 🪙${price}?`)){
+            await updateDoc(doc(db, "users", curU.uid), { coins: increment(-price), spent: increment(price) });
+            await setDoc(doc(db, "users", curU.uid, "unlocked_novels", nid), { date: serverTimestamp() });
+            // Track analytics
+            await updateDoc(doc(db, "novels", nid), { lifetimeCount: increment(1) });
+            alert("Novel Lifetime Unlocked!");
+            openNovel(nid);
+        }
+    };
+
+    // --- Admin: Chapter Edit/Save ---
+    window.saveChapter = async () => {
+        const nid = document.getElementById('anSel').value;
+        const cid = document.getElementById('acID').value;
+        const data = {
+            num: Number(document.getElementById('acNum').value),
+            title: document.getElementById('acTit').value,
+            content: document.getElementById('acCon').value,
+            cost: Number(document.getElementById('acCost').value)
+        };
+        if(cid) await updateDoc(doc(db, "novels", nid, "chapters", cid), data);
+        else await addDoc(collection(db, "novels", nid, "chapters"), data);
+        alert("Chapter Saved!");
+    };
+
+    // --- Admin: Gifts ---
+    window.generateGift = async () => {
+        const amt = Number(document.getElementById('agAmt').value);
+        const code = "FANT-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+        await addDoc(collection(db, "gifts"), { code, amount: amt, used: false, date: serverTimestamp() });
+        alert("Code: " + code);
+        loadGiftHistory();
+    };
+
+    async function loadGiftHistory() {
+        const s = await getDocs(query(collection(db, "gifts"), orderBy("date", "desc")));
+        const h = document.getElementById('giftHistory'); h.innerHTML = "<b>Gift Log:</b>";
+        s.forEach(d => { const g = d.data(); h.innerHTML += `<div style="font-size:0.7rem;">${g.code} - 🪙${g.amount} (${g.used?'Used':'Active'})</div>`; });
+    }
+
+    // --- Novel & Reader System ---
     window.openNovel = async (id) => {
         curNid = id;
         const n = (await getDoc(doc(db, "novels", id))).data();
         await updateDoc(doc(db, "novels", id), { views: increment(1) });
         showView('detail-view');
-        document.getElementById('novelContent').innerHTML = `<h1>${n.title}</h1><p>By ${n.author}</p><p>${n.desc}</p><button class="btn btn-gold" onclick="buyFull('${id}', ${n.vipPrice})">Lifetime Unlock: 🪙 ${n.vipPrice}</button>`;
-        const cSnap = await getDocs(query(collection(db, "novels", id, "chapters"), orderBy("num", "asc")));
-        const cL = document.getElementById('chapterList'); cL.innerHTML = "<h4>Chapters</h4>";
-        cSnap.forEach(cd => {
-            const c = cd.data();
-            cL.innerHTML += `<div onclick="readCh('${id}','${cd.id}',${c.cost},${c.num})" style="padding:10px; border-bottom:1px solid #334155; cursor:pointer;">Ch ${c.num}: ${c.title} <span style="float:right; color:var(--gold);">🪙 ${c.cost}</span></div>`;
-        });
+        document.getElementById('nDetail').innerHTML = `
+            <img src="${n.cover}" style="width:100%; height:250px; object-fit:cover; border-radius:15px;">
+            <h2>${n.title}</h2><p>Author: ${n.author}</p>
+            <button class="btn btn-gold" style="width:100%;" onclick="buyLifetime('${id}', ${n.vipPrice})">Buy Lifetime VIP (🪙${n.vipPrice})</button>
+        `;
+        loadChapters(id);
+        loadReviews(id);
     };
 
-    window.readCh = async (nid, cid, cost, num) => {
-        const vipSnap = await getDoc(doc(db, "users", curU.uid, "unlocked_novels", nid));
-        const chSnap = await getDoc(doc(db, "users", curU.uid, "unlocked_chapters", cid));
-        if(vipSnap.exists() || cost === 0 || chSnap.exists()){
-            const cData = (await getDoc(doc(db, "novels", nid, "chapters", cid))).data();
-            curChNum = num; showView('reader-view');
-            document.getElementById('rTitle').innerText = "Chapter " + num + ": " + cData.title;
-            document.getElementById('rContent').innerText = cData.content;
+    async function loadChapters(nid) {
+        const s = await getDocs(query(collection(db, "novels", nid, "chapters"), orderBy("num", "asc")));
+        const l = document.getElementById('chList'); l.innerHTML = "<h4>Chapter List</h4>";
+        s.forEach(d => {
+            const c = d.data();
+            l.innerHTML += `<div class="card" style="padding:10px; cursor:pointer;" onclick="readChapter('${nid}','${d.id}',${c.cost},${c.num})">Ch ${c.num}: ${c.title} <span style="float:right; color:var(--gold);">🪙${c.cost}</span></div>`;
+        });
+    }
+
+    window.readChapter = async (nid, cid, cost, num) => {
+        const isVip = (await getDoc(doc(db, "users", curU.uid, "unlocked_novels", nid))).exists();
+        const isUnlocked = (await getDoc(doc(db, "users", curU.uid, "unlocked_chapters", cid))).exists();
+        
+        if(isVip || isUnlocked || cost === 0) {
+            const c = (await getDoc(doc(db, "novels", nid, "chapters", cid))).data();
+            showView('reader-view');
+            document.getElementById('rhTitle').innerText = `Chapter ${num}: ${c.title}`;
+            document.getElementById('rhContent').innerText = c.content;
             window.scrollTo(0,0);
-            updateNavBtns(nid, num);
+            updateNav(nid, num);
         } else {
-            if(uData.coins < cost) return alert("Need more coins!");
-            if(confirm(`Unlock Chapter ${num} for 🪙 ${cost}?`)){
+            if(uData.coins < cost) return alert("Insufficient Coins!");
+            if(confirm(`Unlock Ch ${num} for 🪙${cost}?`)) {
                 await updateDoc(doc(db, "users", curU.uid), { coins: increment(-cost), spent: increment(cost) });
                 await setDoc(doc(db, "users", curU.uid, "unlocked_chapters", cid), { date: serverTimestamp() });
-                readCh(nid, cid, cost, num);
+                readChapter(nid, cid, cost, num);
             }
         }
     };
 
-    async function updateNavBtns(nid, num) {
-        const next = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", "==", num + 1), limit(1)));
-        const prev = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", "==", num - 1), limit(1)));
-        document.getElementById('nextBtn').onclick = () => next.empty ? alert("Last Chapter") : readCh(nid, next.docs[0].id, next.docs[0].data().cost, num + 1);
-        document.getElementById('prevBtn').onclick = () => prev.empty ? alert("First Chapter") : readCh(nid, prev.docs[0].id, prev.docs[0].data().cost, num - 1);
-    }
-
-    // --- GLOBAL CHAT ---
-    window.sendChat = async () => {
-        const t = document.getElementById('chatInput').value; if(!t) return;
-        const vip = getVip(uData.spent);
-        await addDoc(collection(db, "chat"), { name: curU.displayName, text: t, vTag: vip.t, vCls: vip.c, date: serverTimestamp() });
-        document.getElementById('chatInput').value = "";
-    };
-    onSnapshot(query(collection(db, "chat"), orderBy("date", "desc"), limit(30)), (s) => {
-        const b = document.getElementById('chat-box'); b.innerHTML = "";
-        s.forEach(d => { const m = d.data(); b.innerHTML += `<div class="chat-msg"><span class="vip-tag ${m.vCls}">${m.vTag}</span><b>${m.name}:</b> ${m.text}</div>`; });
-    });
-
-    // --- GIFT CODES ---
-    window.genGift = async () => {
-        const a = Number(document.getElementById('agAmt').value);
-        const code = "FANT-" + Math.random().toString(36).substr(2, 8).toUpperCase();
-        await addDoc(collection(db, "gifts"), { code, amount: a, used: false });
-        document.getElementById('gcRes').innerText = code;
-    };
-    window.redeemGift = async () => {
-        const c = document.getElementById('giftCodeInput').value.trim();
-        const q = query(collection(db, "gifts"), where("code", "==", c), where("used", "==", false), limit(1));
-        const s = await getDocs(q);
-        if(s.empty) return alert("Invalid Code");
-        await updateDoc(doc(db, "users", curU.uid), { coins: increment(s.docs[0].data().amount) });
-        await updateDoc(doc(db, "gifts", s.docs[0].id), { used: true });
-        alert("Claimed!");
-    };
-
-    // --- ADMIN APPROVAL ---
-    async function loadAdmReqs() {
-        onSnapshot(query(collection(db, "transactions"), where("status", "==", "Pending")), (s) => {
-            const l = document.getElementById('pendingList'); l.innerHTML = "";
-            s.forEach(d => {
-                const r = d.data();
-                l.innerHTML += `<div class="card"><b>${r.userName}</b> 🪙 ${r.amount}<br><small>${r.tid} | ${r.sender}</small><br>
-                    <button onclick="approveT('${d.id}','${r.uid}',${r.amount})">Approve</button></div>`;
-            });
-        });
-        const revS = await getDocs(query(collection(db, "transactions"), where("status", "==", "Approved"), where("type", "==", "Topup")));
-        let rev = 0; revS.forEach(d => rev += d.data().amount);
-        document.getElementById('aRev').innerText = "🪙 " + rev;
-    }
-
-    window.approveT = async (id, uid, amt) => {
-        await updateDoc(doc(db, "transactions", id), { status: "Approved" });
-        await updateDoc(doc(db, "users", uid), { coins: increment(amt) });
-        alert("Approved");
-    };
-
-    // --- UTILS ---
+    // --- Common Utils ---
     window.showView = (id) => {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
         document.getElementById(id).classList.add('active-view');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        if(id === 'admin-view') loadAdmReqs();
+        if(id === 'admin-view') loadVS();
     };
 
-    window.openVipModal = () => document.getElementById('vipModal').style.display = "flex";
-
-    // Novel Save
-    window.saveNovel = async () => {
-        const id = document.getElementById('anID').value;
-        const d = { title: document.getElementById('anTitle').value, author: document.getElementById('anAut').value, cover: document.getElementById('anCov').value, desc: document.getElementById('anDes').value, vipPrice: Number(document.getElementById('anVipP').value) };
-        id ? await updateDoc(doc(db, "novels", id), d) : await addDoc(collection(db, "novels"), { ...d, views: 0 });
-        alert("Saved");
+    window.showAdminSub = (id) => {
+        document.querySelectorAll('.adm-sub').forEach(s => s.style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+        if(id === 'a-gifts') loadGiftHistory();
     };
 
-    window.saveChapter = async () => {
-        const nid = document.getElementById('anSel').value;
-        await addDoc(collection(db, "novels", nid, "chapters"), { num: Number(document.getElementById('acNum').value), title: document.getElementById('acTitle').value, content: document.getElementById('acCon').value, cost: Number(document.getElementById('acCost').value) });
-        alert("Published");
+    // --- Packages & Topup ---
+    const pkgs = [1000, 2000, 5000, 10000, 30000, 50000];
+    pkgs.forEach(p => {
+        document.getElementById('pkgGrid').innerHTML += `<div class="card" style="text-align:center; cursor:pointer;" onclick="selectPkg(${p})">🪙 ${p}</div>`;
+    });
+    window.selectPkg = (p) => { selectedPkg = p; document.getElementById('payForm').style.display='block'; };
+    window.submitTopup = async () => {
+        alert("Please wait for Admin Approval...");
+        await addDoc(collection(db, "transactions"), {
+            uid: curU.uid, userName: uData.name, amount: selectedPkg, 
+            tid: document.getElementById('pTidInput').value, status: "Pending", type: "Topup", date: serverTimestamp()
+        });
+        document.getElementById('payForm').style.display = 'none';
     };
 
-    loadNovels();
+    // Init Novels
+    onSnapshot(collection(db, "novels"), (s) => {
+        const g = document.getElementById('novelGrid'); g.innerHTML = "";
+        const sel = document.getElementById('anSel'); sel.innerHTML = "";
+        s.forEach(d => {
+            const n = d.data();
+            g.innerHTML += `<div onclick="openNovel('${d.id}')" style="cursor:pointer;"><img src="${n.cover}" style="width:100%; height:200px; border-radius:12px; object-fit:cover;"><p style="font-size:0.8rem; font-weight:bold;">${n.title}</p></div>`;
+            sel.innerHTML += `<option value="${d.id}">${n.title}</option>`;
+        });
+    });
+
 </script>
 </body>
 </html>
