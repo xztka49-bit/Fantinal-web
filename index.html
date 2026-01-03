@@ -356,9 +356,14 @@
         <input type="text" id="acID" placeholder="Chapter ID (Leave empty for new)">
         <input type="number" id="acNum" placeholder="Chapter Number">
         <input type="text" id="acTit" placeholder="Chapter Title">
-        <textarea id="acCon" rows="6" placeholder="Chapter Content"></textarea>
+        <textarea id="acCon" rows="6" placeholder="Chapter Content / Bulk Text (Title | Content || Title | Content)"></textarea>
         <input type="number" id="acCost" placeholder="Coin Cost">
-        <button class="btn btn-gold" onclick="saveChapter()">PUBLISH/EDIT CHAPTER</button>
+        
+        <div style="display:flex; gap:10px;">
+            <button class="btn btn-gold" onclick="saveChapter()" style="flex:1;">PUBLISH SINGLE</button>
+            <button class="btn" style="background:var(--purple); color:white; flex:1;" onclick="bulkUploadChapters()">BULK UPLOAD</button>
+        </div>
+        <p style="font-size: 0.65rem; color: var(--text-dim); margin-top: 5px;">* Bulk Format: Title | Content || Title | Content</p>
     </div>
 
     <div id="tab-gifts" class="admin-tab card" style="display:none;">
@@ -410,20 +415,17 @@
         6: [200, 400, 600, 800, 1000, 1200, 1400]
     };
 
-    // --- AUTHENTICATION (COIN SECURITY FIX) ---
+    // --- AUTHENTICATION ---
     window.login = () => signInWithPopup(auth, provider);
 
     onAuthStateChanged(auth, async (user) => {
         if(user) {
             currentUser = user;
             const userRef = doc(db, "users", user.uid);
-            
-            // Database Sync Safety: Ensure row exists immediately upon login
             const snapInitial = await getDoc(userRef);
             if(!snapInitial.exists()) {
                 await setDoc(userRef, { name: user.displayName, email: user.email, coins: 0, spent: 0, claimCount: 0, lastClaim: 0 });
             }
-
             onSnapshot(userRef, (snap) => {
                 if(snap.exists()) {
                     userData = snap.data();
@@ -448,8 +450,6 @@
         document.getElementById('hVip').innerHTML = `<span class="vip-tag ${vip.cls}">${vip.name}</span>`;
         document.getElementById('pName').innerText = userData.name;
         document.getElementById('pVip').innerHTML = `<span class="vip-tag ${vip.cls}" style="font-size:1rem">${vip.name}</span>`;
-
-        // Daily Claim Rendering
         if(vip.lv >= 2) {
             document.getElementById('dailyClaimSection').style.display = 'block';
             const grid = document.getElementById('claimGrid'); grid.innerHTML = "";
@@ -461,16 +461,13 @@
         }
     }
 
-    // [NEW] DAILY CLAIM TIMER
     function startDailyTimer() {
         const claimBtn = document.getElementById('claimBtn');
         const timerTxt = document.getElementById('claimTimer');
-        
         setInterval(() => {
             const nextClaimTime = (userData.lastClaim || 0) + 86400000;
             const now = Date.now();
             const diff = nextClaimTime - now;
-
             if (diff <= 0) {
                 claimBtn.disabled = false;
                 claimBtn.innerText = "CLAIM REWARD";
@@ -502,31 +499,20 @@
     window.handleClaim = async () => {
         const vip = getVipInfo(userData.spent);
         const amt = claimTable[vip.lv][(userData.claimCount || 0) % 7];
-        await updateDoc(doc(db, "users", currentUser.uid), {
-            coins: increment(amt),
-            lastClaim: Date.now(),
-            claimCount: increment(1)
-        });
+        await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(amt), lastClaim: Date.now(), claimCount: increment(1) });
         alert(`Congratulations! You received 🪙${amt} daily coins.`);
     };
 
-    // --- CHAT SYSTEM (VIP TAG FIX) ---
+    // --- CHAT SYSTEM ---
     window.sendChat = async () => {
         const msg = document.getElementById('chatInput').value;
         if(!msg) return;
         const vip = getVipInfo(userData.spent);
         await addDoc(collection(db, "chat"), {
-            name: userData.name,
-            text: msg,
-            nCls: vip.nCls,
-            fCls: vip.fCls,
-            vName: vip.name, // Added for Tag
-            vCls: vip.cls,   // Added for Tag color
-            date: serverTimestamp()
+            name: userData.name, text: msg, nCls: vip.nCls, fCls: vip.fCls, vName: vip.name, vCls: vip.cls, date: serverTimestamp()
         });
         document.getElementById('chatInput').value = "";
     };
-
     onSnapshot(query(collection(db, "chat"), orderBy("date", "desc"), limit(40)), (snap) => {
         const box = document.getElementById('chatBox'); box.innerHTML = "";
         snap.forEach(d => {
@@ -537,51 +523,27 @@
             </div>`;
         });
     });
-
-    // [NEW] AUTO CLEAN CHAT (Older than 24 hours)
     async function autoCleanOldChats() {
         const oneDayAgo = new Date(Date.now() - 86400000);
         const q = query(collection(db, "chat"), where("date", "<", oneDayAgo));
         const oldDocs = await getDocs(q);
-        oldDocs.forEach(async (d) => {
-            await deleteDoc(doc(db, "chat", d.id));
-        });
+        oldDocs.forEach(async (d) => { await deleteDoc(doc(db, "chat", d.id)); });
     }
 
-    // --- NOVELS & ANALYTICS ---
+    // --- NOVELS & READER ---
     onSnapshot(collection(db, "novels"), (snap) => {
         const grid = document.getElementById('novelGrid'); grid.innerHTML = "";
         const sel = document.getElementById('anSelector'); sel.innerHTML = "";
         const vs = document.getElementById('vsAnalyticsContent'); vs.innerHTML = "";
         const admNovelEdit = document.getElementById('adminNovelEditList');
-        
         if(admNovelEdit) admNovelEdit.innerHTML = "";
-        vs.innerHTML = `<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; font-weight:bold; margin-bottom:10px; font-size:0.7rem;">
-            <span>Novel</span><span>Views</span><span>Sales/Life</span>
-        </div>`;
-
+        vs.innerHTML = `<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; font-weight:bold; margin-bottom:10px; font-size:0.7rem;"><span>Novel</span><span>Views</span><span>Sales/Life</span></div>`;
         snap.forEach(docSnap => {
             const n = docSnap.data();
-            grid.innerHTML += `<div class="n-card" onclick="openNovel('${docSnap.id}')">
-                <img src="${n.cover}"><div class="n-card-title">${n.title}</div>
-            </div>`;
+            grid.innerHTML += `<div class="n-card" onclick="openNovel('${docSnap.id}')"><img src="${n.cover}"><div class="n-card-title">${n.title}</div></div>`;
             sel.innerHTML += `<option value="${docSnap.id}">${n.title}</option>`;
-            
-            vs.innerHTML += `<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; font-size:0.75rem; border-bottom:1px solid #161b22; padding:5px 0;">
-                <span style="color:var(--gold)">${n.title}</span>
-                <span>${n.views || 0}</span>
-                <span>🪙${n.sales || 0} / L:${n.lifetimeSales || 0}</span>
-            </div>`;
-
-            if(admNovelEdit) {
-                admNovelEdit.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px; font-size:0.8rem;">
-                    <span>${n.title}</span>
-                    <div>
-                        <button onclick="editNovelData('${docSnap.id}')" style="color:var(--gold); background:none; border:none; cursor:pointer;">Edit</button> | 
-                        <button onclick="deleteNovelData('${docSnap.id}')" style="color:var(--red); background:none; border:none; cursor:pointer;">Del</button>
-                    </div>
-                </div>`;
-            }
+            vs.innerHTML += `<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; font-size:0.75rem; border-bottom:1px solid #161b22; padding:5px 0;"><span style="color:var(--gold)">${n.title}</span><span>${n.views || 0}</span><span>🪙${n.sales || 0} / L:${n.lifetimeSales || 0}</span></div>`;
+            if(admNovelEdit) admNovelEdit.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px; font-size:0.8rem;"><span>${n.title}</span><div><button onclick="editNovelData('${docSnap.id}')" style="color:var(--gold); background:none; border:none; cursor:pointer;">Edit</button> | <button onclick="deleteNovelData('${docSnap.id}')" style="color:var(--red); background:none; border:none; cursor:pointer;">Del</button></div></div>`;
         });
     });
 
@@ -591,19 +553,13 @@
         const n = nSnap.data();
         await updateDoc(doc(db, "novels", id), { views: increment(1) });
         showView('detail-view');
-        
-        // CHECK LIFETIME STATUS
         const lifeRef = doc(db, "users", currentUser.uid, "unlocked_novels", id);
         const lifeSnap = await getDoc(lifeRef);
         const isLife = lifeSnap.exists();
-
         document.getElementById('novelInfo').innerHTML = `
             <img src="${n.cover}" style="width:100%; height:280px; object-fit:cover; border-radius:20px; border: 1px solid var(--gold);">
-            <h1 style="color:var(--gold); margin-top:20px;">${n.title}</h1>
-            <p style="color:var(--text-dim)">Author: ${n.author}</p>
-            <p style="line-height:1.6;">${n.desc}</p>
-            ${isLife ? `<button class="btn" style="width:100%; background:var(--green); color:white;">LIFETIME UNLOCKED ✅</button>` : 
-            `<button class="btn btn-gold" style="width:100%;" onclick="buyFullAccess('${id}', ${n.vipPrice})">UNLOCK ALL CHAPTERS (🪙${n.vipPrice})</button>`}
+            <h1 style="color:var(--gold); margin-top:20px;">${n.title}</h1><p style="color:var(--text-dim)">Author: ${n.author}</p><p style="line-height:1.6;">${n.desc}</p>
+            ${isLife ? `<button class="btn" style="width:100%; background:var(--green); color:white;">LIFETIME UNLOCKED ✅</button>` : `<button class="btn btn-gold" style="width:100%;" onclick="buyFullAccess('${id}', ${n.vipPrice})">UNLOCK ALL CHAPTERS (🪙${n.vipPrice})</button>`}
         `;
         loadChapters(id);
         loadReviews(id);
@@ -613,30 +569,19 @@
         const snap = await getDocs(query(collection(db, "novels", nid, "chapters"), orderBy("num", "asc")));
         const list = document.getElementById('chapterList');
         list.innerHTML = `<h3 style="color:var(--gold); margin-top:30px;">Chapters</h3>`;
-        
         const isLife = (await getDoc(doc(db, "users", currentUser.uid, "unlocked_novels", nid))).exists();
-
         snap.forEach(async (cd) => {
             const c = cd.data();
             const isChUnlocked = (await getDoc(doc(db, "users", currentUser.uid, "unlocked_chapters", cd.id))).exists();
-            
-            // [NEW] PRICE HIDING LOGIC
             let priceLabel = `<span style="color:var(--gold)">🪙 ${c.cost === 0 ? 'FREE' : c.cost}</span>`;
-            if (isLife || isChUnlocked || c.cost === 0) {
-                priceLabel = `<span style="color:var(--green)">READ NOW</span>`;
-            }
-
-            list.innerHTML += `<div class="card" onclick="readChapter('${nid}','${cd.id}',${c.cost},${c.num})" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
-                <span>Chapter ${c.num}: ${c.title}</span>
-                ${priceLabel}
-            </div>`;
+            if (isLife || isChUnlocked || c.cost === 0) priceLabel = `<span style="color:var(--green)">READ NOW</span>`;
+            list.innerHTML += `<div class="card" onclick="readChapter('${nid}','${cd.id}',${c.cost},${c.num})" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;"><span>Chapter ${c.num}: ${c.title}</span>${priceLabel}</div>`;
         });
     }
 
     window.readChapter = async (nid, cid, cost, num) => {
         const isFull = (await getDoc(doc(db, "users", currentUser.uid, "unlocked_novels", nid))).exists();
         const isCh = (await getDoc(doc(db, "users", currentUser.uid, "unlocked_chapters", cid))).exists();
-        
         if(isFull || isCh || cost === 0) {
             const c = (await getDoc(doc(db, "novels", nid, "chapters", cid))).data();
             showView('reader-view');
@@ -649,7 +594,7 @@
             if(userData.coins < cost) return alert("Insufficient coins!");
             if(confirm(`Unlock Chapter ${num} for 🪙${cost}?`)) {
                 await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(-cost), spent: increment(cost) });
-                await updateDoc(doc(db, "novels", nid), { sales: increment(cost) }); // V&S Sale Increment
+                await updateDoc(doc(db, "novels", nid), { sales: increment(cost) });
                 await setDoc(doc(db, "users", currentUser.uid, "unlocked_chapters", cid), { date: serverTimestamp() });
                 readChapter(nid, cid, cost, num);
             }
@@ -660,7 +605,7 @@
         if(userData.coins < price) return alert("Insufficient coins!");
         if(confirm(`Unlock Lifetime Access for 🪙${price}?`)) {
             await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(-price), spent: increment(price) });
-            await updateDoc(doc(db, "novels", nid), { lifetimeSales: increment(price) }); // V&S Lifetime Sale
+            await updateDoc(doc(db, "novels", nid), { lifetimeSales: increment(price) });
             await setDoc(doc(db, "users", currentUser.uid, "unlocked_novels", nid), { date: serverTimestamp() });
             alert("Lifetime Unlocked!");
             openNovel(nid);
@@ -670,21 +615,17 @@
     async function updateReaderNav(nid, num) {
         const next = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", "==", num + 1), limit(1)));
         const prev = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", "==", num - 1), limit(1)));
-        
         document.getElementById('nextBtn').onclick = () => next.empty ? alert("Last Chapter") : readChapter(nid, next.docs[0].id, next.docs[0].data().cost, num + 1);
         document.getElementById('prevBtn').onclick = () => prev.empty ? alert("First Chapter") : readChapter(nid, prev.docs[0].id, prev.docs[0].data().cost, num - 1);
     }
 
-    // --- REVIEWS & RATINGS ---
+    // --- REVIEWS ---
     async function loadReviews(nid) {
         const snap = await getDocs(collection(db, "novels", nid, "reviews"));
         const box = document.getElementById('reviewList'); box.innerHTML = "";
         snap.forEach(d => {
             const r = d.data();
-            box.innerHTML += `<div style="padding:10px; border-bottom:1px solid #161b22; font-size:0.8rem;">
-                <b style="color:var(--gold)">${r.name}</b> (${r.rate}⭐): ${r.text}
-                ${currentUser.email === ADMIN_EMAIL ? `<button onclick="deleteRev('${nid}','${d.id}')" style="background:none; border:none; color:var(--red); cursor:pointer;">[Del]</button>` : ''}
-            </div>`;
+            box.innerHTML += `<div style="padding:10px; border-bottom:1px solid #161b22; font-size:0.8rem;"><b style="color:var(--gold)">${r.name}</b> (${r.rate}⭐): ${r.text}${currentUser.email === ADMIN_EMAIL ? `<button onclick="deleteRev('${nid}','${d.id}')" style="background:none; border:none; color:var(--red); cursor:pointer;">[Del]</button>` : ''}</div>`;
         });
     }
     window.postReview = async () => {
@@ -695,25 +636,19 @@
         document.getElementById('revText').value = "";
         loadReviews(currentNid);
     };
-    window.deleteRev = async (nid, rid) => {
-        await deleteDoc(doc(db, "novels", nid, "reviews", rid));
-        loadReviews(nid);
-    };
+    window.deleteRev = async (nid, rid) => { await deleteDoc(doc(db, "novels", nid, "reviews", rid)); loadReviews(nid); };
 
-    // --- SHOP & TRANSFER (SECURE COIN LOGIC) ---
+    // --- SHOP & TRANSFER ---
     const packages = [1000, 2000, 5000, 10000, 30000, 50000];
-    packages.forEach(p => {
-        document.getElementById('packageGrid').innerHTML += `<div class="card" onclick="openTopup(${p})" style="text-align:center; cursor:pointer; background:#161b22;">🪙 ${p.toLocaleString()}</div>`;
-    });
+    packages.forEach(p => { document.getElementById('packageGrid').innerHTML += `<div class="card" onclick="openTopup(${p})" style="text-align:center; cursor:pointer; background:#161b22;">🪙 ${p.toLocaleString()}</div>`; });
     window.openTopup = (amt) => { selectedTopupAmt = amt; document.getElementById('topupForm').style.display = 'block'; };
     window.submitTopup = async () => {
         const tid = document.getElementById('tpID').value;
         if(tid.length < 6) return alert("Enter valid Transaction ID");
         await addDoc(collection(db, "transactions"), { uid: currentUser.uid, userName: userData.name, amount: selectedTopupAmt, tid, sender: document.getElementById('tpName').value, status: "Pending", type: "Topup", date: serverTimestamp() });
-        alert("Topup submitted! Waiting for Admin.");
+        alert("Topup submitted!");
         document.getElementById('topupForm').style.display = 'none';
     };
-
     window.processTransfer = async () => {
         const email = document.getElementById('tfEmail').value;
         const amt = Number(document.getElementById('tfAmt').value);
@@ -722,7 +657,6 @@
         const s = await getDocs(q);
         if(s.empty) return alert("User not found!");
         const target = s.docs[0];
-        
         try {
             await runTransaction(db, async (transaction) => {
                 const senderRef = doc(db, "users", currentUser.uid);
@@ -731,22 +665,21 @@
                 transaction.update(receiverRef, { coins: increment(amt) });
             });
             await addDoc(collection(db, "transactions"), { uid: currentUser.uid, type: "Transfer Out", amount: amt, status: "Approved", date: serverTimestamp() });
-            alert("Coins transferred successfully!");
-        } catch(e) { alert("Transfer error!"); }
+            alert("Transfer success!");
+        } catch(e) { alert("Error!"); }
     };
-
     window.redeemGift = async () => {
         const code = document.getElementById('giftCodeInput').value.trim();
         const q = query(collection(db, "gifts"), where("code", "==", code), where("used", "==", false), limit(1));
         const s = await getDocs(q);
-        if(s.empty) return alert("Invalid or Used Code!");
+        if(s.empty) return alert("Invalid Code!");
         const giftAmt = s.docs[0].data().amount;
         await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(giftAmt) });
         await updateDoc(doc(db, "gifts", s.docs[0].id), { used: true, usedBy: userData.email });
-        alert("Gift coins claimed successfully!");
+        alert("Success!");
     };
 
-    // --- ADMIN PANEL ADVANCED ---
+    // --- ADMIN ADVANCED (FETCH & BULK INTEGRATED) ---
     window.openAdminTab = (id) => {
         document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
         document.getElementById(id).style.display = 'block';
@@ -756,12 +689,10 @@
     };
 
     async function loadAdminGlobalStats() {
-        // Total Topup Income
         onSnapshot(query(collection(db, "transactions"), where("status", "==", "Approved"), where("type", "==", "Topup")), (snap) => {
             let total = 0; snap.forEach(d => total += d.data().amount);
             document.getElementById('admTotalIncome').innerText = "🪙 " + total.toLocaleString();
         });
-        // Total Gift Coin Used
         onSnapshot(query(collection(db, "gifts"), where("used", "==", true)), (snap) => {
             let total = 0; snap.forEach(d => total += d.data().amount);
             document.getElementById('admTotalGiftUsed').innerText = "🪙 " + total.toLocaleString();
@@ -771,10 +702,7 @@
     async function loadAdminUserList() {
         const snap = await getDocs(collection(db, "users"));
         const body = document.getElementById('admUserListBody'); body.innerHTML = "";
-        snap.forEach(d => {
-            const u = d.data();
-            body.innerHTML += `<tr><td>${u.email}</td><td>${u.coins}</td><td>${u.spent}</td></tr>`;
-        });
+        snap.forEach(d => { const u = d.data(); body.innerHTML += `<tr><td>${u.email}</td><td>${u.coins}</td><td>${u.spent}</td></tr>`; });
     }
 
     async function loadPendingTopups() {
@@ -782,11 +710,7 @@
             const list = document.getElementById('pendingReqList'); list.innerHTML = "";
             snap.forEach(d => {
                 const r = d.data();
-                list.innerHTML += `<div class="card">
-                    <b>${r.userName}</b> (🪙${r.amount})<br>TID: ${r.tid} | Acc: ${r.sender}<br>
-                    <button onclick="approveT('${d.id}','${r.uid}',${r.amount})" class="btn-gold" style="width:auto; padding:5px 15px;">APPROVE</button>
-                    <button onclick="rejectT('${d.id}')" style="background:var(--red); color:white; border:none; padding:5px 15px; border-radius:5px;">REJECT</button>
-                </div>`;
+                list.innerHTML += `<div class="card"><b>${r.userName}</b> (🪙${r.amount})<br>TID: ${r.tid}<br><button onclick="approveT('${d.id}','${r.uid}',${r.amount})" class="btn-gold" style="width:auto; padding:5px 15px;">APPROVE</button></div>`;
             });
         });
     }
@@ -794,11 +718,8 @@
     window.approveT = async (id, uid, amt) => {
         await updateDoc(doc(db, "transactions", id), { status: "Approved" });
         await updateDoc(doc(db, "users", uid), { coins: increment(amt) });
-        alert("Approved!");
     };
-    window.rejectT = async (id) => { await updateDoc(doc(db, "transactions", id), { status: "Rejected" }); };
 
-    // [NEW] NOVEL EDIT / DELETE LOGIC
     window.editNovelData = async (id) => {
         const snap = await getDoc(doc(db, "novels", id));
         const n = snap.data();
@@ -809,58 +730,65 @@
         document.getElementById('anDes').value = n.desc;
         document.getElementById('anVipP').value = n.vipPrice;
     };
-    window.deleteNovelData = async (id) => {
-        if(confirm("Delete this novel and all its chapters?")) {
-            await deleteDoc(doc(db, "novels", id));
-            alert("Deleted");
-        }
-    };
+
+    window.deleteNovelData = async (id) => { if(confirm("Delete Novel?")) await deleteDoc(doc(db, "novels", id)); };
 
     window.saveNovel = async () => {
         const id = document.getElementById('anID').value;
         const data = { title: document.getElementById('anTit').value, author: document.getElementById('anAut').value, cover: document.getElementById('anCov').value, desc: document.getElementById('anDes').value, vipPrice: Number(document.getElementById('anVipP').value) };
         id ? await updateDoc(doc(db, "novels", id), data) : await addDoc(collection(db, "novels"), { ...data, views: 0, sales: 0, lifetimeSales: 0 });
-        alert("Novel Saved!");
-        document.getElementById('anID').value = "";
+        alert("Saved!");
     };
 
-    // [NEW] CHAPTER EDIT / DELETE LOGIC
     window.loadAdminChapters = async () => {
         const nid = document.getElementById('anSelector').value;
         const snap = await getDocs(query(collection(db, "novels", nid, "chapters"), orderBy("num", "asc")));
         const list = document.getElementById('adminChapterEditList'); list.innerHTML = "";
         snap.forEach(cd => {
             const c = cd.data();
-            list.innerHTML += `<div style="font-size:0.75rem; display:flex; justify-content:space-between; margin-bottom:5px;">
-                <span>Ch ${c.num}: ${c.title}</span>
-                <div>
-                    <button onclick="editChapterData('${cd.id}','${c.num}','${c.title}','${c.cost}')" style="color:var(--gold); background:none; border:none; cursor:pointer;">Edit</button> | 
-                    <button onclick="deleteChapterData('${nid}','${cd.id}')" style="color:var(--red); background:none; border:none; cursor:pointer;">Del</button>
-                </div>
-            </div>`;
+            list.innerHTML += `<div style="font-size:0.75rem; display:flex; justify-content:space-between; margin-bottom:5px;"><span>Ch ${c.num}: ${c.title}</span><div><button onclick="editChapterData('${cd.id}','${c.num}','${c.title}','${c.cost}')" style="color:var(--gold); background:none; border:none;">Edit</button> | <button onclick="deleteChapterData('${nid}','${cd.id}')" style="color:var(--red); background:none; border:none;">Del</button></div></div>`;
         });
     };
-    window.editChapterData = (cid, num, title, cost) => {
+
+    // [FETCH FIX] Chapter Edit နှိပ်ရင် စာသားဟောင်းပြန်ပေါ်အောင် လုပ်ထားပါတယ်။
+    window.editChapterData = async (cid, num, title, cost) => {
+        const nid = document.getElementById('anSelector').value;
         document.getElementById('acID').value = cid;
         document.getElementById('acNum').value = num;
         document.getElementById('acTit').value = title;
         document.getElementById('acCost').value = cost;
-        alert("Content must be fetched or pasted manually for editing.");
+        const cSnap = await getDoc(doc(db, "novels", nid, "chapters", cid));
+        if(cSnap.exists()) document.getElementById('acCon').value = cSnap.data().content;
+        alert("Old content loaded!");
     };
-    window.deleteChapterData = async (nid, cid) => {
-        if(confirm("Delete Chapter?")) {
-            await deleteDoc(doc(db, "novels", nid, "chapters", cid));
-            loadAdminChapters();
-        }
-    };
+
+    window.deleteChapterData = async (nid, cid) => { if(confirm("Delete?")) { await deleteDoc(doc(db, "novels", nid, "chapters", cid)); loadAdminChapters(); } };
 
     window.saveChapter = async () => {
         const nid = document.getElementById('anSelector').value;
         const cid = document.getElementById('acID').value;
         const data = { num: Number(document.getElementById('acNum').value), title: document.getElementById('acTit').value, content: document.getElementById('acCon').value, cost: Number(document.getElementById('acCost').value) };
         cid ? await updateDoc(doc(db, "novels", nid, "chapters", cid), data) : await addDoc(collection(db, "novels", nid, "chapters"), data);
-        alert("Chapter Saved!");
-        document.getElementById('acID').value = "";
+        alert("Published!");
+        loadAdminChapters();
+    };
+
+    // [BULK SYSTEM] အပိုင်း ၃၀၀၀ တင်နိုင်ဖို့ အမြန်တင်စနစ်။
+    window.bulkUploadChapters = async () => {
+        const nid = document.getElementById('anSelector').value;
+        const rawData = document.getElementById('acCon').value;
+        const cost = Number(document.getElementById('acCost').value) || 0;
+        const blocks = rawData.split('||');
+        let startNum = Number(document.getElementById('acNum').value);
+        if(!confirm(`Upload ${blocks.length} chapters?`)) return;
+        for(let b of blocks) {
+            const [tit, con] = b.split('|');
+            if(tit && con) {
+                await addDoc(collection(db, "novels", nid, "chapters"), { num: startNum, title: tit.trim(), content: con.trim(), cost, date: serverTimestamp() });
+                startNum++;
+            }
+        }
+        alert("Bulk Success!");
         loadAdminChapters();
     };
 
@@ -868,21 +796,18 @@
         const amt = Number(document.getElementById('agAmt').value);
         const code = "FANT-" + Math.random().toString(36).substr(2, 7).toUpperCase();
         await addDoc(collection(db, "gifts"), { code, amount: amt, used: false, date: serverTimestamp() });
-        alert("Generated: " + code);
         loadGiftHistory();
     };
 
     async function loadGiftHistory() {
         const snap = await getDocs(query(collection(db, "gifts"), orderBy("date", "desc")));
-        const log = document.getElementById('adminGiftLog'); log.innerHTML = "<b>Gift Log:</b>";
-        snap.forEach(d => { const g = d.data(); log.innerHTML += `<div>${g.code} - 🪙${g.amount} (${g.used ? 'Used by ' + g.usedBy : 'Active'})</div>`; });
+        const log = document.getElementById('adminGiftLog'); log.innerHTML = "";
+        snap.forEach(d => { const g = d.data(); log.innerHTML += `<div>${g.code} - 🪙${g.amount}</div>`; });
     }
 
-    // --- UTILS ---
     window.showView = (id) => {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
         document.getElementById(id).classList.add('active-view');
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
     };
 
     async function loadCoinHistory() {
@@ -891,14 +816,10 @@
             snap.forEach(d => {
                 const h = d.data();
                 const dt = h.date ? h.date.toDate().toLocaleDateString() : '---';
-                body.innerHTML += `<tr style="border-bottom: 0.5px solid #161b22;">
-                    <td style="padding:12px;">${dt}</td><td>${h.type}</td><td>${h.amount}</td>
-                    <td style="color:${h.status==='Approved'?'#22c55e':'#fbbf24'}">${h.status}</td>
-                </tr>`;
+                body.innerHTML += `<tr><td style="padding:10px;">${dt}</td><td>${h.type}</td><td>${h.amount}</td><td>${h.status}</td></tr>`;
             });
         });
     }
-
 </script>
 </body>
 </html>
