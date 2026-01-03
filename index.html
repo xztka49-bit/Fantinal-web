@@ -148,23 +148,48 @@
         .nav-item { color: var(--text-dim); font-size: 0.7rem; text-align: center; cursor: pointer; flex: 1; transition: 0.3s; }
         .nav-item.active { color: var(--gold); font-weight: bold; }
 
+        /* AUTH UI STYLES */
+        .auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .auth-container { width: 100%; max-width: 400px; text-align: center; }
+        
         /* ADMIN NEW UI TABLES */
         .admin-table { width:100%; border-collapse: collapse; font-size: 0.8rem; margin-top:10px; }
         .admin-table th, .admin-table td { border: 1px solid #30363d; padding: 10px; text-align: left; }
         .admin-table th { background: #161b22; color: var(--gold); }
-
-        /* [NEW] LUXURY LOGIN MODAL STYLES */
-        .modal { display: none; position: fixed; z-index: 9999; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); }
-        .modal-content { position: absolute; top:50%; left:50%; transform: translate(-50%, -50%); background: var(--card); padding: 40px; border-radius: 30px; border: 1px solid var(--gold); width: 85%; max-width: 400px; text-align: center; }
-        .login-logo { font-size: 2.5rem; color: var(--gold); margin-bottom: 30px; }
     </style>
 </head>
 <body>
 
+<div id="authOverlay" class="auth-overlay">
+    <div class="auth-container">
+        <h1 class="logo" style="color:var(--gold); font-size: 2.5rem; margin-bottom: 10px;">FANTINAL</h1>
+        <p style="color:var(--text-dim); margin-bottom: 30px;">Welcome to the Emperor's Library</p>
+        
+        <div id="loginForm">
+            <input type="email" id="authEmail" placeholder="Eternal Email">
+            <input type="password" id="authPass" placeholder="Secret Password">
+            <button onclick="handleAuth('login')" class="btn btn-gold" style="width:100%; margin-top: 10px;">SIGN IN</button>
+            <p style="margin-top: 20px; font-size: 0.8rem;">New Immortal? <span onclick="toggleAuth('reg')" style="color:var(--gold); cursor:pointer;">Register Here</span></p>
+        </div>
+
+        <div id="regForm" style="display:none;">
+            <input type="text" id="regName" placeholder="Display Name">
+            <input type="email" id="regEmail" placeholder="Email Address">
+            <input type="password" id="regPass" placeholder="New Password">
+            <button onclick="handleAuth('reg')" class="btn btn-gold" style="width:100%; margin-top: 10px;">CREATE ACCOUNT</button>
+            <p style="margin-top: 20px; font-size: 0.8rem;">Already have an account? <span onclick="toggleAuth('login')" style="color:var(--gold); cursor:pointer;">Login Here</span></p>
+        </div>
+        
+        <div style="margin-top: 25px; display: flex; align-items: center; gap: 10px; color: var(--text-dim);">
+            <hr style="flex:1; border: 0.5px solid #30363d;"> OR <hr style="flex:1; border: 0.5px solid #30363d;">
+        </div>
+        <button onclick="handleGoogle()" class="btn" style="width:100%; margin-top: 20px; background: white; color: black;">CONTINUE WITH GOOGLE</button>
+    </div>
+</div>
+
 <header style="padding: 15px 20px; border-bottom: 1px solid rgba(212,175,55,0.2); display: flex; justify-content: space-between; align-items: center; background: var(--card); position: sticky; top: 0; z-index: 1000;">
     <div class="logo" style="color:var(--gold); font-size: 1.2rem;">FANTINAL</div>
     <div id="authBox">
-        <button id="loginBtn" onclick="showLogin()" class="btn-gold" style="padding: 8px 18px; border-radius: 25px; font-size: 0.75rem;">SIGN IN</button>
         <div id="userHeader" style="display:none; text-align: right;">
             <div style="color:var(--gold); font-weight: bold; font-size: 0.9rem;">🪙 <span id="hCoins">0</span></div>
             <div id="hVip"></div>
@@ -172,20 +197,8 @@
     </div>
 </header>
 
-<div id="loginModal" class="modal">
-    <div class="modal-content">
-        <div class="login-logo">FANTINAL</div>
-        <h3 style="margin-bottom: 10px;">Welcome, Immortal</h3>
-        <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 30px;">Embark on your eternal journey through the library of legends.</p>
-        <button onclick="login()" class="btn btn-gold" style="width:100%; display:flex; align-items:center; justify-content:center; gap:10px;">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="20"> CONTINUE WITH GOOGLE
-        </button>
-        <button onclick="hideLogin()" style="background:none; border:none; color:var(--text-dim); margin-top:20px; cursor:pointer;">Maybe Later</button>
-    </div>
-</div>
-
 <div id="home-view" class="view active-view">
-    <input type="text" id="searchBar" placeholder="Search for legendary sagas..." oninput="searchNovels()">
+    <input type="text" id="searchBar" placeholder="Search for legendary sagas..." oninput="search()">
     <div class="novel-grid" id="novelGrid"></div>
 </div>
 
@@ -269,6 +282,7 @@
             <input type="text" id="newName" placeholder="New Display Name">
             <button class="btn-gold" onclick="updateUsername()" style="width:auto; padding:8px 20px;">UPDATE</button>
         </div>
+        <button onclick="auth.signOut()" style="background:none; border:none; color:var(--red); cursor:pointer; font-size: 0.7rem; margin-top:10px;">[ LOGOUT ]</button>
     </div>
 
     <div id="dailyClaimSection" class="card" style="display:none; border-color: var(--gold);">
@@ -401,26 +415,46 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, doc, onSnapshot, collection, query, getDocs, getDoc, updateDoc, increment, setDoc, addDoc, where, orderBy, limit, serverTimestamp, deleteDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    // PROJECT CONFIG
     const config = { apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0", authDomain: "fantinal-publishing-5b960.firebaseapp.com", projectId: "fantinal-publishing-5b960", storageBucket: "fantinal-publishing-5b960.firebasestorage.app", messagingSenderId: "961612304854", appId: "1:961612304854:web:6bf7b03072ed83b58b9477" };
     const app = initializeApp(config);
     const db = getFirestore(app);
-    const auth = getAuth(app);
+    window.auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
     const ADMIN_EMAIL = "xztka49@gmail.com";
     let currentUser = null, userData = null, selectedTopupAmt = 0, currentNid = null;
-    let allNovels = []; // Global Storage for Search
+    let allNovels = [];
 
-    // --- LUXURY LOGIN CONTROL ---
-    window.showLogin = () => { document.getElementById('loginModal').style.display = 'block'; };
-    window.hideLogin = () => { document.getElementById('loginModal').style.display = 'none'; };
+    // --- AUTH UI TOGGLE ---
+    window.toggleAuth = (mode) => {
+        document.getElementById('loginForm').style.display = mode === 'reg' ? 'none' : 'block';
+        document.getElementById('regForm').style.display = mode === 'reg' ? 'block' : 'none';
+    };
 
-    // --- VIP SYSTEM LOGIC ---
+    // --- EMAIL/PASS AUTH ---
+    window.handleAuth = async (type) => {
+        try {
+            if(type === 'login') {
+                const e = document.getElementById('authEmail').value;
+                const p = document.getElementById('authPass').value;
+                await signInWithEmailAndPassword(auth, e, p);
+            } else {
+                const n = document.getElementById('regName').value;
+                const e = document.getElementById('regEmail').value;
+                const p = document.getElementById('regPass').value;
+                const res = await createUserWithEmailAndPassword(auth, e, p);
+                await setDoc(doc(db, "users", res.user.uid), { name: n, email: e, coins: 0, spent: 0, claimCount: 0, lastClaim: 0 });
+            }
+        } catch (err) { alert(err.message); }
+    };
+
+    window.handleGoogle = () => signInWithPopup(auth, provider);
+
+    // --- VIP LOGIC ---
     function getVipInfo(spent) {
-        const s = Number(spent) || 0; // Fix NaN
+        const s = Number(spent) || 0;
         if(s >= 3000000) return {lv:6, name:"Emperor", cls:"t6", nCls:"name-red", fCls:"v6-frame"};
         if(s >= 1000000) return {lv:5, name:"King", cls:"t5", nCls:"name-purple", fCls:"v5-frame"};
         if(s >= 400000) return {lv:4, name:"Master", cls:"t4", nCls:"name-gold", fCls:""};
@@ -431,43 +465,37 @@
     }
 
     const claimTable = {
-        2: [25, 50, 75, 100, 125, 150, 175],
-        3: [50, 100, 150, 200, 250, 300, 350],
-        4: [75, 150, 325, 400, 475, 550, 625],
-        5: [100, 200, 300, 400, 500, 600, 700],
+        2: [25, 50, 75, 100, 125, 150, 175], 3: [50, 100, 150, 200, 250, 300, 350],
+        4: [75, 150, 325, 400, 475, 550, 625], 5: [100, 200, 300, 400, 500, 600, 700],
         6: [200, 400, 600, 800, 1000, 1200, 1400]
     };
-
-    // --- AUTHENTICATION ---
-    window.login = () => signInWithPopup(auth, provider).then(() => hideLogin());
 
     onAuthStateChanged(auth, async (user) => {
         if(user) {
             currentUser = user;
+            document.getElementById('authOverlay').style.display = 'none';
             const userRef = doc(db, "users", user.uid);
             const snapInitial = await getDoc(userRef);
             if(!snapInitial.exists()) {
-                await setDoc(userRef, { name: user.displayName, email: user.email, coins: 0, spent: 0, claimCount: 0, lastClaim: 0 });
+                await setDoc(userRef, { name: user.displayName || "User", email: user.email, coins: 0, spent: 0, claimCount: 0, lastClaim: 0 });
             }
             onSnapshot(userRef, (snap) => {
-                if(snap.exists()) {
-                    userData = snap.data();
-                    updateMasterUI();
-                }
+                if(snap.exists()) { userData = snap.data(); updateMasterUI(); }
             });
             if(user.email === ADMIN_EMAIL) {
                 document.getElementById('adminPanelBtn').style.display = 'block';
-                loadAdminGlobalStats();
-                autoCleanOldChats();
+                loadAdminGlobalStats(); autoCleanOldChats();
             }
             loadCoinHistory();
+        } else {
+            document.getElementById('authOverlay').style.display = 'flex';
+            document.getElementById('userHeader').style.display = 'none';
         }
     });
 
     function updateMasterUI() {
         const vip = getVipInfo(userData.spent);
-        const userCoins = Number(userData.coins) || 0; // Prevent NaN
-        document.getElementById('loginBtn').style.display = 'none';
+        const userCoins = Number(userData.coins) || 0;
         document.getElementById('userHeader').style.display = 'block';
         document.getElementById('hCoins').innerText = userCoins.toLocaleString();
         document.getElementById('sCoins').innerText = userCoins.toLocaleString();
@@ -489,26 +517,20 @@
         const claimBtn = document.getElementById('claimBtn');
         const timerTxt = document.getElementById('claimTimer');
         setInterval(() => {
-            const lastTime = Number(userData.lastClaim) || 0;
-            const nextClaimTime = lastTime + 86400000;
+            const nextClaimTime = (Number(userData.lastClaim) || 0) + 86400000;
             const now = Date.now();
             const diff = nextClaimTime - now;
             if (diff <= 0) {
-                claimBtn.disabled = false;
-                claimBtn.innerText = "CLAIM REWARD";
-                timerTxt.innerText = "Reward Ready!";
+                claimBtn.disabled = false; claimBtn.innerText = "CLAIM REWARD"; timerTxt.innerText = "Reward Ready!";
             } else {
                 claimBtn.disabled = true;
-                const h = Math.floor(diff / 3600000);
-                const m = Math.floor((diff % 3600000) / 60000);
-                const s = Math.floor((diff % 60000) / 1000);
+                const h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
                 claimBtn.innerText = `LOCKED (${h}h ${m}m ${s}s)`;
                 timerTxt.innerText = `Next claim in: ${h}:${m}:${s}`;
             }
         }, 1000);
     }
 
-    // --- PROFILE ACTIONS ---
     window.toggleEditName = () => {
         const div = document.getElementById('editNameDiv');
         div.style.display = div.style.display === 'none' ? 'block' : 'none';
@@ -517,22 +539,19 @@
         const newName = document.getElementById('newName').value;
         if(newName) {
             await updateDoc(doc(db, "users", currentUser.uid), { name: newName });
-            alert("Name updated successfully!");
-            toggleEditName();
+            alert("Name updated!"); toggleEditName();
         }
     };
     window.handleClaim = async () => {
         const vip = getVipInfo(userData.spent);
-        const dayIdx = (Number(userData.claimCount) || 0) % 7;
-        const amt = claimTable[vip.lv][dayIdx];
+        const amt = claimTable[vip.lv][(Number(userData.claimCount) || 0) % 7];
         await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(amt), lastClaim: Date.now(), claimCount: increment(1) });
         alert(`Congratulations! You received 🪙${amt} daily coins.`);
     };
 
-    // --- CHAT SYSTEM ---
     window.sendChat = async () => {
         const msg = document.getElementById('chatInput').value;
-        if(!msg || !currentUser) return;
+        if(!msg) return;
         const vip = getVipInfo(userData.spent);
         await addDoc(collection(db, "chat"), {
             name: userData.name, text: msg, nCls: vip.nCls, fCls: vip.fCls, vName: vip.name, vCls: vip.cls, date: serverTimestamp()
@@ -556,14 +575,10 @@
         oldDocs.forEach(async (d) => { await deleteDoc(doc(db, "chat", d.id)); });
     }
 
-    // --- NOVELS & READER ---
     onSnapshot(collection(db, "novels"), (snap) => {
         allNovels = [];
-        snap.forEach(docSnap => {
-            allNovels.push({ id: docSnap.id, ...docSnap.data() });
-        });
-        renderNovels(allNovels);
-        updateAdminNovelLists();
+        snap.forEach(docSnap => { allNovels.push({ id: docSnap.id, ...docSnap.data() }); });
+        renderNovels(allNovels); updateAdminNovelLists();
     });
 
     function renderNovels(list) {
@@ -573,8 +588,7 @@
         });
     }
 
-    // [FIXED] SEARCH FUNCTION
-    window.searchNovels = () => {
+    window.search = () => {
         const query = document.getElementById('searchBar').value.toLowerCase();
         const filtered = allNovels.filter(n => n.title.toLowerCase().includes(query) || n.author.toLowerCase().includes(query));
         renderNovels(filtered);
@@ -584,7 +598,6 @@
         const sel = document.getElementById('anSelector'); if(sel) sel.innerHTML = "";
         const vs = document.getElementById('vsAnalyticsContent'); if(vs) vs.innerHTML = `<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; font-weight:bold; margin-bottom:10px; font-size:0.7rem;"><span>Novel</span><span>Views</span><span>Sales/Life</span></div>`;
         const admNovelEdit = document.getElementById('adminNovelEditList'); if(admNovelEdit) admNovelEdit.innerHTML = "";
-
         allNovels.forEach(n => {
             if(sel) sel.innerHTML += `<option value="${n.id}">${n.title}</option>`;
             if(vs) vs.innerHTML += `<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; font-size:0.75rem; border-bottom:1px solid #161b22; padding:5px 0;"><span style="color:var(--gold)">${n.title}</span><span>${n.views || 0}</span><span>🪙${n.sales || 0} / L:${n.lifetimeSales || 0}</span></div>`;
@@ -593,7 +606,6 @@
     }
 
     window.openNovel = async (id) => {
-        if(!currentUser) return showLogin();
         currentNid = id;
         const nSnap = await getDoc(doc(db, "novels", id));
         const n = nSnap.data();
@@ -605,43 +617,38 @@
         document.getElementById('novelInfo').innerHTML = `
             <img src="${n.cover}" style="width:100%; height:280px; object-fit:cover; border-radius:20px; border: 1px solid var(--gold);">
             <h1 style="color:var(--gold); margin-top:20px;">${n.title}</h1><p style="color:var(--text-dim)">Author: ${n.author}</p><p style="line-height:1.6;">${n.desc}</p>
-            ${isLife ? `<button class="btn" style="width:100%; background:var(--green); color:white;">LIFETIME UNLOCKED ✅</button>` : `<button class="btn btn-gold" style="width:100%;" onclick="buyFullAccess('${id}', ${Number(n.vipPrice)})">UNLOCK ALL CHAPTERS (🪙${n.vipPrice})</button>`}
+            ${isLife ? `<button class="btn" style="width:100%; background:var(--green); color:white;">LIFETIME UNLOCKED ✅</button>` : `<button class="btn btn-gold" style="width:100%;" onclick="buyFullAccess('${id}', ${Number(n.vipPrice)})">UNLOCK ALL (🪙${n.vipPrice})</button>`}
         `;
-        loadChapters(id);
-        loadReviews(id);
+        loadChapters(id); loadReviews(id);
     };
 
     async function loadChapters(nid) {
         const snap = await getDocs(query(collection(db, "novels", nid, "chapters"), orderBy("num", "asc")));
-        const list = document.getElementById('chapterList');
-        list.innerHTML = `<h3 style="color:var(--gold); margin-top:30px;">Chapters</h3>`;
+        const list = document.getElementById('chapterList'); list.innerHTML = `<h3 style="color:var(--gold); margin-top:30px;">Chapters</h3>`;
         const isLife = (await getDoc(doc(db, "users", currentUser.uid, "unlocked_novels", nid))).exists();
-        
         for (const cd of snap.docs) {
             const c = cd.data();
             const isChUnlocked = (await getDoc(doc(db, "users", currentUser.uid, "unlocked_chapters", cd.id))).exists();
-            let priceLabel = `<span style="color:var(--gold)">🪙 ${c.cost === 0 ? 'FREE' : c.cost}</span>`;
-            if (isLife || isChUnlocked || c.cost === 0) priceLabel = `<span style="color:var(--green)">READ NOW</span>`;
-            list.innerHTML += `<div class="card" onclick="readChapter('${nid}','${cd.id}',${Number(c.cost)},${Number(c.num)})" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;"><span>Chapter ${c.num}: ${c.title}</span>${priceLabel}</div>`;
+            let label = `<span style="color:var(--gold)">🪙 ${c.cost === 0 ? 'FREE' : c.cost}</span>`;
+            if (isLife || isChUnlocked || c.cost === 0) label = `<span style="color:var(--green)">READ</span>`;
+            list.innerHTML += `<div class="card" onclick="readChapter('${nid}','${cd.id}',${Number(c.cost)},${Number(c.num)})" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;"><span>Ch ${c.num}: ${c.title}</span>${label}</div>`;
         }
     }
 
     window.readChapter = async (nid, cid, cost, num) => {
-        const isFull = (await getDoc(doc(db, "users", currentUser.uid, "unlocked_novels", nid))).exists();
+        const isLife = (await getDoc(doc(db, "users", currentUser.uid, "unlocked_novels", nid))).exists();
         const isCh = (await getDoc(doc(db, "users", currentUser.uid, "unlocked_chapters", cid))).exists();
         const cCost = Number(cost) || 0;
-
-        if(isFull || isCh || cCost === 0) {
+        if(isLife || isCh || cCost === 0) {
             const c = (await getDoc(doc(db, "novels", nid, "chapters", cid))).data();
             showView('reader-view');
             document.getElementById('rChNum').innerText = "CHAPTER " + num;
             document.getElementById('rChTitle').innerText = c.title;
             document.getElementById('rContent').innerText = c.content;
-            window.scrollTo(0,0);
-            updateReaderNav(nid, num);
+            window.scrollTo(0,0); updateReaderNav(nid, num);
         } else {
-            if(Number(userData.coins) < cCost) return alert("Insufficient coins!");
-            if(confirm(`Unlock Chapter ${num} for 🪙${cCost}?`)) {
+            if(Number(userData.coins) < cCost) return alert("Low coins!");
+            if(confirm(`Unlock Ch ${num} for 🪙${cCost}?`)) {
                 await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(-cCost), spent: increment(cCost) });
                 await updateDoc(doc(db, "novels", nid), { sales: increment(cCost) });
                 await setDoc(doc(db, "users", currentUser.uid, "unlocked_chapters", cid), { date: serverTimestamp() });
@@ -652,12 +659,11 @@
 
     window.buyFullAccess = async (nid, price) => {
         const vPrice = Number(price) || 0;
-        if(Number(userData.coins) < vPrice) return alert("Insufficient coins!");
-        if(confirm(`Unlock Lifetime Access for 🪙${vPrice}?`)) {
+        if(Number(userData.coins) < vPrice) return alert("Low coins!");
+        if(confirm(`Unlock All for 🪙${vPrice}?`)) {
             await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(-vPrice), spent: increment(vPrice) });
             await updateDoc(doc(db, "novels", nid), { lifetimeSales: increment(vPrice) });
             await setDoc(doc(db, "users", currentUser.uid, "unlocked_novels", nid), { date: serverTimestamp() });
-            alert("Lifetime Unlocked!");
             openNovel(nid);
         }
     };
@@ -665,17 +671,16 @@
     async function updateReaderNav(nid, num) {
         const next = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", "==", Number(num) + 1), limit(1)));
         const prev = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", "==", Number(num) - 1), limit(1)));
-        document.getElementById('nextBtn').onclick = () => next.empty ? alert("Last Chapter") : readChapter(nid, next.docs[0].id, next.docs[0].data().cost, Number(num) + 1);
-        document.getElementById('prevBtn').onclick = () => prev.empty ? alert("First Chapter") : readChapter(nid, prev.docs[0].id, prev.docs[0].data().cost, Number(num) - 1);
+        document.getElementById('nextBtn').onclick = () => next.empty ? alert("Last Ch") : readChapter(nid, next.docs[0].id, next.docs[0].data().cost, Number(num) + 1);
+        document.getElementById('prevBtn').onclick = () => prev.empty ? alert("First Ch") : readChapter(nid, prev.docs[0].id, prev.docs[0].data().cost, Number(num) - 1);
     }
 
-    // --- REVIEWS ---
     async function loadReviews(nid) {
         const snap = await getDocs(collection(db, "novels", nid, "reviews"));
         const box = document.getElementById('reviewList'); box.innerHTML = "";
         snap.forEach(d => {
             const r = d.data();
-            box.innerHTML += `<div style="padding:10px; border-bottom:1px solid #161b22; font-size:0.8rem;"><b style="color:var(--gold)">${r.name}</b> (${r.rate}⭐): ${r.text}${currentUser && currentUser.email === ADMIN_EMAIL ? `<button onclick="deleteRev('${nid}','${d.id}')" style="background:none; border:none; color:var(--red); cursor:pointer;">[Del]</button>` : ''}</div>`;
+            box.innerHTML += `<div style="padding:10px; border-bottom:1px solid #161b22; font-size:0.8rem;"><b style="color:var(--gold)">${r.name}</b> (${r.rate}⭐): ${r.text}${currentUser.email === ADMIN_EMAIL ? `<button onclick="deleteRev('${nid}','${d.id}')" style="color:var(--red); background:none; border:none; cursor:pointer;">[Del]</button>` : ''}</div>`;
         });
     }
     window.postReview = async () => {
@@ -683,53 +688,41 @@
         const rate = document.getElementById('revRate').value;
         if(!text) return;
         await addDoc(collection(db, "novels", currentNid, "reviews"), { name: userData.name, text, rate, date: serverTimestamp() });
-        document.getElementById('revText').value = "";
-        loadReviews(currentNid);
+        document.getElementById('revText').value = ""; loadReviews(currentNid);
     };
     window.deleteRev = async (nid, rid) => { await deleteDoc(doc(db, "novels", nid, "reviews", rid)); loadReviews(nid); };
 
-    // --- SHOP & TRANSFER ---
     const packages = [1000, 2000, 5000, 10000, 30000, 50000];
     packages.forEach(p => { document.getElementById('packageGrid').innerHTML += `<div class="card" onclick="openTopup(${p})" style="text-align:center; cursor:pointer; background:#161b22;">🪙 ${p.toLocaleString()}</div>`; });
     window.openTopup = (amt) => { selectedTopupAmt = Number(amt); document.getElementById('topupForm').style.display = 'block'; };
     window.submitTopup = async () => {
         const tid = document.getElementById('tpID').value;
-        if(tid.length < 6) return alert("Enter valid Transaction ID");
+        if(tid.length < 6) return alert("Valid TID needed");
         await addDoc(collection(db, "transactions"), { uid: currentUser.uid, userName: userData.name, amount: Number(selectedTopupAmt), tid, sender: document.getElementById('tpName').value, status: "Pending", type: "Topup", date: serverTimestamp() });
-        alert("Topup submitted!");
-        document.getElementById('topupForm').style.display = 'none';
+        alert("Submitted!"); document.getElementById('topupForm').style.display = 'none';
     };
     window.processTransfer = async () => {
-        const email = document.getElementById('tfEmail').value;
-        const amt = Number(document.getElementById('tfAmt').value) || 0;
+        const email = document.getElementById('tfEmail').value, amt = Number(document.getElementById('tfAmt').value) || 0;
         if(Number(userData.coins) < amt) return alert("Not enough coins!");
         const q = query(collection(db, "users"), where("email", "==", email), limit(1));
-        const s = await getDocs(q);
-        if(s.empty) return alert("User not found!");
-        const target = s.docs[0];
-        try {
-            await runTransaction(db, async (transaction) => {
-                const senderRef = doc(db, "users", currentUser.uid);
-                const receiverRef = doc(db, "users", target.id);
-                transaction.update(senderRef, { coins: increment(-amt) });
-                transaction.update(receiverRef, { coins: increment(amt) });
-            });
-            await addDoc(collection(db, "transactions"), { uid: currentUser.uid, type: "Transfer Out", amount: amt, status: "Approved", date: serverTimestamp() });
-            alert("Transfer success!");
-        } catch(e) { alert("Error!"); }
+        const s = await getDocs(q); if(s.empty) return alert("User not found!");
+        await runTransaction(db, async (tx) => {
+            const sR = doc(db, "users", currentUser.uid), rR = doc(db, "users", s.docs[0].id);
+            tx.update(sR, { coins: increment(-amt) }); tx.update(rR, { coins: increment(amt) });
+        });
+        await addDoc(collection(db, "transactions"), { uid: currentUser.uid, type: "Transfer Out", amount: amt, status: "Approved", date: serverTimestamp() });
+        alert("Success!");
     };
     window.redeemGift = async () => {
         const code = document.getElementById('giftCodeInput').value.trim();
         const q = query(collection(db, "gifts"), where("code", "==", code), where("used", "==", false), limit(1));
-        const s = await getDocs(q);
-        if(s.empty) return alert("Invalid Code!");
+        const s = await getDocs(q); if(s.empty) return alert("Invalid Code!");
         const giftAmt = Number(s.docs[0].data().amount) || 0;
         await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(giftAmt) });
         await updateDoc(doc(db, "gifts", s.docs[0].id), { used: true, usedBy: userData.email });
-        alert("Success!");
+        alert("Redeemed!");
     };
 
-    // --- ADMIN ADVANCED ---
     window.openAdminTab = (id) => {
         document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
         document.getElementById(id).style.display = 'block';
@@ -771,18 +764,12 @@
     };
 
     window.editNovelData = async (id) => {
-        const snap = await getDoc(doc(db, "novels", id));
-        const n = snap.data();
-        document.getElementById('anID').value = id;
-        document.getElementById('anTit').value = n.title;
-        document.getElementById('anAut').value = n.author;
-        document.getElementById('anCov').value = n.cover;
-        document.getElementById('anDes').value = n.desc;
-        document.getElementById('anVipP').value = n.vipPrice;
+        const snap = await getDoc(doc(db, "novels", id)), n = snap.data();
+        document.getElementById('anID').value = id; document.getElementById('anTit').value = n.title;
+        document.getElementById('anAut').value = n.author; document.getElementById('anCov').value = n.cover;
+        document.getElementById('anDes').value = n.desc; document.getElementById('anVipP').value = n.vipPrice;
     };
-
     window.deleteNovelData = async (id) => { if(confirm("Delete Novel?")) await deleteDoc(doc(db, "novels", id)); };
-
     window.saveNovel = async () => {
         const id = document.getElementById('anID').value;
         const data = { title: document.getElementById('anTit').value, author: document.getElementById('anAut').value, cover: document.getElementById('anCov').value, desc: document.getElementById('anDes').value, vipPrice: Number(document.getElementById('anVipP').value) || 0 };
@@ -802,44 +789,31 @@
 
     window.editChapterData = async (cid, num, title, cost) => {
         const nid = document.getElementById('anSelector').value;
-        document.getElementById('acID').value = cid;
-        document.getElementById('acNum').value = num;
-        document.getElementById('acTit').value = title;
-        document.getElementById('acCost').value = cost;
+        document.getElementById('acID').value = cid; document.getElementById('acNum').value = num;
+        document.getElementById('acTit').value = title; document.getElementById('acCost').value = cost;
         const cSnap = await getDoc(doc(db, "novels", nid, "chapters", cid));
         if(cSnap.exists()) document.getElementById('acCon').value = cSnap.data().content;
-        alert("Old content loaded!");
     };
-
     window.deleteChapterData = async (nid, cid) => { if(confirm("Delete?")) { await deleteDoc(doc(db, "novels", nid, "chapters", cid)); loadAdminChapters(); } };
-
     window.saveChapter = async () => {
-        const nid = document.getElementById('anSelector').value;
-        const cid = document.getElementById('acID').value;
+        const nid = document.getElementById('anSelector').value, cid = document.getElementById('acID').value;
         const data = { num: Number(document.getElementById('acNum').value) || 0, title: document.getElementById('acTit').value, content: document.getElementById('acCon').value, cost: Number(document.getElementById('acCost').value) || 0 };
         cid ? await updateDoc(doc(db, "novels", nid, "chapters", cid), data) : await addDoc(collection(db, "novels", nid, "chapters"), data);
-        alert("Published!");
-        loadAdminChapters();
+        alert("Done!"); loadAdminChapters();
     };
 
     window.bulkUploadChapters = async () => {
-        const nid = document.getElementById('anSelector').value;
-        const rawData = document.getElementById('acCon').value;
-        const cost = Number(document.getElementById('acCost').value) || 0;
-        const blocks = rawData.split('||');
-        let startNum = Number(document.getElementById('acNum').value) || 1;
+        const nid = document.getElementById('anSelector').value, raw = document.getElementById('acCon').value, cost = Number(document.getElementById('acCost').value) || 0;
+        const blocks = raw.split('||'); let num = Number(document.getElementById('acNum').value) || 1;
         if(!confirm(`Upload ${blocks.length} chapters?`)) return;
         for(let b of blocks) {
-            const parts = b.split('|');
-            const tit = parts[0];
-            const con = parts[1];
-            if(tit && con) {
-                await addDoc(collection(db, "novels", nid, "chapters"), { num: Number(startNum), title: tit.trim(), content: con.trim(), cost: Number(cost), date: serverTimestamp() });
-                startNum++;
+            const p = b.split('|');
+            if(p[0] && p[1]) {
+                await addDoc(collection(db, "novels", nid, "chapters"), { num: Number(num), title: p[0].trim(), content: p[1].trim(), cost: Number(cost), date: serverTimestamp() });
+                num++;
             }
         }
-        alert("Bulk Success!");
-        loadAdminChapters();
+        alert("Bulk Done!"); loadAdminChapters();
     };
 
     window.generateGiftCode = async () => {
@@ -848,7 +822,6 @@
         await addDoc(collection(db, "gifts"), { code, amount: amt, used: false, date: serverTimestamp() });
         loadGiftHistory();
     };
-
     async function loadGiftHistory() {
         const snap = await getDocs(query(collection(db, "gifts"), orderBy("date", "desc")));
         const log = document.getElementById('adminGiftLog'); log.innerHTML = "";
@@ -864,8 +837,7 @@
         onSnapshot(query(collection(db, "transactions"), where("uid", "==", currentUser.uid), orderBy("date", "desc")), (snap) => {
             const body = document.getElementById('historyBody'); body.innerHTML = "";
             snap.forEach(d => {
-                const h = d.data();
-                const dt = h.date ? h.date.toDate().toLocaleDateString() : '---';
+                const h = d.data(); const dt = h.date ? h.date.toDate().toLocaleDateString() : '---';
                 body.innerHTML += `<tr><td style="padding:10px;">${dt}</td><td>${h.type}</td><td>${h.amount}</td><td>${h.status}</td></tr>`;
             });
         });
