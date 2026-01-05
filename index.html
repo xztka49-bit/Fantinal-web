@@ -112,6 +112,16 @@
         .t3 { background: var(--v3); color: #000; } .t4 { background: var(--v4); color: #000; }
         .t5 { background: var(--v5); } .t6 { background: var(--v6); border: 1px solid #fff; }
 
+        /* RANKING & REWARD STYLES [NEW] */
+        .rank-card { position: relative; display: flex; align-items: center; padding: 15px; margin-bottom: 12px; border-radius: 15px; background: var(--card); border: 1px solid #30363d; }
+        .rank-1-frame { border: 3px solid gold !important; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); background: linear-gradient(90deg, #0d1117 0%, rgba(212,175,55,0.1) 100%); }
+        .rank-2-frame { border: 3px solid silver !important; box-shadow: 0 0 15px rgba(192, 192, 192, 0.3); }
+        .rank-3-frame { border: 3px solid #cd7f32 !important; box-shadow: 0 0 10px rgba(205, 127, 50, 0.2); }
+        .rank-number { font-family: 'Cinzel'; font-size: 1.2rem; font-weight: bold; width: 40px; text-align: center; }
+        .gold-txt { color: gold !important; font-weight: 800; text-shadow: 0 0 5px gold; }
+        .silver-txt { color: silver !important; }
+        .bronze-txt { color: #cd7f32 !important; }
+
         /* DAILY CLAIM GRID */
         .claim-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
         .day-box { 
@@ -198,8 +208,22 @@
 </header>
 
 <div id="home-view" class="view active-view">
+    <button class="btn btn-gold" onclick="showView('leaderboard-view')" style="width:100%; margin-bottom:20px;">🏆 VIEW TOP 100 IMMORTALS</button>
     <input type="text" id="searchBar" placeholder="Search for legendary sagas..." oninput="search()">
     <div class="novel-grid" id="novelGrid"></div>
+</div>
+
+<div id="leaderboard-view" class="view">
+    <button class="btn" onclick="showView('home-view')" style="background:none; color:var(--gold); padding:0; margin-bottom:20px;">← BACK</button>
+    <h2 style="color:var(--gold); text-align:center;">TOP 100 RANKING</h2>
+    
+    <div class="card" style="border:1px solid gold;">
+        <h3 style="color:var(--gold); border-bottom:1px solid #334155; padding-bottom:10px;">Monthly Rewards</h3>
+        <div id="reward-timer" style="text-align:center; color:var(--red); font-weight:bold; margin-bottom:10px;"></div>
+        <button id="claimRankRewardBtn" class="btn btn-gold" style="width:100%;" onclick="claimMonthlyRankReward()" disabled>CLAIM RANK REWARD</button>
+    </div>
+
+    <div id="leaderboardList"></div>
 </div>
 
 <div id="detail-view" class="view">
@@ -337,6 +361,17 @@
             <small>Gift Coins Used</small><br><b id="admTotalGiftUsed">0</b>
         </div>
     </div>
+
+    <div class="card" style="border:1px solid var(--gold);">
+        <h4 style="color:var(--gold)">Income Analytics By Date</h4>
+        <div style="display:flex; gap:10px; margin-bottom:10px;">
+            <input type="date" id="statsStart" style="font-size:0.7rem; padding:5px;">
+            <input type="date" id="statsEnd" style="font-size:0.7rem; padding:5px;">
+            <button class="btn-gold" onclick="filterAdminStats()" style="padding:5px 10px; font-size:0.7rem;">Filter</button>
+        </div>
+        <p style="font-size:0.8rem;">Filtered Range Total: <b id="filteredIncomeText" style="color:var(--green);">0</b></p>
+    </div>
+    <p style="color:var(--text-dim); padding-left:10px;">Total Registered Immortals: <b id="totalUserCount" style="color:white;">0</b></p>
 
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:25px;">
         <button class="btn" style="background:#334155; color:white; font-size: 0.7rem;" onclick="openAdminTab('tab-approvals')">Approvals</button>
@@ -517,6 +552,7 @@
         const claimBtn = document.getElementById('claimBtn');
         const timerTxt = document.getElementById('claimTimer');
         setInterval(() => {
+            if(!userData) return;
             const nextClaimTime = (Number(userData.lastClaim) || 0) + 86400000;
             const now = Date.now();
             const diff = nextClaimTime - now;
@@ -740,6 +776,8 @@
             let total = 0; snap.forEach(d => total += (Number(d.data().amount) || 0));
             document.getElementById('admTotalGiftUsed').innerText = "🪙 " + total.toLocaleString();
         });
+        const uSnap = await getDocs(collection(db, "users"));
+        document.getElementById('totalUserCount').innerText = uSnap.size;
     }
 
     async function loadAdminUserList() {
@@ -828,9 +866,84 @@
         snap.forEach(d => { const g = d.data(); log.innerHTML += `<div>${g.code} - 🪙${g.amount}</div>`; });
     }
 
+    // --- NEW LEADERBOARD & REWARD SYSTEM ---
+    async function loadLeaderboard() {
+        const q = query(collection(db, "users"), orderBy("spent", "desc"), limit(100));
+        const snap = await getDocs(q);
+        const list = document.getElementById('leaderboardList');
+        list.innerHTML = "";
+        let rank = 1;
+        snap.forEach(d => {
+            const u = d.data();
+            let frame = "", txt = "";
+            if(rank === 1) { frame = "rank-1-frame"; txt = "gold-txt"; }
+            else if(rank === 2) { frame = "rank-2-frame"; txt = "silver-txt"; }
+            else if(rank === 3) { frame = "rank-3-frame"; txt = "bronze-txt"; }
+            list.innerHTML += `
+                <div class="rank-card ${frame}">
+                    <div class="rank-number ${txt}">${rank}</div>
+                    <div style="flex:1">
+                        <div style="font-weight:bold" class="${txt}">${u.name}</div>
+                        <div style="font-size:0.6rem; color:var(--text-dim)">${u.email}</div>
+                    </div>
+                    <div style="text-align:right">
+                        <div style="color:var(--gold); font-size:0.8rem">🪙 ${u.spent.toLocaleString()}</div>
+                    </div>
+                </div>`;
+            rank++;
+        });
+    }
+
+    function updateRankTimers() {
+        const now = new Date();
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        lastDay.setHours(23, 59, 59);
+        const diff = lastDay - now;
+        const timer = document.getElementById('reward-timer');
+        if (diff > 0) {
+            const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000);
+            timer.innerText = `Season Ends In: ${d}d ${h}h`;
+            document.getElementById('claimRankRewardBtn').disabled = true;
+        } else {
+            timer.innerText = "Season Ended! Claim Rewards Now.";
+            document.getElementById('claimRankRewardBtn').disabled = false;
+        }
+    }
+
+    window.claimMonthlyRankReward = async () => {
+        const q = query(collection(db, "users"), orderBy("spent", "desc"), limit(100));
+        const snap = await getDocs(q);
+        let myRank = 0, i = 1;
+        snap.forEach(d => { if(d.id === currentUser.uid) myRank = i; i++; });
+        if(myRank === 0) return alert("Rank 1-10 only for rewards.");
+        
+        let reward = 0;
+        if(myRank === 1) reward = 15000;
+        else if(myRank === 2) reward = 8500;
+        else if(myRank === 3) reward = 5000;
+        else if(myRank <= 10) reward = 2000;
+        else return alert("Rank 11-100: No coin rewards.");
+
+        await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(reward) });
+        alert(`Claimed ${reward} coins!`);
+    };
+
+    // --- ADMIN FILTER ---
+    window.filterAdminStats = async () => {
+        const start = new Date(document.getElementById('statsStart').value);
+        const end = new Date(document.getElementById('statsEnd').value);
+        end.setHours(23,59,59);
+        const q = query(collection(db, "transactions"), where("status", "==", "Approved"), where("type", "==", "Topup"), where("date", ">=", start), where("date", "<=", end));
+        const snap = await getDocs(q);
+        let total = 0; snap.forEach(d => total += (Number(d.data().amount) || 0));
+        document.getElementById('filteredIncomeText').innerText = "🪙 " + total.toLocaleString();
+    };
+
     window.showView = (id) => {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
         document.getElementById(id).classList.add('active-view');
+        if(id === 'leaderboard-view') { loadLeaderboard(); updateRankTimers(); }
+        if(id === 'admin-view') { loadAdminGlobalStats(); }
     };
 
     async function loadCoinHistory() {
