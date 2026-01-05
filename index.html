@@ -137,10 +137,25 @@
 
         /* NOVEL DISPLAY */
         .novel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 18px; }
-        .n-card { border-radius: 15px; overflow: hidden; background: var(--card); cursor: pointer; transition: 0.3s; position: relative; }
+        .n-card { border-radius: 15px; overflow: hidden; background: var(--card); cursor: pointer; transition: 0.3s; position: relative; border: 1px solid rgba(255,255,255,0.05); }
         .n-card:hover { transform: translateY(-8px); border: 1px solid var(--gold); }
         .n-card img { width: 100%; height: 230px; object-fit: cover; }
         .n-card-title { padding: 10px; font-size: 0.85rem; font-weight: 600; text-align: center; color: var(--gold); }
+        
+        /* [NEW] NOVEL TAGS */
+        .novel-tag { position: absolute; top: 10px; left: 10px; padding: 4px 10px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; text-transform: uppercase; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .tag-top { background: linear-gradient(45deg, #d4af37, #fef08a); color: black; border: 1px solid gold; }
+        .tag-complete { background: var(--green); color: white; }
+        .view-count { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.6rem; }
+
+        /* [NEW] HORIZONTAL SCROLL */
+        .horizontal-scroll { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+        .horizontal-scroll::-webkit-scrollbar { display: none; }
+        .h-card { min-width: 140px; max-width: 140px; }
+        .h-card img { height: 180px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin: 25px 0 15px 0; }
+        .section-header h2 { font-size: 1.1rem; color: var(--gold); margin: 0; }
+        .view-all { font-size: 0.75rem; color: var(--text-dim); cursor: pointer; }
 
         /* BOTTOM NAV */
         .bottom-nav { 
@@ -218,12 +233,32 @@
 <div id="home-view" class="view active-view">
     <button class="btn btn-gold" onclick="showView('leaderboard-view')" style="width:100%; margin-bottom:20px;">🏆 VIEW TOP 100 IMMORTALS</button>
     
+    <div class="section-header">
+        <h2>TOP NOVELS (RANKING)</h2>
+    </div>
+    <div class="horizontal-scroll" id="topNovelScroll"></div>
+
+    <div class="section-header">
+        <h2>စဆုံးပြီးစာစဉ်များ</h2>
+        <span class="view-all" onclick="showCompletedPage()">VIEW ALL →</span>
+    </div>
+    <div class="horizontal-scroll" id="completedNovelScroll"></div>
+
+    <div class="section-header" style="margin-top:30px;">
+        <h2>ALL SAGAS</h2>
+    </div>
     <div class="genre-bar" id="genreFilterBar">
         <div class="genre-tab active" onclick="filterByGenre('All')">ALL SAGAS</div>
     </div>
 
     <input type="text" id="searchBar" placeholder="Search for legendary sagas..." oninput="search()">
     <div class="novel-grid" id="novelGrid"></div>
+</div>
+
+<div id="completed-view" class="view">
+    <button class="btn" onclick="showView('home-view')" style="background:none; color:var(--gold); padding:0; margin-bottom:20px;">← BACK TO HOME</button>
+    <h2 style="color:var(--gold); margin-bottom:20px;">စဆုံးပြီးစာစဉ်များ အားလုံး</h2>
+    <div class="novel-grid" id="completedGrid"></div>
 </div>
 
 <div id="leaderboard-view" class="view">
@@ -322,6 +357,11 @@
             <button class="btn-gold" onclick="updateUsername()" style="width:auto; padding:8px 20px;">UPDATE</button>
         </div>
         <button onclick="auth.signOut()" style="background:none; border:none; color:var(--red); cursor:pointer; font-size: 0.7rem; margin-top:10px;">[ LOGOUT ]</button>
+    </div>
+
+    <div class="card">
+        <h3 style="color:var(--gold); margin:0 0 15px 0;">My Bookmarks</h3>
+        <div id="bookmarkGrid" class="novel-grid" style="grid-template-columns: repeat(2, 1fr);"></div>
     </div>
 
     <div id="dailyClaimSection" class="card" style="display:none; border-color: var(--gold);">
@@ -427,6 +467,15 @@
         <input type="text" id="anCov" placeholder="Cover URL">
         <textarea id="anDes" placeholder="Description"></textarea>
         <input type="number" id="anVipP" placeholder="Full Lifetime Price">
+        
+        <p style="font-size:0.75rem; color:var(--gold); margin-bottom:5px;">Novel Display Section:</p>
+        <select id="anSection">
+            <option value="none">Normal List</option>
+            <option value="top">Top Ranking Section</option>
+            <option value="completed">Completed Section</option>
+        </select>
+        <input type="number" id="anTopRank" placeholder="Top Rank Number (1-10) - If Top Section" style="margin-top:5px;">
+        
         <button class="btn btn-gold" onclick="saveNovel()">SAVE NOVEL DATA</button>
         
         <hr style="margin:25px 0; border:0.5px solid #334155;">
@@ -537,6 +586,7 @@
                 loadAdminGlobalStats(); autoCleanOldChats();
             }
             loadCoinHistory();
+            loadBookmarks();
         } else {
             document.getElementById('authOverlay').style.display = 'flex';
         }
@@ -639,8 +689,46 @@
             if(d.genre) genres.add(d.genre);
         });
         updateGenreBar(genres);
-        renderNovels(allNovels); updateAdminNovelLists();
+        renderNovels(allNovels); 
+        renderHomeSections();
+        updateAdminNovelLists();
     });
+
+    function renderHomeSections() {
+        const topScroll = document.getElementById('topNovelScroll');
+        const completeScroll = document.getElementById('completedNovelScroll');
+        const completeGrid = document.getElementById('completedGrid');
+        
+        topScroll.innerHTML = ""; completeScroll.innerHTML = ""; completeGrid.innerHTML = "";
+
+        // TOP RANKING NOVELS (Rank 1-10)
+        const topList = allNovels.filter(n => n.section === 'top').sort((a,b) => a.topRank - b.topRank);
+        topList.forEach(n => {
+            topScroll.innerHTML += `
+                <div class="n-card h-card" onclick="openNovel('${n.id}')">
+                    <div class="novel-tag tag-top">TOP ${n.topRank}</div>
+                    <div class="view-count">👁️ ${n.views || 0}</div>
+                    <img src="${n.cover}">
+                    <div class="n-card-title">${n.title}</div>
+                </div>`;
+        });
+
+        // COMPLETED NOVELS
+        const compList = allNovels.filter(n => n.section === 'completed');
+        compList.forEach(n => {
+            const html = `
+                <div class="n-card ${arguments.callee.caller.name === 'renderHomeSections' ? 'h-card' : ''}" onclick="openNovel('${n.id}')">
+                    <div class="novel-tag tag-complete">COMPLETE</div>
+                    <div class="view-count">👁️ ${n.views || 0}</div>
+                    <img src="${n.cover}">
+                    <div class="n-card-title">${n.title}</div>
+                </div>`;
+            completeScroll.innerHTML += html;
+            completeGrid.innerHTML += html;
+        });
+    }
+
+    window.showCompletedPage = () => showView('completed-view');
 
     function updateGenreBar(genres) {
         const bar = document.getElementById('genreFilterBar');
@@ -660,7 +748,17 @@
     function renderNovels(list) {
         const grid = document.getElementById('novelGrid'); grid.innerHTML = "";
         list.forEach(n => {
-            grid.innerHTML += `<div class="n-card" onclick="openNovel('${n.id}')"><img src="${n.cover}"><div class="n-card-title">${n.title}</div></div>`;
+            let tag = "";
+            if(n.section === 'top') tag = `<div class="novel-tag tag-top">TOP ${n.topRank}</div>`;
+            if(n.section === 'completed') tag = `<div class="novel-tag tag-complete">COMPLETE</div>`;
+            
+            grid.innerHTML += `
+                <div class="n-card" onclick="openNovel('${n.id}')">
+                    ${tag}
+                    <div class="view-count">👁️ ${n.views || 0}</div>
+                    <img src="${n.cover}">
+                    <div class="n-card-title">${n.title}</div>
+                </div>`;
         });
     }
 
@@ -686,9 +784,22 @@
         showView('detail-view'); 
         const n = novelCache[id];
         if(!n) return;
+        
+        const isBookmarked = userData.bookmarks && userData.bookmarks.includes(id);
+
         document.getElementById('novelInfo').innerHTML = `
-            <img src="${n.cover}" style="width:100%; height:280px; object-fit:cover; border-radius:20px; border: 1px solid var(--gold);">
-            <h1 style="color:var(--gold); margin-top:20px;">${n.title}</h1><p style="color:var(--text-dim)">Author: ${n.author}</p><p style="line-height:1.6;">${n.desc}</p>
+            <div style="position:relative">
+                <img src="${n.cover}" style="width:100%; height:280px; object-fit:cover; border-radius:20px; border: 1px solid var(--gold);">
+                <button onclick="toggleBookmark('${id}')" style="position:absolute; top:15px; right:15px; background:rgba(0,0,0,0.6); border:1px solid var(--gold); color:var(--gold); padding:8px; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:1.2rem;">
+                    ${isBookmarked ? '🔖' : '🔖'}
+                </button>
+            </div>
+            <h1 style="color:var(--gold); margin-top:20px;">${n.title}</h1>
+            <div style="display:flex; gap:15px; color:var(--text-dim); font-size:0.8rem; margin-bottom:15px;">
+                <span>👤 ${n.author}</span>
+                <span>👁️ ${n.views || 0} Views</span>
+            </div>
+            <p style="line-height:1.6;">${n.desc}</p>
             <div id="unlockActionBtn">...</div>
         `;
         const lifeRef = doc(db, "users", currentUser.uid, "unlocked_novels", id);
@@ -701,6 +812,38 @@
         loadReviews(id);
         updateDoc(doc(db, "novels", id), { views: increment(1) });
     };
+
+    window.toggleBookmark = async (id) => {
+        let list = userData.bookmarks || [];
+        if(list.includes(id)) {
+            list = list.filter(item => item !== id);
+            alert("Removed from bookmarks");
+        } else {
+            list.push(id);
+            alert("Added to bookmarks");
+        }
+        await updateDoc(doc(db, "users", currentUser.uid), { bookmarks: list });
+        loadBookmarks();
+    };
+
+    async function loadBookmarks() {
+        const grid = document.getElementById('bookmarkGrid'); 
+        if(!grid) return; grid.innerHTML = "";
+        if(!userData.bookmarks || userData.bookmarks.length === 0) {
+            grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:var(--text-dim);'>No bookmarks yet.</p>";
+            return;
+        }
+        userData.bookmarks.forEach(id => {
+            const n = novelCache[id];
+            if(n) {
+                grid.innerHTML += `
+                <div class="n-card" onclick="openNovel('${n.id}')">
+                    <img src="${n.cover}" style="height:150px;">
+                    <div class="n-card-title" style="font-size:0.7rem;">${n.title}</div>
+                </div>`;
+            }
+        });
+    }
 
     async function loadChapters(nid, isLife, rangeStart = 1) {
         const list = document.getElementById('chapterList'); 
@@ -893,13 +1036,24 @@
         document.getElementById('anGenre').value = n.genre || "";
         document.getElementById('anAut').value = n.author; document.getElementById('anCov').value = n.cover;
         document.getElementById('anDes').value = n.desc; document.getElementById('anVipP').value = n.vipPrice;
+        document.getElementById('anSection').value = n.section || "none";
+        document.getElementById('anTopRank').value = n.topRank || "";
     };
 
     window.deleteNovelData = async (id) => { if(confirm("Delete Novel?")) await deleteDoc(doc(db, "novels", id)); };
 
     window.saveNovel = async () => {
         const id = document.getElementById('anID').value;
-        const data = { title: document.getElementById('anTit').value, genre: document.getElementById('anGenre').value, author: document.getElementById('anAut').value, cover: document.getElementById('anCov').value, desc: document.getElementById('anDes').value, vipPrice: Number(document.getElementById('anVipP').value) || 0 };
+        const data = { 
+            title: document.getElementById('anTit').value, 
+            genre: document.getElementById('anGenre').value, 
+            author: document.getElementById('anAut').value, 
+            cover: document.getElementById('anCov').value, 
+            desc: document.getElementById('anDes').value, 
+            vipPrice: Number(document.getElementById('anVipP').value) || 0,
+            section: document.getElementById('anSection').value,
+            topRank: Number(document.getElementById('anTopRank').value) || 0
+        };
         id ? await updateDoc(doc(db, "novels", id), data) : await addDoc(collection(db, "novels"), { ...data, views: 0, sales: 0, lifetimeSales: 0 });
         alert("Saved!");
     };
@@ -1056,4 +1210,3 @@
 </script>
 </body>
 </html>
-
