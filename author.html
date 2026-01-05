@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Author Dashboard - Fantinal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <style>
+        .glass { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(10px); }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+    </style>
+</head>
+<body class="bg-gray-900 text-white font-sans min-h-screen">
+
+    <nav class="p-4 border-b border-gray-800 flex justify-between items-center glass sticky top-0 z-50">
+        <h1 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Author Hub</h1>
+        <div id="authorName" class="text-sm text-gray-400 italic">Loading profile...</div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto p-4 md:p-8">
+        
+        <section class="mb-10">
+            <div class="flex justify-between items-end mb-4">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <span class="w-2 h-6 bg-blue-500 rounded"></span> Sales Analytics
+                </h2>
+                <div class="flex gap-2 text-xs">
+                    <input type="date" id="startDate" class="bg-gray-800 border border-gray-700 p-1 rounded">
+                    <input type="date" id="endDate" class="bg-gray-800 border border-gray-700 p-1 rounded">
+                    <button onclick="calculateSales()" class="bg-blue-600 px-3 py-1 rounded">Filter</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-gray-800 border border-gray-700 p-6 rounded-2xl shadow-xl">
+                    <p class="text-gray-400 text-sm">Filtered Profit (<span id="currentRate">0</span>%)</p>
+                    <h3 id="filteredProfit" class="text-4xl font-bold mt-2 text-blue-400">0 Ks</h3>
+                    <p class="text-[10px] text-gray-500 mt-2">*Based on your specific profit share rate</p>
+                </div>
+                <div class="bg-gray-800 border border-gray-700 p-6 rounded-2xl shadow-xl">
+                    <p class="text-gray-400 text-sm">Lifetime Total Earnings</p>
+                    <h3 id="lifetimeProfit" class="text-4xl font-bold mt-2 text-green-400">0 Ks</h3>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-10">
+            <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                <span class="w-2 h-6 bg-purple-500 rounded"></span> My Approved Novels
+            </h2>
+            <div id="novelList" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="col-span-full p-10 text-center text-gray-500 border-2 border-dashed border-gray-800 rounded-2xl">
+                    No approved novels found. Contact Admin to get approval.
+                </div>
+            </div>
+        </section>
+
+        <section id="chapterManager" class="hidden fixed inset-0 z-[100] bg-gray-900 p-4 md:p-10 overflow-y-auto">
+            <div class="max-w-3xl mx-auto">
+                <button onclick="closeManager()" class="text-gray-400 mb-4 flex items-center gap-1 hover:text-white">
+                    ← Back to Dashboard
+                </button>
+                <h2 id="editingNovelTitle" class="text-2xl font-bold mb-6">Manage Chapters</h2>
+                
+                <div class="bg-gray-800 p-6 rounded-2xl mb-6">
+                    <h4 class="text-sm font-bold text-blue-400 mb-4">ADD NEW CHAPTER</h4>
+                    <input type="text" id="chapTitle" placeholder="Chapter Title (e.g., Chapter 1)" class="w-full bg-gray-700 border-none p-3 rounded mb-3">
+                    <textarea id="chapContent" rows="6" placeholder="Paste your story here..." class="w-full bg-gray-700 border-none p-3 rounded mb-3"></textarea>
+                    <button onclick="submitChapter()" class="w-full bg-blue-600 py-3 rounded-xl font-bold hover:bg-blue-500 transition">PUBLISH CHAPTER</button>
+                </div>
+
+                <div id="existingChapters" class="space-y-2">
+                    </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "fantinal-publishing-5b960.firebaseapp.com",
+            projectId: "fantinal-publishing-5b960",
+            storageBucket: "fantinal-publishing-5b960.appspot.com",
+            messagingSenderId: "YOUR_ID",
+            appId: "YOUR_APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        let currentAuthorId = "";
+        let currentAuthorRate = 0.5; // Default 50%
+        let activeNovelId = "";
+
+        // --- AUTH & DATA LOADING ---
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentAuthorId = user.uid;
+                fetchAuthorProfile(user.uid);
+            } else {
+                alert("Please login as Author first.");
+                window.location.href = "login.html";
+            }
+        });
+
+        async function fetchAuthorProfile(uid) {
+            const doc = await db.collection('users').doc(uid).get();
+            if (doc.exists && doc.data().role === 'author') {
+                const data = doc.data();
+                currentAuthorRate = data.profitRate || 0.5;
+                document.getElementById('authorName').innerText = "Author: " + (data.name || "User");
+                document.getElementById('currentRate').innerText = (currentAuthorRate * 100).toFixed(0);
+                loadApprovedNovels(uid);
+                calculateSales(uid);
+            } else {
+                alert("Access Denied: You are not an authorized author.");
+            }
+        }
+
+        function loadApprovedNovels(uid) {
+            db.collection('novels')
+                .where('authorId', '==', uid)
+                .where('status', '==', 'approved')
+                .onSnapshot(snap => {
+                    let html = '';
+                    snap.forEach(doc => {
+                        const novel = doc.data();
+                        html += `
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex justify-between items-center shadow-lg hover:border-blue-500 transition">
+                            <div>
+                                <h4 class="font-bold">${novel.title}</h4>
+                                <p class="text-[10px] text-gray-500">ID: ${doc.id}</p>
+                            </div>
+                            <button onclick="openManager('${doc.id}', '${novel.title}')" class="bg-blue-600/20 text-blue-400 px-4 py-2 rounded-lg text-sm font-bold">Manage</button>
+                        </div>`;
+                    });
+                    if(html) document.getElementById('novelList').innerHTML = html;
+                });
+        }
+
+        // --- SALES CALCULATION ---
+        async function calculateSales() {
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+            
+            // Note: အစစ်အမှန်တွင် Transactions collection မှ novelId အလိုက် query လုပ်ရပါမည်
+            // ဤနေရာတွင် logic အကြမ်းဖျင်းရေးပေးထားပါသည်
+            let rawTotal = 0;
+            const snapshot = await db.collection('transactions').where('authorId', '==', currentAuthorId).get();
+            
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                // Date Filtering Logic (simplified)
+                rawTotal += data.amount || 0;
+            });
+
+            const authorProfit = rawTotal * currentAuthorRate;
+            document.getElementById('filteredProfit').innerText = authorProfit.toLocaleString() + " Ks";
+            document.getElementById('lifetimeProfit').innerText = authorProfit.toLocaleString() + " Ks";
+        }
+
+        // --- CHAPTER MANAGEMENT ---
+        function openManager(id, title) {
+            activeNovelId = id;
+            document.getElementById('editingNovelTitle').innerText = "Managing: " + title;
+            document.getElementById('chapterManager').classList.remove('hidden');
+            loadChapters(id);
+        }
+
+        function closeManager() {
+            document.getElementById('chapterManager').classList.add('hidden');
+        }
+
+        function loadChapters(novelId) {
+            db.collection('novels').doc(novelId).collection('chapters').orderBy('createdAt', 'desc')
+                .onSnapshot(snap => {
+                    let html = '';
+                    snap.forEach(doc => {
+                        html += `
+                        <div class="bg-gray-700 p-3 rounded-lg flex justify-between text-sm">
+                            <span>${doc.data().title}</span>
+                            <span class="text-gray-400 text-[10px]">${doc.data().createdAt?.toDate().toLocaleDateString() || 'Just now'}</span>
+                        </div>`;
+                    });
+                    document.getElementById('existingChapters').innerHTML = html;
+                });
+        }
+
+        async function submitChapter() {
+            const title = document.getElementById('chapTitle').value;
+            const content = document.getElementById('chapContent').value;
+            if(!title || !content) return alert("Fill all fields");
+
+            try {
+                await db.collection('novels').doc(activeNovelId).collection('chapters').add({
+                    title: title,
+                    content: content,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                document.getElementById('chapTitle').value = "";
+                document.getElementById('chapContent').value = "";
+                alert("Chapter Published!");
+            } catch (e) {
+                alert("Error: " + e.message);
+            }
+        }
+    </script>
+</body>
+</html>
