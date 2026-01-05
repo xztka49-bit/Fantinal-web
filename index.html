@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FANTINAL - Emperor Eternal Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         /* LUXURY PALETTE */
         :root {
@@ -20,6 +24,15 @@
             --v0: #8b949e; --v1: #22c55e; --v2: #cd7f32; --v3: #c0c0c0; --v4: #d4af37; --v5: #a855f7; --v6: #ff3e3e;
         }
 
+        /* NEW: LIGHT MODE PALETTE */
+        body.light-mode {
+            --bg: #f0f2f5;
+            --card: #ffffff;
+            --text: #1c1e21;
+            --text-dim: #606770;
+            --silver: #4b4b4b;
+        }
+
         body { 
             background: var(--bg); 
             color: var(--text); 
@@ -28,9 +41,19 @@
             padding-bottom: 90px; 
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
+            transition: background 0.3s, color 0.3s; /* Smooth Theme Transition */
         }
 
         h1, h2, h3, .logo { font-family: 'Cinzel', serif; letter-spacing: 2px; }
+
+        /* NEW: MOD RGB FRAME ANIMATION */
+        @keyframes modRGB {
+            0% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
+            33% { border-color: #00ff00; box-shadow: 0 0 10px #00ff00; }
+            66% { border-color: #0000ff; box-shadow: 0 0 10px #0000ff; }
+            100% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
+        }
+        .mod-frame { border: 2px solid transparent; animation: modRGB 3s linear infinite !important; }
 
         /* LUXURY ANIMATIONS & EFFECTS */
         @keyframes glowGold { 0% { box-shadow: 0 0 5px var(--gold); } 50% { box-shadow: 0 0 20px var(--gold); } 100% { box-shadow: 0 0 5px var(--gold); } }
@@ -107,7 +130,7 @@
         .name-red { color: #ff3e3e; font-weight: 900; text-shadow: 0 0 10px rgba(255,62,62,0.8); }
 
         /* VIP TAGS */
-        .vip-tag { padding: 3px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 900; margin-right: 8px; text-transform: uppercase; display: inline-block; vertical-align: middle; }
+        .vip-tag { padding: 3px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 900; margin-right: 8px; text-transform: uppercase; display: inline-block; vertical-align: middle; cursor: pointer; }
         .t0 { background: var(--v0); } .t1 { background: var(--v1); } .t2 { background: var(--v2); }
         .t3 { background: var(--v3); color: #000; } .t4 { background: var(--v4); color: #000; }
         .t5 { background: var(--v5); } .t6 { background: var(--v6); border: 1px solid #fff; }
@@ -142,7 +165,7 @@
         .n-card img { width: 100%; height: 230px; object-fit: cover; }
         .n-card-title { padding: 10px; font-size: 0.85rem; font-weight: 600; text-align: center; color: var(--gold); }
         
-        /* NOVEL TAGS - Updated for double badges */
+        /* NOVEL TAGS */
         .novel-tag { position: absolute; top: 10px; left: 10px; padding: 4px 10px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; text-transform: uppercase; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .tag-top { background: linear-gradient(45deg, #d4af37, #fef08a); color: black; border: 1px solid gold; }
         .tag-complete { background: var(--green); color: white; }
@@ -191,7 +214,7 @@
         .page-btn.active { background: var(--gold); color: black; }
     </style>
 </head>
-<body>
+<body id="mainBody">
 
 <div id="authOverlay" class="auth-overlay">
     <div class="auth-container">
@@ -222,10 +245,14 @@
 
 <header style="padding: 15px 20px; border-bottom: 1px solid rgba(212,175,55,0.2); display: flex; justify-content: space-between; align-items: center; background: var(--card); position: sticky; top: 0; z-index: 1000;">
     <div class="logo" style="color:var(--gold); font-size: 1.2rem;">FANTINAL</div>
-    <div id="authBox">
-        <div id="userHeader" style="display:none; text-align: right;">
-            <div style="color:var(--gold); font-weight: bold; font-size: 0.9rem;">🪙 <span id="hCoins">0</span></div>
-            <div id="hVip"></div>
+    
+    <div style="display:flex; align-items:center; gap:12px;">
+        <button onclick="toggleTheme()" id="themeBtn" style="background:none; border:none; color:var(--gold); cursor:pointer; font-size: 1.2rem;">🌙</button>
+        <div id="authBox">
+            <div id="userHeader" style="display:none; text-align: right;">
+                <div style="color:var(--gold); font-weight: bold; font-size: 0.9rem;">🪙 <span id="hCoins">0</span></div>
+                <div id="hVip" onclick="showVipBadgeList()"></div>
+            </div>
         </div>
     </div>
 </header>
@@ -351,7 +378,7 @@
 <div id="profile-view" class="view">
     <div class="card" style="text-align:center;">
         <h2 id="pName" style="margin-bottom:5px;">User Name</h2>
-        <div id="pVip"></div>
+        <div id="pVip" onclick="showVipBadgeList()"></div>
         <button onclick="toggleEditName()" style="background:none; border:none; color:var(--gold); cursor:pointer; font-size: 0.7rem; margin-top:10px;">[ EDIT PROFILE NAME ]</button>
         <div id="editNameDiv" style="display:none; margin-top:15px;">
             <input type="text" id="newName" placeholder="New Display Name">
@@ -421,8 +448,8 @@
     <div class="card" style="border:1px solid var(--gold);">
         <h4 style="color:var(--gold)">Income Analytics By Date</h4>
         <div style="display:flex; gap:10px; margin-bottom:10px;">
-            <input type="date" id="statsStart" style="font-size:0.7rem; padding:5px;">
-            <input type="date" id="statsEnd" style="font-size:0.7rem; padding:5px;">
+            <input type="text" id="statsStart" class="datepicker" placeholder="Start Date" style="font-size:0.7rem;">
+            <input type="text" id="statsEnd" class="datepicker" placeholder="End Date" style="font-size:0.7rem;">
             <button class="btn-gold" onclick="filterAdminStats()" style="padding:5px 10px; font-size:0.7rem;">Filter</button>
         </div>
         <p style="font-size:0.8rem;">Filtered Range Total: <b id="filteredIncomeText" style="color:var(--green);">0</b></p>
@@ -455,7 +482,7 @@
         </div>
         <div style="overflow-x:auto;">
             <table class="admin-table">
-                <thead><tr><th>Gmail</th><th>Coins</th><th>Actions</th></tr></thead>
+                <thead><tr><th>Gmail</th><th>Profit%</th><th>Action</th></tr></thead>
                 <tbody id="admUserListBody"></tbody>
             </table>
         </div>
@@ -537,6 +564,43 @@
     let novelCache = {}; 
     let userListLastVisible = null;
 
+    // NEW: THEME TOGGLE LOGIC
+    window.toggleTheme = () => {
+        const body = document.getElementById('mainBody');
+        const themeBtn = document.getElementById('themeBtn');
+        body.classList.toggle('light-mode');
+        const isLight = body.classList.contains('light-mode');
+        themeBtn.innerText = isLight ? '☀️' : '🌙';
+        localStorage.setItem('fantinal_theme', isLight ? 'light' : 'dark');
+    };
+
+    // LOAD SAVED THEME
+    if(localStorage.getItem('fantinal_theme') === 'light') {
+        document.getElementById('mainBody').classList.add('light-mode');
+        document.getElementById('themeBtn').innerText = '☀️';
+    }
+
+    // NEW: VIP BADGE INFO MODAL
+    window.showVipBadgeList = () => {
+        Swal.fire({
+            title: 'VIP IMMORTAL RANKS',
+            background: 'var(--card)', color: 'var(--gold)',
+            html: `
+                <div style="text-align:left; font-size:0.8rem; line-height:2;">
+                    <span class="vip-tag t1">WARRIOR</span> : Spent 10,000+<br>
+                    <span class="vip-tag t2">BRONZE</span> : Spent 50,000+<br>
+                    <span class="vip-tag t3">SILVER</span> : Spent 120,000+<br>
+                    <span class="vip-tag t4">MASTER</span> : Spent 400,000+<br>
+                    <span class="vip-tag t5">KING</span> : Spent 1,000,000+<br>
+                    <span class="vip-tag t6">EMPEROR</span> : Spent 3,000,000+
+                </div>`,
+            confirmButtonColor: '#d4af37'
+        });
+    };
+
+    // NEW: CALENDAR FIX (Flatpickr Init)
+    flatpickr(".datepicker", { dateFormat: "Y-m-d" });
+
     window.toggleAuth = (mode) => {
         document.getElementById('loginForm').style.display = mode === 'reg' ? 'none' : 'block';
         document.getElementById('regForm').style.display = mode === 'reg' ? 'block' : 'none';
@@ -551,7 +615,7 @@
             } else {
                 const n = document.getElementById('regName').value;
                 const e = document.getElementById('regEmail').value;
-                const p = document.getElementById('regPass').value;
+                const p = document.getElementById('authPass').value;
                 const res = await createUserWithEmailAndPassword(auth, e, p);
                 await setDoc(doc(db, "users", res.user.uid), { name: n, email: e, coins: 0, spent: 0, claimCount: 0, lastClaim: 0 });
             }
@@ -660,8 +724,10 @@
         const msg = document.getElementById('chatInput').value;
         if(!msg) return;
         const vip = getVipInfo(userData.spent);
+        // NEW: MOD CHECK FOR RGB FRAME
+        const isMod = userData.role === 'mod';
         await addDoc(collection(db, "chat"), {
-            name: userData.name, text: msg, nCls: vip.nCls, fCls: vip.fCls, vName: vip.name, vCls: vip.cls, date: serverTimestamp()
+            name: userData.name, text: msg, nCls: vip.nCls, fCls: isMod ? "mod-frame" : vip.fCls, vName: vip.name, vCls: vip.cls, date: serverTimestamp()
         });
         document.getElementById('chatInput').value = "";
     };
@@ -1023,16 +1089,30 @@
         
         snap.forEach(d => {
             const u = d.data();
-            body.innerHTML += `<tr><td>${u.email}</td><td>${u.coins}</td><td>
-                <button onclick="openExternal('Author.html')" style="background:var(--purple); font-size:0.6rem; padding:4px; border:none; border-radius:4px; color:white; cursor:pointer;">Author</button>
-                <button onclick="openExternal('Mod.html')" style="background:var(--red); font-size:0.6rem; padding:4px; border:none; border-radius:4px; color:white; cursor:pointer;">Mod</button>
-            </td></tr>`;
+            // NEW: ADMIN USER LIST WITH PROFIT RATE EDIT & HIDE BUTTON
+            body.innerHTML += `<tr>
+                <td>${u.email}<br><button onclick="toggleHideUser('${d.id}', ${u.isHidden || false})" style="font-size:0.6rem;">${u.isHidden ? 'Unhide' : 'Hide'}</button></td>
+                <td>
+                    <select onchange="updateProfitRate('${d.id}', this.value)" style="padding:2px; font-size:0.7rem;">
+                        <option value="0.5" ${u.profitRate == 0.5 ? 'selected' : ''}>50%</option>
+                        <option value="0.6" ${u.profitRate == 0.6 ? 'selected' : ''}>60%</option>
+                        <option value="0.7" ${u.profitRate == 0.7 ? 'selected' : ''}>70%</option>
+                    </select>
+                </td>
+                <td>
+                    <button onclick="openExternal('Author.html')" style="background:var(--purple); font-size:0.6rem; padding:4px; border:none; border-radius:4px; color:white; cursor:pointer;">Author</button>
+                    <button onclick="openExternal('Mod.html')" style="background:var(--red); font-size:0.6rem; padding:4px; border:none; border-radius:4px; color:white; cursor:pointer;">Mod</button>
+                </td></tr>`;
         });
         
         userListLastVisible = snap.docs[snap.docs.length - 1];
         const pag = document.getElementById('admUserPagination');
         pag.innerHTML = snap.size === 300 ? `<button class="btn-gold" onclick="loadAdminUserList()">Load Next 300</button>` : "";
     }
+
+    // NEW ADMIN FUNCTIONS
+    window.updateProfitRate = async (uid, rate) => { await updateDoc(doc(db, "users", uid), { profitRate: Number(rate) }); alert("Profit Updated!"); };
+    window.toggleHideUser = async (uid, current) => { await updateDoc(doc(db, "users", uid), { isHidden: !current }); loadAdminUserList(); };
 
     window.openExternal = (url) => window.open(url, '_blank');
 
@@ -1132,7 +1212,8 @@
     }
 
     async function loadLeaderboard() {
-        const q = query(collection(db, "users"), orderBy("spent", "desc"), limit(100));
+        // MODIFIED: FILTER HIDDEN USERS
+        const q = query(collection(db, "users"), where("isHidden", "==", false), orderBy("spent", "desc"), limit(100));
         const snap = await getDocs(q);
         const list = document.getElementById('leaderboardList');
         list.innerHTML = ""; let rank = 1;
