@@ -36,9 +36,9 @@
         @keyframes glowGold { 0% { box-shadow: 0 0 5px var(--gold); } 50% { box-shadow: 0 0 20px var(--gold); } 100% { box-shadow: 0 0 5px var(--gold); } }
         @keyframes glowPurple { 0% { box-shadow: 0 0 5px var(--purple); } 50% { box-shadow: 0 0 15px var(--purple); } 100% { box-shadow: 0 0 5px var(--purple); } }
         @keyframes glowRed { 0% { border-color: #ff3e3e; box-shadow: 0 0 5px #ff3e3e; } 50% { border-color: #fff; box-shadow: 0 0 25px #ff3e3e; } 100% { border-color: #ff3e3e; box-shadow: 0 0 5px #ff3e3e; } }
-        @keyframes slide { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .view { display: none; padding: 20px; animation: slide 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .view { display: none; padding: 20px; animation: slide 0.2s ease-out; }
         .active-view { display: block; }
 
         /* [NEW] FULL SCREEN READER STYLE */
@@ -449,26 +449,32 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, collection, query, getDocs, getDoc, updateDoc, increment, setDoc, addDoc, where, orderBy, limit, serverTimestamp, deleteDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, collection, query, getDocs, getDoc, updateDoc, increment, setDoc, addDoc, where, orderBy, limit, serverTimestamp, deleteDoc, runTransaction, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     const config = { apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0", authDomain: "fantinal-publishing-5b960.firebaseapp.com", projectId: "fantinal-publishing-5b960", storageBucket: "fantinal-publishing-5b960.firebasestorage.app", messagingSenderId: "961612304854", appId: "1:961612304854:web:6bf7b03072ed83b58b9477" };
     const app = initializeApp(config);
     const db = getFirestore(app);
+    
+    // [OPTIMIZATION] Enable Offline Persistence for speed
+    try { enableIndexedDbPersistence(db); } catch(e) {}
+
     window.auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
     const ADMIN_EMAIL = "xztka49@gmail.com";
     let currentUser = null, userData = null, selectedTopupAmt = 0, currentNid = null;
     let allNovels = [];
+    
+    // [NEW CACHE] Local storage for fast loading
+    let novelCache = {}; 
+    let chapterCache = {};
 
-    // --- AUTH UI TOGGLE ---
     window.toggleAuth = (mode) => {
         document.getElementById('loginForm').style.display = mode === 'reg' ? 'none' : 'block';
         document.getElementById('regForm').style.display = mode === 'reg' ? 'block' : 'none';
     };
 
-    // --- EMAIL/PASS AUTH ---
     window.handleAuth = async (type) => {
         try {
             if(type === 'login') {
@@ -487,7 +493,6 @@
 
     window.handleGoogle = () => signInWithPopup(auth, provider);
 
-    // --- VIP LOGIC ---
     function getVipInfo(spent) {
         const s = Number(spent) || 0;
         if(s >= 3000000) return {lv:6, name:"Emperor", cls:"t6", nCls:"name-red", fCls:"v6-frame"};
@@ -510,12 +515,9 @@
             currentUser = user;
             document.getElementById('authOverlay').style.display = 'none';
             const userRef = doc(db, "users", user.uid);
-            const snapInitial = await getDoc(userRef);
-            if(!snapInitial.exists()) {
-                await setDoc(userRef, { name: user.displayName || "User", email: user.email, coins: 0, spent: 0, claimCount: 0, lastClaim: 0 });
-            }
             onSnapshot(userRef, (snap) => {
                 if(snap.exists()) { userData = snap.data(); updateMasterUI(); }
+                else { setDoc(userRef, { name: user.displayName || "User", email: user.email, coins: 0, spent: 0, claimCount: 0, lastClaim: 0 }); }
             });
             if(user.email === ADMIN_EMAIL) {
                 document.getElementById('adminPanelBtn').style.display = 'block';
@@ -524,7 +526,6 @@
             loadCoinHistory();
         } else {
             document.getElementById('authOverlay').style.display = 'flex';
-            document.getElementById('userHeader').style.display = 'none';
         }
     });
 
@@ -551,7 +552,8 @@
     function startDailyTimer() {
         const claimBtn = document.getElementById('claimBtn');
         const timerTxt = document.getElementById('claimTimer');
-        setInterval(() => {
+        if(window.claimTimerInt) clearInterval(window.claimTimerInt);
+        window.claimTimerInt = setInterval(() => {
             if(!userData) return;
             const nextClaimTime = (Number(userData.lastClaim) || 0) + 86400000;
             const now = Date.now();
@@ -582,7 +584,6 @@
         const vip = getVipInfo(userData.spent);
         const amt = claimTable[vip.lv][(Number(userData.claimCount) || 0) % 7];
         await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(amt), lastClaim: Date.now(), claimCount: increment(1) });
-        alert(`Congratulations! You received 🪙${amt} daily coins.`);
     };
 
     window.sendChat = async () => {
@@ -613,7 +614,11 @@
 
     onSnapshot(collection(db, "novels"), (snap) => {
         allNovels = [];
-        snap.forEach(docSnap => { allNovels.push({ id: docSnap.id, ...docSnap.data() }); });
+        snap.forEach(docSnap => { 
+            const d = { id: docSnap.id, ...docSnap.data() };
+            allNovels.push(d); 
+            novelCache[d.id] = d; 
+        });
         renderNovels(allNovels); updateAdminNovelLists();
     });
 
@@ -625,8 +630,8 @@
     }
 
     window.search = () => {
-        const query = document.getElementById('searchBar').value.toLowerCase();
-        const filtered = allNovels.filter(n => n.title.toLowerCase().includes(query) || n.author.toLowerCase().includes(query));
+        const q = document.getElementById('searchBar').value.toLowerCase();
+        const filtered = allNovels.filter(n => n.title.toLowerCase().includes(q) || n.author.toLowerCase().includes(q));
         renderNovels(filtered);
     };
 
@@ -641,64 +646,102 @@
         });
     }
 
+    // [SPEED IMPROVEMENT] Instant UI + Background Fetch
     window.openNovel = async (id) => {
         currentNid = id;
-        const nSnap = await getDoc(doc(db, "novels", id));
-        const n = nSnap.data();
-        await updateDoc(doc(db, "novels", id), { views: increment(1) });
-        showView('detail-view');
-        const lifeRef = doc(db, "users", currentUser.uid, "unlocked_novels", id);
-        const lifeSnap = await getDoc(lifeRef);
-        const isLife = lifeSnap.exists();
+        showView('detail-view'); 
+        
+        const n = novelCache[id];
+        if(!n) return;
+        
+        // Fast UI render from cache
         document.getElementById('novelInfo').innerHTML = `
             <img src="${n.cover}" style="width:100%; height:280px; object-fit:cover; border-radius:20px; border: 1px solid var(--gold);">
             <h1 style="color:var(--gold); margin-top:20px;">${n.title}</h1><p style="color:var(--text-dim)">Author: ${n.author}</p><p style="line-height:1.6;">${n.desc}</p>
-            ${isLife ? `<button class="btn" style="width:100%; background:var(--green); color:white;">LIFETIME UNLOCKED ✅</button>` : `<button class="btn btn-gold" style="width:100%;" onclick="buyFullAccess('${id}', ${Number(n.vipPrice)})">UNLOCK ALL (🪙${n.vipPrice})</button>`}
+            <div id="unlockActionBtn">...</div>
         `;
-        loadChapters(id); loadReviews(id);
+
+        // Check Unlock Status
+        const lifeRef = doc(db, "users", currentUser.uid, "unlocked_novels", id);
+        const lifeSnap = await getDoc(lifeRef);
+        const isLife = lifeSnap.exists();
+        
+        document.getElementById('unlockActionBtn').innerHTML = isLife 
+            ? `<button class="btn" style="width:100%; background:var(--green); color:white;">LIFETIME UNLOCKED ✅</button>` 
+            : `<button class="btn btn-gold" style="width:100%;" onclick="buyFullAccess('${id}', ${Number(n.vipPrice)})">UNLOCK ALL (🪙${n.vipPrice})</button>`;
+        
+        loadChapters(id, isLife); 
+        loadReviews(id);
+        updateDoc(doc(db, "novels", id), { views: increment(1) });
     };
 
-    async function loadChapters(nid) {
+    // [SPEED IMPROVEMENT] Efficient Chapter Loading
+    async function loadChapters(nid, isLife) {
+        const list = document.getElementById('chapterList'); 
+        list.innerHTML = `<h3 style="color:var(--gold); margin-top:30px;">Chapters</h3><p id="chLoading">Loading Sagacity...</p>`;
+        
         const snap = await getDocs(query(collection(db, "novels", nid, "chapters"), orderBy("num", "asc")));
-        const list = document.getElementById('chapterList'); list.innerHTML = `<h3 style="color:var(--gold); margin-top:30px;">Chapters</h3>`;
-        const isLife = (await getDoc(doc(db, "users", currentUser.uid, "unlocked_novels", nid))).exists();
-        for (const cd of snap.docs) {
+        document.getElementById('chLoading').remove();
+        
+        const chUnlockedSnap = await getDocs(collection(db, "users", currentUser.uid, "unlocked_chapters"));
+        const unlockedIds = chUnlockedSnap.docs.map(d => d.id);
+
+        snap.forEach(cd => {
             const c = cd.data();
-            const isChUnlocked = (await getDoc(doc(db, "users", currentUser.uid, "unlocked_chapters", cd.id))).exists();
+            const isChUnlocked = unlockedIds.includes(cd.id);
             let label = `<span style="color:var(--gold)">🪙 ${c.cost === 0 ? 'FREE' : c.cost}</span>`;
             if (isLife || isChUnlocked || c.cost === 0) label = `<span style="color:var(--green)">READ</span>`;
-            list.innerHTML += `<div class="card" onclick="readChapter('${nid}','${cd.id}',${Number(c.cost)},${Number(c.num)})" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;"><span>Ch ${c.num}: ${c.title}</span>${label}</div>`;
-        }
+            
+            const div = document.createElement('div');
+            div.className = "card";
+            div.style.cursor = "pointer";
+            div.style.display = "flex";
+            div.style.justifyContent = "space-between";
+            div.style.alignItems = "center";
+            div.innerHTML = `<span>Ch ${c.num}: ${c.title}</span>${label}`;
+            div.onclick = () => readChapter(nid, cd.id, Number(c.cost), Number(c.num), isLife || isChUnlocked);
+            list.appendChild(div);
+        });
     }
 
-    window.readChapter = async (nid, cid, cost, num) => {
-        const isLife = (await getDoc(doc(db, "users", currentUser.uid, "unlocked_novels", nid))).exists();
-        const isCh = (await getDoc(doc(db, "users", currentUser.uid, "unlocked_chapters", cid))).exists();
-        const cCost = Number(cost) || 0;
-        if(isLife || isCh || cCost === 0) {
-            const c = (await getDoc(doc(db, "novels", nid, "chapters", cid))).data();
+    window.readChapter = async (nid, cid, cost, num, alreadyUnlocked) => {
+        if(alreadyUnlocked || cost === 0) {
             showView('reader-view');
-            document.getElementById('rChNum').innerText = "CHAPTER " + num;
-            document.getElementById('rChTitle').innerText = c.title;
-            document.getElementById('rContent').innerText = c.content;
-            window.scrollTo(0,0); updateReaderNav(nid, num);
+            document.getElementById('rContent').innerText = "Opening scrolls...";
+            
+            // Cache check for instant text
+            if(chapterCache[cid]) {
+                renderReader(chapterCache[cid], num, nid);
+            } else {
+                const cSnap = await getDoc(doc(db, "novels", nid, "chapters", cid));
+                const c = cSnap.data();
+                chapterCache[cid] = c;
+                renderReader(c, num, nid);
+            }
         } else {
-            if(Number(userData.coins) < cCost) return alert("Low coins!");
-            if(confirm(`Unlock Ch ${num} for 🪙${cCost}?`)) {
-                await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(-cCost), spent: increment(cCost) });
-                await updateDoc(doc(db, "novels", nid), { sales: increment(cCost) });
+            if(Number(userData.coins) < cost) return alert("Not enough coins in your pouch!");
+            if(confirm(`Unlock Ch ${num} for 🪙${cost}?`)) {
+                await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(-cost), spent: increment(cost) });
+                await updateDoc(doc(db, "novels", nid), { sales: increment(cost) });
                 await setDoc(doc(db, "users", currentUser.uid, "unlocked_chapters", cid), { date: serverTimestamp() });
-                readChapter(nid, cid, cCost, num);
+                readChapter(nid, cid, cost, num, true);
             }
         }
     };
 
+    function renderReader(c, num, nid) {
+        document.getElementById('rChNum').innerText = "CHAPTER " + num;
+        document.getElementById('rChTitle').innerText = c.title;
+        document.getElementById('rContent').innerText = c.content;
+        window.scrollTo(0,0); 
+        updateReaderNav(nid, num);
+    }
+
     window.buyFullAccess = async (nid, price) => {
-        const vPrice = Number(price) || 0;
-        if(Number(userData.coins) < vPrice) return alert("Low coins!");
-        if(confirm(`Unlock All for 🪙${vPrice}?`)) {
-            await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(-vPrice), spent: increment(vPrice) });
-            await updateDoc(doc(db, "novels", nid), { lifetimeSales: increment(vPrice) });
+        if(Number(userData.coins) < price) return alert("Low coins!");
+        if(confirm(`Unlock All for 🪙${price}?`)) {
+            await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(-price), spent: increment(price) });
+            await updateDoc(doc(db, "novels", nid), { lifetimeSales: increment(price) });
             await setDoc(doc(db, "users", currentUser.uid, "unlocked_novels", nid), { date: serverTimestamp() });
             openNovel(nid);
         }
@@ -707,8 +750,8 @@
     async function updateReaderNav(nid, num) {
         const next = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", "==", Number(num) + 1), limit(1)));
         const prev = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", "==", Number(num) - 1), limit(1)));
-        document.getElementById('nextBtn').onclick = () => next.empty ? alert("Last Ch") : readChapter(nid, next.docs[0].id, next.docs[0].data().cost, Number(num) + 1);
-        document.getElementById('prevBtn').onclick = () => prev.empty ? alert("First Ch") : readChapter(nid, prev.docs[0].id, prev.docs[0].data().cost, Number(num) - 1);
+        document.getElementById('nextBtn').onclick = () => next.empty ? alert("Last Chapter") : readChapter(nid, next.docs[0].id, next.docs[0].data().cost, Number(num) + 1, false);
+        document.getElementById('prevBtn').onclick = () => prev.empty ? alert("First Chapter") : readChapter(nid, prev.docs[0].id, prev.docs[0].data().cost, Number(num) - 1, false);
     }
 
     async function loadReviews(nid) {
@@ -866,7 +909,6 @@
         snap.forEach(d => { const g = d.data(); log.innerHTML += `<div>${g.code} - 🪙${g.amount}</div>`; });
     }
 
-    // --- NEW LEADERBOARD & REWARD SYSTEM ---
     async function loadLeaderboard() {
         const q = query(collection(db, "users"), orderBy("spent", "desc"), limit(100));
         const snap = await getDocs(q);
@@ -911,7 +953,7 @@
     }
 
     window.claimMonthlyRankReward = async () => {
-        const q = query(collection(db, "users"), orderBy("spent", "desc"), limit(100));
+        const q = query(collection(db, "users"), orderBy("spent", "desc"), limit(10));
         const snap = await getDocs(q);
         let myRank = 0, i = 1;
         snap.forEach(d => { if(d.id === currentUser.uid) myRank = i; i++; });
@@ -922,13 +964,11 @@
         else if(myRank === 2) reward = 8500;
         else if(myRank === 3) reward = 5000;
         else if(myRank <= 10) reward = 2000;
-        else return alert("Rank 11-100: No coin rewards.");
 
         await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(reward) });
         alert(`Claimed ${reward} coins!`);
     };
 
-    // --- ADMIN FILTER ---
     window.filterAdminStats = async () => {
         const start = new Date(document.getElementById('statsStart').value);
         const end = new Date(document.getElementById('statsEnd').value);
@@ -942,8 +982,15 @@
     window.showView = (id) => {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
         document.getElementById(id).classList.add('active-view');
+        
+        // Update Nav UI
+        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        if(id === 'home-view') document.querySelectorAll('.nav-item')[0].classList.add('active');
+        if(id === 'shop-view') document.querySelectorAll('.nav-item')[1].classList.add('active');
+        if(id === 'chat-view') document.querySelectorAll('.nav-item')[2].classList.add('active');
+        if(id === 'profile-view') document.querySelectorAll('.nav-item')[3].classList.add('active');
+
         if(id === 'leaderboard-view') { loadLeaderboard(); updateRankTimers(); }
-        if(id === 'admin-view') { loadAdminGlobalStats(); }
     };
 
     async function loadCoinHistory() {
