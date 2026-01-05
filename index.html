@@ -166,6 +166,14 @@
         .admin-table { width:100%; border-collapse: collapse; font-size: 0.8rem; margin-top:10px; }
         .admin-table th, .admin-table td { border: 1px solid #30363d; padding: 10px; text-align: left; }
         .admin-table th { background: #161b22; color: var(--gold); }
+
+        /* [NEW] GENRE & PAGINATION STYLES */
+        .genre-bar { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; }
+        .genre-tab { padding: 8px 15px; background: #161b22; border-radius: 20px; font-size: 0.75rem; cursor: pointer; border: 1px solid #30363d; white-space: nowrap; }
+        .genre-tab.active { background: var(--gold); color: black; border-color: var(--gold); }
+        .pagination-bar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; margin-bottom: 15px; }
+        .page-btn { padding: 6px 12px; background: #0d1117; border: 1px solid var(--gold); color: var(--gold); border-radius: 8px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; }
+        .page-btn.active { background: var(--gold); color: black; }
     </style>
 </head>
 <body>
@@ -209,6 +217,11 @@
 
 <div id="home-view" class="view active-view">
     <button class="btn btn-gold" onclick="showView('leaderboard-view')" style="width:100%; margin-bottom:20px;">🏆 VIEW TOP 100 IMMORTALS</button>
+    
+    <div class="genre-bar" id="genreFilterBar">
+        <div class="genre-tab active" onclick="filterByGenre('All')">ALL SAGAS</div>
+    </div>
+
     <input type="text" id="searchBar" placeholder="Search for legendary sagas..." oninput="search()">
     <div class="novel-grid" id="novelGrid"></div>
 </div>
@@ -240,6 +253,8 @@
         </div>
     </div>
     
+    <h3 style="color:var(--gold); margin-top:30px;">Chapters</h3>
+    <div class="pagination-bar" id="chapterRangeBar"></div>
     <div id="chapterList"></div>
 </div>
 
@@ -407,6 +422,7 @@
         
         <input type="text" id="anID" placeholder="Novel ID (Leave empty for new)">
         <input type="text" id="anTit" placeholder="Title">
+        <input type="text" id="anGenre" placeholder="Genre (e.g. Action)">
         <input type="text" id="anAut" placeholder="Author">
         <input type="text" id="anCov" placeholder="Cover URL">
         <textarea id="anDes" placeholder="Description"></textarea>
@@ -573,13 +589,16 @@
         const div = document.getElementById('editNameDiv');
         div.style.display = div.style.display === 'none' ? 'block' : 'none';
     };
+    
+    // [FIX] Update Username
     window.updateUsername = async () => {
         const newName = document.getElementById('newName').value;
         if(newName) {
-            await updateDoc(doc(db, "users", currentUser.uid), { name: newName });
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { name: newName });
             alert("Name updated!"); toggleEditName();
         }
     };
+    
     window.handleClaim = async () => {
         const vip = getVipInfo(userData.spent);
         const amt = claimTable[vip.lv][(Number(userData.claimCount) || 0) % 7];
@@ -614,13 +633,31 @@
 
     onSnapshot(collection(db, "novels"), (snap) => {
         allNovels = [];
+        const genres = new Set();
         snap.forEach(docSnap => { 
             const d = { id: docSnap.id, ...docSnap.data() };
             allNovels.push(d); 
             novelCache[d.id] = d; 
+            if(d.genre) genres.add(d.genre);
         });
+        updateGenreBar(genres);
         renderNovels(allNovels); updateAdminNovelLists();
     });
+
+    // [NEW] Genre Logic
+    function updateGenreBar(genres) {
+        const bar = document.getElementById('genreFilterBar');
+        bar.innerHTML = `<div class="genre-tab active" onclick="filterByGenre('All')">ALL SAGAS</div>`;
+        genres.forEach(g => {
+            bar.innerHTML += `<div class="genre-tab" onclick="filterByGenre('${g}')">${g.toUpperCase()}</div>`;
+        });
+    }
+    window.filterByGenre = (g) => {
+        document.querySelectorAll('.genre-tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+        const filtered = g === 'All' ? allNovels : allNovels.filter(n => n.genre === g);
+        renderNovels(filtered);
+    };
 
     function renderNovels(list) {
         const grid = document.getElementById('novelGrid'); grid.innerHTML = "";
@@ -646,43 +683,44 @@
         });
     }
 
-    // [SPEED IMPROVEMENT] Instant UI + Background Fetch
     window.openNovel = async (id) => {
         currentNid = id;
         showView('detail-view'); 
-        
         const n = novelCache[id];
         if(!n) return;
-        
-        // Fast UI render from cache
         document.getElementById('novelInfo').innerHTML = `
             <img src="${n.cover}" style="width:100%; height:280px; object-fit:cover; border-radius:20px; border: 1px solid var(--gold);">
             <h1 style="color:var(--gold); margin-top:20px;">${n.title}</h1><p style="color:var(--text-dim)">Author: ${n.author}</p><p style="line-height:1.6;">${n.desc}</p>
             <div id="unlockActionBtn">...</div>
         `;
-
-        // Check Unlock Status
         const lifeRef = doc(db, "users", currentUser.uid, "unlocked_novels", id);
         const lifeSnap = await getDoc(lifeRef);
         const isLife = lifeSnap.exists();
-        
         document.getElementById('unlockActionBtn').innerHTML = isLife 
             ? `<button class="btn" style="width:100%; background:var(--green); color:white;">LIFETIME UNLOCKED ✅</button>` 
             : `<button class="btn btn-gold" style="width:100%;" onclick="buyFullAccess('${id}', ${Number(n.vipPrice)})">UNLOCK ALL (🪙${n.vipPrice})</button>`;
-        
         loadChapters(id, isLife); 
         loadReviews(id);
         updateDoc(doc(db, "novels", id), { views: increment(1) });
     };
 
-    // [SPEED IMPROVEMENT] Efficient Chapter Loading
-    async function loadChapters(nid, isLife) {
+    // [FIX] Chapter Pagination & Unlock Sync
+    async function loadChapters(nid, isLife, rangeStart = 1) {
         const list = document.getElementById('chapterList'); 
-        list.innerHTML = `<h3 style="color:var(--gold); margin-top:30px;">Chapters</h3><p id="chLoading">Loading Sagacity...</p>`;
+        const rBar = document.getElementById('chapterRangeBar');
+        list.innerHTML = `<p id="chLoading">Loading Sagacity...</p>`;
         
-        const snap = await getDocs(query(collection(db, "novels", nid, "chapters"), orderBy("num", "asc")));
+        const lastSnap = await getDocs(query(collection(db, "novels", nid, "chapters"), orderBy("num", "desc"), limit(1)));
+        const total = lastSnap.empty ? 0 : lastSnap.docs[0].data().num;
+
+        rBar.innerHTML = "";
+        for(let i=1; i<=total; i+=100) {
+            let end = i+99 > total ? total : i+99;
+            rBar.innerHTML += `<div class="page-btn ${rangeStart === i ? 'active' : ''}" onclick="loadChapters('${nid}',${isLife},${i})">${i}-${end}</div>`;
+        }
+
+        const snap = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", ">=", rangeStart), where("num", "<", rangeStart + 100), orderBy("num", "asc")));
         document.getElementById('chLoading').remove();
-        
         const chUnlockedSnap = await getDocs(collection(db, "users", currentUser.uid, "unlocked_chapters"));
         const unlockedIds = chUnlockedSnap.docs.map(d => d.id);
 
@@ -691,35 +729,26 @@
             const isChUnlocked = unlockedIds.includes(cd.id);
             let label = `<span style="color:var(--gold)">🪙 ${c.cost === 0 ? 'FREE' : c.cost}</span>`;
             if (isLife || isChUnlocked || c.cost === 0) label = `<span style="color:var(--green)">READ</span>`;
-            
             const div = document.createElement('div');
-            div.className = "card";
-            div.style.cursor = "pointer";
-            div.style.display = "flex";
-            div.style.justifyContent = "space-between";
-            div.style.alignItems = "center";
+            div.className = "card"; div.style.display = "flex"; div.style.justifyContent = "space-between";
             div.innerHTML = `<span>Ch ${c.num}: ${c.title}</span>${label}`;
             div.onclick = () => readChapter(nid, cd.id, Number(c.cost), Number(c.num), isLife || isChUnlocked);
             list.appendChild(div);
         });
     }
 
+    // [FIX] Read Chapter with Lifetime Carry
     window.readChapter = async (nid, cid, cost, num, alreadyUnlocked) => {
-        if(alreadyUnlocked || cost === 0) {
+        const lifeRef = doc(db, "users", auth.currentUser.uid, "unlocked_novels", nid);
+        const lifeSnap = await getDoc(lifeRef);
+        const hasLife = lifeSnap.exists();
+
+        if(hasLife || alreadyUnlocked || cost === 0) {
             showView('reader-view');
-            document.getElementById('rContent').innerText = "Opening scrolls...";
-            
-            // Cache check for instant text
-            if(chapterCache[cid]) {
-                renderReader(chapterCache[cid], num, nid);
-            } else {
-                const cSnap = await getDoc(doc(db, "novels", nid, "chapters", cid));
-                const c = cSnap.data();
-                chapterCache[cid] = c;
-                renderReader(c, num, nid);
-            }
+            const cSnap = await getDoc(doc(db, "novels", nid, "chapters", cid));
+            renderReader(cSnap.data(), num, nid, hasLife);
         } else {
-            if(Number(userData.coins) < cost) return alert("Not enough coins in your pouch!");
+            if(Number(userData.coins) < cost) return alert("Not enough coins!");
             if(confirm(`Unlock Ch ${num} for 🪙${cost}?`)) {
                 await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(-cost), spent: increment(cost) });
                 await updateDoc(doc(db, "novels", nid), { sales: increment(cost) });
@@ -729,12 +758,19 @@
         }
     };
 
-    function renderReader(c, num, nid) {
+    function renderReader(c, num, nid, hasLife) {
         document.getElementById('rChNum').innerText = "CHAPTER " + num;
         document.getElementById('rChTitle').innerText = c.title;
         document.getElementById('rContent').innerText = c.content;
         window.scrollTo(0,0); 
-        updateReaderNav(nid, num);
+        updateReaderNav(nid, num, hasLife);
+    }
+
+    async function updateReaderNav(nid, num, hasLife) {
+        const next = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", "==", Number(num) + 1), limit(1)));
+        const prev = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", "==", Number(num) - 1), limit(1)));
+        document.getElementById('nextBtn').onclick = () => next.empty ? alert("Last Chapter") : readChapter(nid, next.docs[0].id, next.docs[0].data().cost, Number(num) + 1, hasLife);
+        document.getElementById('prevBtn').onclick = () => prev.empty ? alert("First Chapter") : readChapter(nid, prev.docs[0].id, prev.docs[0].data().cost, Number(num) - 1, hasLife);
     }
 
     window.buyFullAccess = async (nid, price) => {
@@ -746,13 +782,6 @@
             openNovel(nid);
         }
     };
-
-    async function updateReaderNav(nid, num) {
-        const next = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", "==", Number(num) + 1), limit(1)));
-        const prev = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", "==", Number(num) - 1), limit(1)));
-        document.getElementById('nextBtn').onclick = () => next.empty ? alert("Last Chapter") : readChapter(nid, next.docs[0].id, next.docs[0].data().cost, Number(num) + 1, false);
-        document.getElementById('prevBtn').onclick = () => prev.empty ? alert("First Chapter") : readChapter(nid, prev.docs[0].id, prev.docs[0].data().cost, Number(num) - 1, false);
-    }
 
     async function loadReviews(nid) {
         const snap = await getDocs(collection(db, "novels", nid, "reviews"));
@@ -771,8 +800,14 @@
     };
     window.deleteRev = async (nid, rid) => { await deleteDoc(doc(db, "novels", nid, "reviews", rid)); loadReviews(nid); };
 
-    const packages = [1000, 2000, 5000, 10000, 30000, 50000];
-    packages.forEach(p => { document.getElementById('packageGrid').innerHTML += `<div class="card" onclick="openTopup(${p})" style="text-align:center; cursor:pointer; background:#161b22;">🪙 ${p.toLocaleString()}</div>`; });
+    // [FIX] Coin Packages & Bonus
+    const coinPackages = [
+        {amt: 1000, bonus: 10}, {amt: 2000, bonus: 50}, {amt: 5000, bonus: 150},
+        {amt: 10000, bonus: 350}, {amt: 30000, bonus: 1000}, {amt: 50000, bonus: 2500}
+    ];
+    coinPackages.forEach(p => { 
+        document.getElementById('packageGrid').innerHTML += `<div class="card" onclick="openTopup(${p.amt})" style="text-align:center; cursor:pointer; background:#161b22; border:1px solid var(--gold);">🪙 ${p.amt.toLocaleString()}<br><small style="color:var(--green)">+${p.bonus} Bonus</small></div>`; 
+    });
     window.openTopup = (amt) => { selectedTopupAmt = Number(amt); document.getElementById('topupForm').style.display = 'block'; };
     window.submitTopup = async () => {
         const tid = document.getElementById('tpID').value;
@@ -839,21 +874,25 @@
         });
     }
 
+    // [FIX] Approve with Bonus
     window.approveT = async (id, uid, amt) => {
+        const pack = coinPackages.find(p => p.amt === amt);
+        const bonus = pack ? pack.bonus : 0;
         await updateDoc(doc(db, "transactions", id), { status: "Approved" });
-        await updateDoc(doc(db, "users", uid), { coins: increment(Number(amt)) });
+        await updateDoc(doc(db, "users", uid), { coins: increment(Number(amt) + bonus) });
     };
 
     window.editNovelData = async (id) => {
         const snap = await getDoc(doc(db, "novels", id)), n = snap.data();
         document.getElementById('anID').value = id; document.getElementById('anTit').value = n.title;
+        document.getElementById('anGenre').value = n.genre || "";
         document.getElementById('anAut').value = n.author; document.getElementById('anCov').value = n.cover;
         document.getElementById('anDes').value = n.desc; document.getElementById('anVipP').value = n.vipPrice;
     };
     window.deleteNovelData = async (id) => { if(confirm("Delete Novel?")) await deleteDoc(doc(db, "novels", id)); };
     window.saveNovel = async () => {
         const id = document.getElementById('anID').value;
-        const data = { title: document.getElementById('anTit').value, author: document.getElementById('anAut').value, cover: document.getElementById('anCov').value, desc: document.getElementById('anDes').value, vipPrice: Number(document.getElementById('anVipP').value) || 0 };
+        const data = { title: document.getElementById('anTit').value, genre: document.getElementById('anGenre').value, author: document.getElementById('anAut').value, cover: document.getElementById('anCov').value, desc: document.getElementById('anDes').value, vipPrice: Number(document.getElementById('anVipP').value) || 0 };
         id ? await updateDoc(doc(db, "novels", id), data) : await addDoc(collection(db, "novels"), { ...data, views: 0, sales: 0, lifetimeSales: 0 });
         alert("Saved!");
     };
