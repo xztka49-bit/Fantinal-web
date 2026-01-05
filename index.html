@@ -112,7 +112,7 @@
         .t3 { background: var(--v3); color: #000; } .t4 { background: var(--v4); color: #000; }
         .t5 { background: var(--v5); } .t6 { background: var(--v6); border: 1px solid #fff; }
 
-        /* RANKING & REWARD STYLES [NEW] */
+        /* RANKING & REWARD STYLES */
         .rank-card { position: relative; display: flex; align-items: center; padding: 15px; margin-bottom: 12px; border-radius: 15px; background: var(--card); border: 1px solid #30363d; }
         .rank-1-frame { border: 3px solid gold !important; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); background: linear-gradient(90deg, #0d1117 0%, rgba(212,175,55,0.1) 100%); }
         .rank-2-frame { border: 3px solid silver !important; box-shadow: 0 0 15px rgba(192, 192, 192, 0.3); }
@@ -167,7 +167,7 @@
         .admin-table th, .admin-table td { border: 1px solid #30363d; padding: 10px; text-align: left; }
         .admin-table th { background: #161b22; color: var(--gold); }
 
-        /* [NEW] GENRE & PAGINATION STYLES */
+        /* GENRE & PAGINATION STYLES */
         .genre-bar { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; }
         .genre-tab { padding: 8px 15px; background: #161b22; border-radius: 20px; font-size: 0.75rem; cursor: pointer; border: 1px solid #30363d; white-space: nowrap; }
         .genre-tab.active { background: var(--gold); color: black; border-color: var(--gold); }
@@ -472,7 +472,7 @@
     const app = initializeApp(config);
     const db = getFirestore(app);
     
-    // [OPTIMIZATION] Enable Offline Persistence for speed
+    // Offline Persistence
     try { enableIndexedDbPersistence(db); } catch(e) {}
 
     window.auth = getAuth(app);
@@ -481,10 +481,7 @@
     const ADMIN_EMAIL = "xztka49@gmail.com";
     let currentUser = null, userData = null, selectedTopupAmt = 0, currentNid = null;
     let allNovels = [];
-    
-    // [NEW CACHE] Local storage for fast loading
     let novelCache = {}; 
-    let chapterCache = {};
 
     window.toggleAuth = (mode) => {
         document.getElementById('loginForm').style.display = mode === 'reg' ? 'none' : 'block';
@@ -590,7 +587,6 @@
         div.style.display = div.style.display === 'none' ? 'block' : 'none';
     };
     
-    // [FIX] Update Username
     window.updateUsername = async () => {
         const newName = document.getElementById('newName').value;
         if(newName) {
@@ -614,6 +610,7 @@
         });
         document.getElementById('chatInput').value = "";
     };
+
     onSnapshot(query(collection(db, "chat"), orderBy("date", "desc"), limit(40)), (snap) => {
         const box = document.getElementById('chatBox'); box.innerHTML = "";
         snap.forEach(d => {
@@ -624,6 +621,7 @@
             </div>`;
         });
     });
+
     async function autoCleanOldChats() {
         const oneDayAgo = new Date(Date.now() - 86400000);
         const q = query(collection(db, "chat"), where("date", "<", oneDayAgo));
@@ -644,7 +642,6 @@
         renderNovels(allNovels); updateAdminNovelLists();
     });
 
-    // [NEW] Genre Logic
     function updateGenreBar(genres) {
         const bar = document.getElementById('genreFilterBar');
         bar.innerHTML = `<div class="genre-tab active" onclick="filterByGenre('All')">ALL SAGAS</div>`;
@@ -652,9 +649,10 @@
             bar.innerHTML += `<div class="genre-tab" onclick="filterByGenre('${g}')">${g.toUpperCase()}</div>`;
         });
     }
+
     window.filterByGenre = (g) => {
         document.querySelectorAll('.genre-tab').forEach(t => t.classList.remove('active'));
-        event.target.classList.add('active');
+        if(event) event.target.classList.add('active');
         const filtered = g === 'All' ? allNovels : allNovels.filter(n => n.genre === g);
         renderNovels(filtered);
     };
@@ -704,7 +702,6 @@
         updateDoc(doc(db, "novels", id), { views: increment(1) });
     };
 
-    // [FIX] Chapter Pagination & Unlock Sync
     async function loadChapters(nid, isLife, rangeStart = 1) {
         const list = document.getElementById('chapterList'); 
         const rBar = document.getElementById('chapterRangeBar');
@@ -715,12 +712,14 @@
 
         rBar.innerHTML = "";
         for(let i=1; i<=total; i+=100) {
-            let end = i+99 > total ? total : i+99;
+            let end = (i+99 > total) ? total : i+99;
             rBar.innerHTML += `<div class="page-btn ${rangeStart === i ? 'active' : ''}" onclick="loadChapters('${nid}',${isLife},${i})">${i}-${end}</div>`;
         }
 
         const snap = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", ">=", rangeStart), where("num", "<", rangeStart + 100), orderBy("num", "asc")));
-        document.getElementById('chLoading').remove();
+        const chLoading = document.getElementById('chLoading');
+        if(chLoading) chLoading.remove();
+        
         const chUnlockedSnap = await getDocs(collection(db, "users", currentUser.uid, "unlocked_chapters"));
         const unlockedIds = chUnlockedSnap.docs.map(d => d.id);
 
@@ -729,6 +728,7 @@
             const isChUnlocked = unlockedIds.includes(cd.id);
             let label = `<span style="color:var(--gold)">🪙 ${c.cost === 0 ? 'FREE' : c.cost}</span>`;
             if (isLife || isChUnlocked || c.cost === 0) label = `<span style="color:var(--green)">READ</span>`;
+            
             const div = document.createElement('div');
             div.className = "card"; div.style.display = "flex"; div.style.justifyContent = "space-between";
             div.innerHTML = `<span>Ch ${c.num}: ${c.title}</span>${label}`;
@@ -737,7 +737,6 @@
         });
     }
 
-    // [FIX] Read Chapter with Lifetime Carry
     window.readChapter = async (nid, cid, cost, num, alreadyUnlocked) => {
         const lifeRef = doc(db, "users", auth.currentUser.uid, "unlocked_novels", nid);
         const lifeSnap = await getDoc(lifeRef);
@@ -791,6 +790,7 @@
             box.innerHTML += `<div style="padding:10px; border-bottom:1px solid #161b22; font-size:0.8rem;"><b style="color:var(--gold)">${r.name}</b> (${r.rate}⭐): ${r.text}${currentUser.email === ADMIN_EMAIL ? `<button onclick="deleteRev('${nid}','${d.id}')" style="color:var(--red); background:none; border:none; cursor:pointer;">[Del]</button>` : ''}</div>`;
         });
     }
+
     window.postReview = async () => {
         const text = document.getElementById('revText').value;
         const rate = document.getElementById('revRate').value;
@@ -798,23 +798,28 @@
         await addDoc(collection(db, "novels", currentNid, "reviews"), { name: userData.name, text, rate, date: serverTimestamp() });
         document.getElementById('revText').value = ""; loadReviews(currentNid);
     };
+
     window.deleteRev = async (nid, rid) => { await deleteDoc(doc(db, "novels", nid, "reviews", rid)); loadReviews(nid); };
 
-    // [FIX] Coin Packages & Bonus
     const coinPackages = [
         {amt: 1000, bonus: 10}, {amt: 2000, bonus: 50}, {amt: 5000, bonus: 150},
         {amt: 10000, bonus: 350}, {amt: 30000, bonus: 1000}, {amt: 50000, bonus: 2500}
     ];
+
+    const packageGrid = document.getElementById('packageGrid');
     coinPackages.forEach(p => { 
-        document.getElementById('packageGrid').innerHTML += `<div class="card" onclick="openTopup(${p.amt})" style="text-align:center; cursor:pointer; background:#161b22; border:1px solid var(--gold);">🪙 ${p.amt.toLocaleString()}<br><small style="color:var(--green)">+${p.bonus} Bonus</small></div>`; 
+        packageGrid.innerHTML += `<div class="card" onclick="openTopup(${p.amt})" style="text-align:center; cursor:pointer; background:#161b22; border:1px solid var(--gold);">🪙 ${p.amt.toLocaleString()}<br><small style="color:var(--green)">+${p.bonus} Bonus</small></div>`; 
     });
+
     window.openTopup = (amt) => { selectedTopupAmt = Number(amt); document.getElementById('topupForm').style.display = 'block'; };
+
     window.submitTopup = async () => {
         const tid = document.getElementById('tpID').value;
         if(tid.length < 6) return alert("Valid TID needed");
         await addDoc(collection(db, "transactions"), { uid: currentUser.uid, userName: userData.name, amount: Number(selectedTopupAmt), tid, sender: document.getElementById('tpName').value, status: "Pending", type: "Topup", date: serverTimestamp() });
         alert("Submitted!"); document.getElementById('topupForm').style.display = 'none';
     };
+
     window.processTransfer = async () => {
         const email = document.getElementById('tfEmail').value, amt = Number(document.getElementById('tfAmt').value) || 0;
         if(Number(userData.coins) < amt) return alert("Not enough coins!");
@@ -827,6 +832,7 @@
         await addDoc(collection(db, "transactions"), { uid: currentUser.uid, type: "Transfer Out", amount: amt, status: "Approved", date: serverTimestamp() });
         alert("Success!");
     };
+
     window.redeemGift = async () => {
         const code = document.getElementById('giftCodeInput').value.trim();
         const q = query(collection(db, "gifts"), where("code", "==", code), where("used", "==", false), limit(1));
@@ -874,7 +880,6 @@
         });
     }
 
-    // [FIX] Approve with Bonus
     window.approveT = async (id, uid, amt) => {
         const pack = coinPackages.find(p => p.amt === amt);
         const bonus = pack ? pack.bonus : 0;
@@ -889,7 +894,9 @@
         document.getElementById('anAut').value = n.author; document.getElementById('anCov').value = n.cover;
         document.getElementById('anDes').value = n.desc; document.getElementById('anVipP').value = n.vipPrice;
     };
+
     window.deleteNovelData = async (id) => { if(confirm("Delete Novel?")) await deleteDoc(doc(db, "novels", id)); };
+
     window.saveNovel = async () => {
         const id = document.getElementById('anID').value;
         const data = { title: document.getElementById('anTit').value, genre: document.getElementById('anGenre').value, author: document.getElementById('anAut').value, cover: document.getElementById('anCov').value, desc: document.getElementById('anDes').value, vipPrice: Number(document.getElementById('anVipP').value) || 0 };
@@ -914,7 +921,9 @@
         const cSnap = await getDoc(doc(db, "novels", nid, "chapters", cid));
         if(cSnap.exists()) document.getElementById('acCon').value = cSnap.data().content;
     };
+
     window.deleteChapterData = async (nid, cid) => { if(confirm("Delete?")) { await deleteDoc(doc(db, "novels", nid, "chapters", cid)); loadAdminChapters(); } };
+
     window.saveChapter = async () => {
         const nid = document.getElementById('anSelector').value, cid = document.getElementById('acID').value;
         const data = { num: Number(document.getElementById('acNum').value) || 0, title: document.getElementById('acTit').value, content: document.getElementById('acCon').value, cost: Number(document.getElementById('acCost').value) || 0 };
@@ -942,6 +951,7 @@
         await addDoc(collection(db, "gifts"), { code, amount: amt, used: false, date: serverTimestamp() });
         loadGiftHistory();
     };
+
     async function loadGiftHistory() {
         const snap = await getDocs(query(collection(db, "gifts"), orderBy("date", "desc")));
         const log = document.getElementById('adminGiftLog'); log.innerHTML = "";
@@ -968,7 +978,7 @@
                         <div style="font-size:0.6rem; color:var(--text-dim)">${u.email}</div>
                     </div>
                     <div style="text-align:right">
-                        <div style="color:var(--gold); font-size:0.8rem">🪙 ${u.spent.toLocaleString()}</div>
+                        <div style="color:var(--gold); font-size:0.8rem">🪙 ${(u.spent || 0).toLocaleString()}</div>
                     </div>
                 </div>`;
             rank++;
@@ -1009,8 +1019,11 @@
     };
 
     window.filterAdminStats = async () => {
-        const start = new Date(document.getElementById('statsStart').value);
-        const end = new Date(document.getElementById('statsEnd').value);
+        const startVal = document.getElementById('statsStart').value;
+        const endVal = document.getElementById('statsEnd').value;
+        if(!startVal || !endVal) return alert("Select dates");
+        const start = new Date(startVal);
+        const end = new Date(endVal);
         end.setHours(23,59,59);
         const q = query(collection(db, "transactions"), where("status", "==", "Approved"), where("type", "==", "Topup"), where("date", ">=", start), where("date", "<=", end));
         const snap = await getDocs(q);
@@ -1022,7 +1035,6 @@
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
         document.getElementById(id).classList.add('active-view');
         
-        // Update Nav UI
         document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
         if(id === 'home-view') document.querySelectorAll('.nav-item')[0].classList.add('active');
         if(id === 'shop-view') document.querySelectorAll('.nav-item')[1].classList.add('active');
