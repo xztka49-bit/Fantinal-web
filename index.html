@@ -615,7 +615,7 @@
             } else {
                 const n = document.getElementById('regName').value;
                 const e = document.getElementById('regEmail').value;
-                const p = document.getElementById('authPass').value;
+                const p = document.getElementById('regPass').value;
                 const res = await createUserWithEmailAndPassword(auth, e, p);
                 await setDoc(doc(db, "users", res.user.uid), { name: n, email: e, coins: 0, spent: 0, claimCount: 0, lastClaim: 0 });
             }
@@ -724,7 +724,6 @@
         const msg = document.getElementById('chatInput').value;
         if(!msg) return;
         const vip = getVipInfo(userData.spent);
-        // NEW: MOD CHECK FOR RGB FRAME
         const isMod = userData.role === 'mod';
         await addDoc(collection(db, "chat"), {
             name: userData.name, text: msg, nCls: vip.nCls, fCls: isMod ? "mod-frame" : vip.fCls, vName: vip.name, vCls: vip.cls, date: serverTimestamp()
@@ -1089,11 +1088,10 @@
         
         snap.forEach(d => {
             const u = d.data();
-            // NEW: ADMIN USER LIST WITH PROFIT RATE EDIT & HIDE BUTTON
             body.innerHTML += `<tr>
-                <td>${u.email}<br><button onclick="toggleHideUser('${d.id}', ${u.isHidden || false})" style="font-size:0.6rem;">${u.isHidden ? 'Unhide' : 'Hide'}</button></td>
+                <td>${u.email}<br><button onclick="toggleHideUser('${d.id}', ${u.isHidden || false})" style="font-size:0.6rem; background:none; border:1px solid #444; color:#888; border-radius:3px; cursor:pointer;">${u.isHidden ? 'Unhide' : 'Hide'}</button></td>
                 <td>
-                    <select onchange="updateProfitRate('${d.id}', this.value)" style="padding:2px; font-size:0.7rem;">
+                    <select onchange="updateProfitRate('${d.id}', this.value)" style="padding:2px; font-size:0.7rem; background:#161b22; color:white; border:1px solid #30363d;">
                         <option value="0.5" ${u.profitRate == 0.5 ? 'selected' : ''}>50%</option>
                         <option value="0.6" ${u.profitRate == 0.6 ? 'selected' : ''}>60%</option>
                         <option value="0.7" ${u.profitRate == 0.7 ? 'selected' : ''}>70%</option>
@@ -1110,7 +1108,6 @@
         pag.innerHTML = snap.size === 300 ? `<button class="btn-gold" onclick="loadAdminUserList()">Load Next 300</button>` : "";
     }
 
-    // NEW ADMIN FUNCTIONS
     window.updateProfitRate = async (uid, rate) => { await updateDoc(doc(db, "users", uid), { profitRate: Number(rate) }); alert("Profit Updated!"); };
     window.toggleHideUser = async (uid, current) => { await updateDoc(doc(db, "users", uid), { isHidden: !current }); loadAdminUserList(); };
 
@@ -1212,7 +1209,6 @@
     }
 
     async function loadLeaderboard() {
-        // MODIFIED: FILTER HIDDEN USERS
         const q = query(collection(db, "users"), where("isHidden", "==", false), orderBy("spent", "desc"), limit(100));
         const snap = await getDocs(q);
         const list = document.getElementById('leaderboardList');
