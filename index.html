@@ -214,7 +214,7 @@
         .page-btn.active { background: var(--gold); color: black; }
 
         /* -------------------------------------------------------------------------
-           NEW: ADDED BADGE & UI ANIMATION CSS (FROM SECOND CODE)
+           NEW: ADDED BADGE & UI ANIMATION CSS
         -------------------------------------------------------------------------- */
         .mod-badge {
             display: inline-block;
@@ -665,7 +665,7 @@
     let allNovels = [];
     let novelCache = {}; 
     let userListLastVisible = null;
-    let chosenNovels = []; // New Global State for Author Selection
+    let chosenNovels = []; // Global State for Author Selection
 
     // NEW: THEME TOGGLE LOGIC
     window.toggleTheme = () => {
@@ -677,7 +677,6 @@
         localStorage.setItem('fantinal_theme', isLight ? 'light' : 'dark');
     };
 
-    // LOAD SAVED THEME
     if(localStorage.getItem('fantinal_theme') === 'light') {
         document.getElementById('mainBody').classList.add('light-mode');
         document.getElementById('themeBtn').innerText = '☀️';
@@ -701,7 +700,6 @@
         });
     };
 
-    // NEW: CALENDAR FIX (Flatpickr Init)
     flatpickr(".datepicker", { dateFormat: "Y-m-d" });
 
     window.toggleAuth = (mode) => {
@@ -774,7 +772,7 @@
         document.getElementById('pName').innerText = userData.name;
         document.getElementById('pVip').innerHTML = `<span class="vip-tag ${vip.cls}" style="font-size:1rem">${vip.name}</span>`;
         
-        // Update Specialized Badge Display (Mod/Author)
+        // Specialized Badge Display (Mod/Author)
         const badgeDisplay = document.getElementById('user-badge-display');
         if(userData.role === 'mod') {
             badgeDisplay.innerHTML = '<a href="mod.html" class="mod-badge">MOD</a>';
@@ -794,7 +792,7 @@
     }
 
     // -------------------------------------------------------------------------
-    // NEW: INTEGRATED MOD/AUTHOR HANDLERS (FROM SECOND CODE)
+    // INTEGRATED MOD/AUTHOR HANDLERS
     // -------------------------------------------------------------------------
     window.handleModClick = () => {
         document.getElementById('mod-frame').style.display = 'block';
@@ -802,8 +800,7 @@
     };
 
     window.confirmModAssignment = async () => {
-        // Note: In real production, you'd target a specific UID. 
-        // Here we apply it to the currentUser for demonstration.
+        // You would typically target a specific UID, but here we update current user for demonstration
         await updateDoc(doc(db, "users", currentUser.uid), { role: 'mod' });
         alert("Moderator Badge assigned to User Profile.");
     };
@@ -812,7 +809,6 @@
         document.getElementById('author-main-ui').style.display = 'block';
         document.getElementById('mod-frame').style.display = 'none';
         
-        // Fill novel dropdown from current loaded novels
         const dropdown = document.getElementById('novel-dropdown');
         dropdown.innerHTML = '<option value="">-- Choose a Novel --</option>';
         allNovels.forEach(n => {
@@ -856,10 +852,6 @@
         });
         alert("Author status approved and linked to author page.");
     };
-
-    // -------------------------------------------------------------------------
-    // BACK TO ORIGINAL FIREBASE LOGIC
-    // -------------------------------------------------------------------------
 
     function startDailyTimer() {
         const claimBtn = document.getElementById('claimBtn');
@@ -1244,7 +1236,7 @@
         const giftAmt = Number(s.docs[0].data().amount) || 0;
         await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(giftAmt) });
         await updateDoc(doc(db, "gifts", s.docs[0].id), { used: true, usedBy: userData.email });
-        alert("Redေemေd!");
+        alert("Redeemed!");
     };
 
     window.openAdminTab = (id) => {
@@ -1389,7 +1381,7 @@
     }
 
     // -------------------------------------------------------------------------
-    // INTEGRATED TOP 100 RANKING ERROR FIX (FROM SECOND CODE)
+    // INTEGRATED TOP 100 RANKING
     // -------------------------------------------------------------------------
     async function loadLeaderboard() {
         const list = document.getElementById('leaderboardList');
@@ -1398,7 +1390,7 @@
         const q = query(collection(db, "users"), where("isHidden", "==", false), orderBy("spent", "desc"), limit(100));
         const snap = await getDocs(q);
         
-        list.innerHTML = ""; // Clear fresh load
+        list.innerHTML = "";
         let rank = 1;
         
         if(snap.empty) {
@@ -1426,7 +1418,6 @@
                 </div>`;
             rank++;
         });
-        console.log("Ranking System Synchronized Successfully");
     }
 
     function updateRankTimers() {
@@ -1480,7 +1471,6 @@
         await updateDoc(doc(db, "users", uid), { coins: increment(Number(amt) + (pack ? pack.bonus : 0)) });
     };
 
-    // Final Initialization
     window.onload = () => {
         console.log("FANTINAL System Ready for Public Release");
     };
