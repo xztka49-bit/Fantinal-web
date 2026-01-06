@@ -24,7 +24,7 @@
             --v0: #8b949e; --v1: #22c55e; --v2: #cd7f32; --v3: #c0c0c0; --v4: #d4af37; --v5: #a855f7; --v6: #ff3e3e;
         }
 
-        /* NEW: LIGHT MODE PALETTE */
+        /* LIGHT MODE PALETTE */
         body.light-mode {
             --bg: #f0f2f5;
             --card: #ffffff;
@@ -41,12 +41,12 @@
             padding-bottom: 90px; 
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
-            transition: background 0.3s, color 0.3s; /* Smooth Theme Transition */
+            transition: background 0.3s, color 0.3s;
         }
 
         h1, h2, h3, .logo { font-family: 'Cinzel', serif; letter-spacing: 2px; }
 
-        /* NEW: MOD RGB FRAME ANIMATION */
+        /* MOD RGB FRAME ANIMATION */
         @keyframes modRGB {
             0% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
             33% { border-color: #00ff00; box-shadow: 0 0 10px #00ff00; }
@@ -64,7 +64,6 @@
         .view { display: none; padding: 20px; animation: slide 0.2s ease-out; }
         .active-view { display: block; }
 
-        /* FULL SCREEN READER STYLE */
         #reader-view.active-view {
             display: block;
             position: fixed;
@@ -78,7 +77,6 @@
             overflow-y: auto;
         }
 
-        /* UI COMPONENTS */
         .card { 
             background: var(--card); 
             border-radius: 20px; 
@@ -108,34 +106,24 @@
         .btn-gold:hover { animation: glowGold 1.5s infinite; }
 
         input, textarea, select { 
-            width: 100%; 
-            padding: 14px; 
-            margin: 10px 0; 
-            background: #161b22; 
-            border: 1px solid #30363d; 
-            color: white; 
-            border-radius: 12px;
-            box-sizing: border-box;
+            width: 100%; padding: 14px; margin: 10px 0; background: #161b22; 
+            border: 1px solid #30363d; color: white; border-radius: 12px; box-sizing: border-box;
         }
 
-        /* CHAT MESSAGE BUBBLES & FRAMES */
         .chat-msg { padding: 12px; border-radius: 15px; margin-bottom: 12px; font-size: 0.9rem; position: relative; border: 1px solid transparent; }
         .v5-frame { border: 2px solid var(--purple); background: rgba(168, 85, 247, 0.1); animation: glowPurple 2.5s infinite; }
         .v6-frame { border: 2px solid var(--gold); background: rgba(0,0,0,0.6); animation: glowRed 2s infinite; }
         
-        /* CHAT NAME COLORS */
         .name-white { color: white; font-weight: 600; }
         .name-gold { color: var(--gold); font-weight: 800; text-shadow: 0 0 5px rgba(212,175,55,0.5); }
         .name-purple { color: #d946ef; font-weight: 800; text-shadow: 0 0 8px rgba(217,70,239,0.6); }
         .name-red { color: #ff3e3e; font-weight: 900; text-shadow: 0 0 10px rgba(255,62,62,0.8); }
 
-        /* VIP TAGS */
         .vip-tag { padding: 3px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 900; margin-right: 8px; text-transform: uppercase; display: inline-block; vertical-align: middle; cursor: pointer; }
         .t0 { background: var(--v0); } .t1 { background: var(--v1); } .t2 { background: var(--v2); }
         .t3 { background: var(--v3); color: #000; } .t4 { background: var(--v4); color: #000; }
         .t5 { background: var(--v5); } .t6 { background: var(--v6); border: 1px solid #fff; }
 
-        /* RANKING & REWARD STYLES */
         .rank-card { position: relative; display: flex; align-items: center; padding: 15px; margin-bottom: 12px; border-radius: 15px; background: var(--card); border: 1px solid #30363d; }
         .rank-1-frame { border: 3px solid gold !important; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); background: linear-gradient(90deg, #0d1117 0%, rgba(212,175,55,0.1) 100%); }
         .rank-2-frame { border: 3px solid silver !important; box-shadow: 0 0 15px rgba(192, 192, 192, 0.3); }
@@ -145,33 +133,21 @@
         .silver-txt { color: silver !important; }
         .bronze-txt { color: #cd7f32 !important; }
 
-        /* DAILY CLAIM GRID */
         .claim-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
-        .day-box { 
-            background: #161b22; 
-            padding: 12px 5px; 
-            border-radius: 12px; 
-            text-align: center; 
-            font-size: 0.7rem; 
-            border: 1px solid #30363d; 
-            transition: 0.3s;
-        }
+        .day-box { background: #161b22; padding: 12px 5px; border-radius: 12px; text-align: center; font-size: 0.7rem; border: 1px solid #30363d; transition: 0.3s; }
         .day-box.active { border-color: var(--gold); background: rgba(212,175,55,0.15); color: var(--gold); transform: scale(1.05); }
 
-        /* NOVEL DISPLAY */
         .novel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 18px; }
         .n-card { border-radius: 15px; overflow: hidden; background: var(--card); cursor: pointer; transition: 0.3s; position: relative; border: 1px solid rgba(255,255,255,0.05); }
         .n-card:hover { transform: translateY(-8px); border: 1px solid var(--gold); }
         .n-card img { width: 100%; height: 230px; object-fit: cover; }
         .n-card-title { padding: 10px; font-size: 0.85rem; font-weight: 600; text-align: center; color: var(--gold); }
         
-        /* NOVEL TAGS */
         .novel-tag { position: absolute; top: 10px; left: 10px; padding: 4px 10px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; text-transform: uppercase; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .tag-top { background: linear-gradient(45deg, #d4af37, #fef08a); color: black; border: 1px solid gold; }
         .tag-complete { background: var(--green); color: white; }
         .view-count { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.6rem; z-index: 10; }
 
-        /* HORIZONTAL SCROLL */
         .horizontal-scroll { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
         .horizontal-scroll::-webkit-scrollbar { display: none; }
         .h-card { min-width: 140px; max-width: 140px; }
@@ -180,32 +156,17 @@
         .section-header h2 { font-size: 1.1rem; color: var(--gold); margin: 0; }
         .view-all { font-size: 0.75rem; color: var(--text-dim); cursor: pointer; }
 
-        /* BOTTOM NAV */
-        .bottom-nav { 
-            position: fixed; 
-            bottom: 0; 
-            width: 100%; 
-            background: rgba(13,17,23,0.95); 
-            backdrop-filter: blur(15px); 
-            display: flex; 
-            justify-content: space-around; 
-            padding: 15px 0; 
-            border-top: 1px solid var(--gold); 
-            z-index: 2000;
-        }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: rgba(13,17,23,0.95); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid var(--gold); z-index: 2000; }
         .nav-item { color: var(--text-dim); font-size: 0.7rem; text-align: center; cursor: pointer; flex: 1; transition: 0.3s; }
         .nav-item.active { color: var(--gold); font-weight: bold; }
 
-        /* AUTH UI STYLES */
         .auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
         .auth-container { width: 100%; max-width: 400px; text-align: center; }
         
-        /* ADMIN NEW UI TABLES */
         .admin-table { width:100%; border-collapse: collapse; font-size: 0.8rem; margin-top:10px; }
         .admin-table th, .admin-table td { border: 1px solid #30363d; padding: 10px; text-align: left; }
         .admin-table th { background: #161b22; color: var(--gold); }
 
-        /* GENRE & PAGINATION STYLES */
         .genre-bar { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; }
         .genre-tab { padding: 8px 15px; background: #161b22; border-radius: 20px; font-size: 0.75rem; cursor: pointer; border: 1px solid #30363d; white-space: nowrap; }
         .genre-tab.active { background: var(--gold); color: black; border-color: var(--gold); }
@@ -213,82 +174,22 @@
         .page-btn { padding: 6px 12px; background: #0d1117; border: 1px solid var(--gold); color: var(--gold); border-radius: 8px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; }
         .page-btn.active { background: var(--gold); color: black; }
 
-        /* -------------------------------------------------------------------------
-           NEW: ADDED BADGE & UI ANIMATION CSS (FROM SECOND CODE)
-        -------------------------------------------------------------------------- */
+        /* BADGE & UI ANIMATION CSS */
         .mod-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #fff;
-            text-decoration: none;
-            background: linear-gradient(-45deg, #000000, #ffffff, #8b00ff, #000000);
-            background-size: 400% 400%;
-            animation: modShimmer 3s ease infinite;
-            border: 1px solid #8b00ff;
-            font-size: 0.7rem;
+            display: inline-block; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; color: #fff; text-decoration: none;
+            background: linear-gradient(-45deg, #000000, #ffffff, #8b00ff, #000000); background-size: 400% 400%; animation: modShimmer 3s ease infinite; border: 1px solid #8b00ff; font-size: 0.7rem;
         }
-
-        @keyframes modShimmer {
-            0% { background-position: 0% 50%; box-shadow: 0 0 5px #8b00ff; }
-            50% { background-position: 100% 50%; box-shadow: 0 0 15px #ffffff; }
-            100% { background-position: 0% 50%; box-shadow: 0 0 5px #8b00ff; }
-        }
-
+        @keyframes modShimmer { 0% { background-position: 0% 50%; box-shadow: 0 0 5px #8b00ff; } 50% { background-position: 100% 50%; box-shadow: 0 0 15px #ffffff; } 100% { background-position: 0% 50%; box-shadow: 0 0 5px #8b00ff; } }
+        
         .author-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            background: linear-gradient(90deg, #000 0%, #fff 50%, #000 100%);
-            background-size: 200% auto;
-            color: #555;
-            animation: authorRotate 1.5s linear infinite;
-            border: 1px solid #000;
-            font-size: 0.7rem;
+            display: inline-block; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; text-decoration: none;
+            background: linear-gradient(90deg, #000 0%, #fff 50%, #000 100%); background-size: 200% auto; color: #555; animation: authorRotate 1.5s linear infinite; border: 1px solid #000; font-size: 0.7rem;
         }
+        @keyframes authorRotate { to { background-position: 200% center; } }
 
-        @keyframes authorRotate {
-            to { background-position: 200% center; }
-        }
-
-        .novel-card-mini {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid #333;
-            padding: 8px 12px;
-            margin: 5px;
-            border-radius: 6px;
-            position: relative;
-            color: white;
-            font-size: 0.8rem;
-        }
-
-        .remove-card {
-            margin-left: 10px;
-            color: #ff4d4d;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .approve-gold-btn {
-            background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%);
-            color: black;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 15px;
-            box-shadow: 0 4px 10px rgba(218, 165, 32, 0.4);
-            display: none;
-        }
+        .novel-card-mini { display: inline-flex; align-items: center; background: rgba(255,255,255,0.05); border: 1px solid #333; padding: 8px 12px; margin: 5px; border-radius: 6px; position: relative; color: white; font-size: 0.8rem; }
+        .remove-card { margin-left: 10px; color: #ff4d4d; cursor: pointer; font-weight: bold; font-size: 18px; }
+        .approve-gold-btn { background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%); color: black; border: none; padding: 10px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 10px rgba(218, 165, 32, 0.4); display: none; }
     </style>
 </head>
 <body id="mainBody">
@@ -297,14 +198,12 @@
     <div class="auth-container">
         <h1 class="logo" style="color:var(--gold); font-size: 2.5rem; margin-bottom: 10px;">FANTINAL</h1>
         <p style="color:var(--text-dim); margin-bottom: 30px;">Welcome to the Emperor's Library</p>
-        
         <div id="loginForm">
             <input type="email" id="authEmail" placeholder="Eternal Email">
             <input type="password" id="authPass" placeholder="Secret Password">
             <button onclick="handleAuth('login')" class="btn btn-gold" style="width:100%; margin-top: 10px;">SIGN IN</button>
             <p style="margin-top: 20px; font-size: 0.8rem;">New Immortal? <span onclick="toggleAuth('reg')" style="color:var(--gold); cursor:pointer;">Register Here</span></p>
         </div>
-
         <div id="regForm" style="display:none;">
             <input type="text" id="regName" placeholder="Display Name">
             <input type="email" id="regEmail" placeholder="Email Address">
@@ -312,7 +211,6 @@
             <button onclick="handleAuth('reg')" class="btn btn-gold" style="width:100%; margin-top: 10px;">CREATE ACCOUNT</button>
             <p style="margin-top: 20px; font-size: 0.8rem;">Already have an account? <span onclick="toggleAuth('login')" style="color:var(--gold); cursor:pointer;">Login Here</span></p>
         </div>
-        
         <div style="margin-top: 25px; display: flex; align-items: center; gap: 10px; color: var(--text-dim);">
             <hr style="flex:1; border: 0.5px solid #30363d;"> OR <hr style="flex:1; border: 0.5px solid #30363d;">
         </div>
@@ -322,7 +220,6 @@
 
 <header style="padding: 15px 20px; border-bottom: 1px solid rgba(212,175,55,0.2); display: flex; justify-content: space-between; align-items: center; background: var(--card); position: sticky; top: 0; z-index: 1000;">
     <div class="logo" style="color:var(--gold); font-size: 1.2rem;">FANTINAL</div>
-    
     <div style="display:flex; align-items:center; gap:12px;">
         <button onclick="toggleTheme()" id="themeBtn" style="background:none; border:none; color:var(--gold); cursor:pointer; font-size: 1.2rem;">🌙</button>
         <div id="authBox">
@@ -336,25 +233,12 @@
 
 <div id="home-view" class="view active-view">
     <button class="btn btn-gold" onclick="showView('leaderboard-view')" style="width:100%; margin-bottom:20px;">🏆 VIEW TOP 100 IMMORTALS</button>
-    
-    <div class="section-header">
-        <h2>TOP NOVELS (RANKING)</h2>
-    </div>
+    <div class="section-header"><h2>TOP NOVELS (RANKING)</h2></div>
     <div class="horizontal-scroll" id="topNovelScroll"></div>
-
-    <div class="section-header">
-        <h2>စဆုံးပြီးစာစဉ်များ</h2>
-        <span class="view-all" onclick="showCompletedPage()">VIEW ALL →</span>
-    </div>
+    <div class="section-header"><h2>စဆုံးပြီးစာစဉ်များ</h2><span class="view-all" onclick="showCompletedPage()">VIEW ALL →</span></div>
     <div class="horizontal-scroll" id="completedNovelScroll"></div>
-
-    <div class="section-header" style="margin-top:30px;">
-        <h2>ALL SAGAS</h2>
-    </div>
-    <div class="genre-bar" id="genreFilterBar">
-        <div class="genre-tab active" onclick="filterByGenre('All')">ALL SAGAS</div>
-    </div>
-
+    <div class="section-header" style="margin-top:30px;"><h2>ALL SAGAS</h2></div>
+    <div class="genre-bar" id="genreFilterBar"><div class="genre-tab active" onclick="filterByGenre('All')">ALL SAGAS</div></div>
     <input type="text" id="searchBar" placeholder="Search for legendary sagas..." oninput="search()">
     <div class="novel-grid" id="novelGrid"></div>
 </div>
@@ -369,20 +253,17 @@
 <div id="leaderboard-view" class="view">
     <button class="btn" onclick="showView('home-view')" style="background:none; color:var(--gold); padding:0; margin-bottom:20px;">← BACK</button>
     <h2 style="color:var(--gold); text-align:center;">TOP 100 RANKING</h2>
-    
     <div class="card" style="border:1px solid gold;">
-        <h3 style="color:var(--gold); border-bottom:1px solid #334155; padding-bottom:10px;">Monthly Rewards</h3>
+        <h3 style="color:var(--gold)">Monthly Rewards</h3>
         <div id="reward-timer" style="text-align:center; color:var(--red); font-weight:bold; margin-bottom:10px;"></div>
         <button id="claimRankRewardBtn" class="btn btn-gold" style="width:100%;" onclick="claimMonthlyRankReward()" disabled>CLAIM RANK REWARD</button>
     </div>
-
     <div id="leaderboardList"></div>
 </div>
 
 <div id="detail-view" class="view">
     <button class="btn" onclick="showView('home-view')" style="background:none; color:var(--gold); padding:0; margin-bottom:20px;">← BACK TO LIBRARY</button>
     <div id="novelInfo"></div>
-    
     <div class="card" id="ratingSection">
         <h3 style="color:var(--gold)">Reviews & Ratings</h3>
         <div id="reviewList" style="margin-bottom: 20px;"></div>
@@ -392,7 +273,6 @@
             <button onclick="postReview()" class="btn-gold" style="width:80px; padding:0;">POST</button>
         </div>
     </div>
-    
     <h3 style="color:var(--gold); margin-top:30px;">Chapters</h3>
     <div class="pagination-bar" id="chapterRangeBar"></div>
     <div id="chapterList"></div>
@@ -406,7 +286,6 @@
     <div style="padding: 20px;">
         <h2 id="rChTitle" style="text-align:center; margin-bottom:30px;"></h2>
         <div id="rContent" style="line-height:2.4; font-size:1.25rem; white-space:pre-wrap; text-align: justify; padding: 10px; max-width: 800px; margin: auto;"></div>
-        
         <div style="display:flex; gap:15px; margin-top:40px; max-width: 800px; margin: 40px auto 100px auto;">
             <button id="prevBtn" class="btn" style="background:#161b22; color:white; flex:1;">PREVIOUS</button>
             <button id="nextBtn" class="btn btn-gold" style="flex:1;">NEXT CHAPTER</button>
@@ -419,16 +298,13 @@
         <h1 style="color:var(--gold); margin:0; font-size: 2.5rem;">🪙 <span id="sCoins">0</span></h1>
         <p style="color:var(--text-dim); font-size: 0.8rem; letter-spacing: 2px;">AVAILABLE BALANCE</p>
     </div>
-
     <div class="card" style="border-color: var(--green);">
         <h4 style="color:var(--green); margin:0;">Redeem Gift Code</h4>
         <input type="text" id="giftCodeInput" placeholder="Enter FANT-XXXXX">
         <button class="btn" style="background:var(--green); color:white; width:100%;" onclick="redeemGift()">REDEEM NOW</button>
     </div>
-
     <h3 style="margin-top:30px;">Premium Coin Packages</h3>
     <div id="packageGrid" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;"></div>
-
     <div id="topupForm" class="card" style="display:none; margin-top:25px; border: 2px solid var(--gold); animation: slide 0.3s ease;">
         <div style="background: linear-gradient(135deg, #003399 0%, #0066ff 100%); padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 20px;">
             <h2 style="color: white; margin: 0; font-size: 1.8rem; letter-spacing: 1px;">THU KHA AUNG</h2>
@@ -436,7 +312,6 @@
             <p style="color: white; margin: 0; font-weight: bold;">KBZPay / WavePay</p>
         </div>
         <h4 style="color:var(--gold); margin:0;">Submit Payment Proof</h4>
-        <p style="color:var(--red); font-size: 0.75rem;">* Admin approval takes 5-30 mins.</p>
         <input type="text" id="tpName" placeholder="Payer Name">
         <input type="text" id="tpID" placeholder="Transaction Last 6 Digits">
         <button class="btn btn-gold" style="width:100%;" onclick="submitTopup()">SEND FOR APPROVAL</button>
@@ -466,25 +341,20 @@
         </div>
         <button onclick="auth.signOut()" style="background:none; border:none; color:var(--red); cursor:pointer; font-size: 0.7rem; margin-top:10px;">[ LOGOUT ]</button>
     </div>
-
     <div class="card">
         <h3 style="color:var(--gold); margin:0 0 15px 0;">My Bookmarks</h3>
         <div id="bookmarkGrid" class="novel-grid" style="grid-template-columns: repeat(2, 1fr);"></div>
     </div>
-
     <div id="dailyClaimSection" class="card" style="display:none; border-color: var(--gold);">
         <h3 style="color:var(--gold); margin:0;">Daily Rewards</h3>
         <p id="claimTimer" style="font-size: 0.9rem; color: var(--gold); font-weight: bold; margin: 10px 0;"></p>
-        <p id="claimStatus" style="font-size: 0.75rem; color: var(--text-dim);"></p>
         <div class="claim-row" id="claimGrid"></div>
         <button id="claimBtn" class="btn btn-gold" style="width:100%; margin-top:20px;" onclick="handleClaim()">CLAIM REWARD</button>
     </div>
-
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
         <button class="btn" style="background:#1e293b; color:white;" onclick="showView('history-view')">COIN HISTORY</button>
         <button class="btn" style="background:#1e293b; color:white;" onclick="showView('transfer-view')">TRANSFER</button>
     </div>
-
     <div id="adminPanelBtn" style="display:none; margin-top:30px;">
         <button class="btn-gold" onclick="showView('admin-view')" style="background: linear-gradient(45deg, #7f1d1d, #ff3e3e); color: white;">MASTER ADMIN PANEL</button>
     </div>
@@ -505,9 +375,7 @@
     <h3 style="color:var(--gold)">Transaction History</h3>
     <div class="card" style="overflow-x:auto;">
         <table style="width:100%; font-size:0.8rem; border-collapse: collapse;">
-            <thead><tr style="text-align:left; color:var(--gold); border-bottom: 1px solid #334155;">
-                <th style="padding:10px;">Date</th><th>Type</th><th>Amt</th><th>Status</th>
-            </tr></thead>
+            <thead><tr style="text-align:left; color:var(--gold); border-bottom: 1px solid #334155;"><th style="padding:10px;">Date</th><th>Type</th><th>Amt</th><th>Status</th></tr></thead>
             <tbody id="historyBody"></tbody>
         </table>
     </div>
@@ -522,16 +390,12 @@
             <button onclick="handleModClick()" class="btn" style="background:#8b00ff; color:white; flex:1;">Mod Tools</button>
             <button onclick="handleAuthorClick()" class="btn" style="background:#333; color:white; flex:1;">Author Tools</button>
         </div>
-
         <div id="mod-frame" style="display:none; margin-top:20px; padding:15px; border:1px solid #8b00ff; border-radius:10px; background:rgba(139,0,255,0.05);">
             <h4 style="color:#8b00ff">Moderator Control Frame</h4>
-            <p style="font-size:0.8rem;">Assigning Moderator privileges to the current targeted profile...</p>
             <button onclick="confirmModAssignment()" class="btn-gold" style="width:100%;">Grant Mod Badge</button>
         </div>
-
         <div id="author-main-ui" style="display:none; margin-top:20px; padding:15px; border:1px solid #555; border-radius:10px; background:rgba(255,255,255,0.02);">
             <h4 style="color:white">Author Assignment</h4>
-            <label style="font-size:0.7rem; color:var(--text-dim);">Select Novel Series to Assign:</label>
             <select id="novel-dropdown" onchange="selectNovelForAuthor()"></select>
             <div id="selected-novels-list" style="margin-top: 15px; min-height: 40px; border-top: 1px solid #333; padding-top: 10px;"></div>
             <button id="approved-btn" class="approve-gold-btn" onclick="confirmAuthorAssignment()">Approved</button>
@@ -539,20 +403,16 @@
     </div>
 
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 20px; margin-top:20px;">
-        <div class="card" style="margin:0; background: var(--green); color: white; padding: 15px;">
-            <small>Total Income</small><br><b id="admTotalIncome">0</b>
-        </div>
-        <div class="card" style="margin:0; background: var(--purple); color: white; padding: 15px;">
-            <small>Gift Coins Used</small><br><b id="admTotalGiftUsed">0</b>
-        </div>
+        <div class="card" style="margin:0; background: var(--green); color: white; padding: 15px;"><small>Total Income</small><br><b id="admTotalIncome">0</b></div>
+        <div class="card" style="margin:0; background: var(--purple); color: white; padding: 15px;"><small>Gift Coins Used</small><br><b id="admTotalGiftUsed">0</b></div>
     </div>
 
     <div class="card" style="border:1px solid var(--gold);">
         <h4 style="color:var(--gold)">Income Analytics By Date</h4>
         <div style="display:flex; gap:10px; margin-bottom:10px;">
-            <input type="text" id="statsStart" class="datepicker" placeholder="Start Date" style="font-size:0.7rem;">
-            <input type="text" id="statsEnd" class="datepicker" placeholder="End Date" style="font-size:0.7rem;">
-            <button class="btn-gold" onclick="filterAdminStats()" style="padding:5px 10px; font-size:0.7rem;">Filter</button>
+            <input type="text" id="statsStart" class="datepicker" placeholder="Start Date">
+            <input type="text" id="statsEnd" class="datepicker" placeholder="End Date">
+            <button class="btn-gold" onclick="filterAdminStats()" style="padding:5px 10px;">Filter</button>
         </div>
         <p style="font-size:0.8rem;">Filtered Range Total: <b id="filteredIncomeText" style="color:var(--green);">0</b></p>
     </div>
@@ -566,76 +426,35 @@
         <button class="btn" style="background:#334155; color:white; font-size: 0.7rem;" onclick="openAdminTab('tab-gifts')">Gifts</button>
     </div>
 
-    <div id="tab-approvals" class="admin-tab card">
-        <h4 style="color:var(--gold)">Pending Topups</h4>
-        <div id="pendingReqList"></div>
-    </div>
-
-    <div id="tab-vs" class="admin-tab card" style="display:none;">
-        <h4 style="color:var(--gold)">Novel Analytics</h4>
-        <div id="vsAnalyticsContent"></div>
-    </div>
-
+    <div id="tab-approvals" class="admin-tab card"><h4 style="color:var(--gold)">Pending Topups</h4><div id="pendingReqList"></div></div>
+    <div id="tab-vs" class="admin-tab card" style="display:none;"><h4 style="color:var(--gold)">Novel Analytics</h4><div id="vsAnalyticsContent"></div></div>
     <div id="tab-users" class="admin-tab card" style="display:none;">
         <h4 style="color:var(--gold)">User Database</h4>
-        <div style="display:flex; gap:10px; margin-bottom:10px;">
-            <input type="text" id="admUserSearch" placeholder="Search Email..." style="margin:0;">
-            <button class="btn-gold" onclick="loadAdminUserList()" style="width:80px; padding:0;">SEARCH</button>
-        </div>
-        <div style="overflow-x:auto;">
-            <table class="admin-table">
-                <thead><tr><th>Gmail</th><th>Profit%</th><th>Action</th></tr></thead>
-                <tbody id="admUserListBody"></tbody>
-            </table>
-        </div>
-        <div id="admUserPagination" style="margin-top:15px; display:flex; gap:5px; flex-wrap:wrap;"></div>
+        <div style="display:flex; gap:10px; margin-bottom:10px;"><input type="text" id="admUserSearch" placeholder="Search Email..."><button class="btn-gold" onclick="loadAdminUserList()" style="width:80px;">SEARCH</button></div>
+        <div style="overflow-x:auto;"><table class="admin-table"><thead><tr><th>Gmail</th><th>Profit%</th><th>Action</th></tr></thead><tbody id="admUserListBody"></tbody></table></div>
+        <div id="admUserPagination" style="margin-top:15px; display:flex; gap:5px;"></div>
     </div>
-
     <div id="tab-novels" class="admin-tab card" style="display:none;">
         <h4>Novel Add/Edit</h4>
-        <div id="adminNovelEditList" style="margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px;"></div>
-        
-        <input type="text" id="anID" placeholder="Novel ID (Leave empty for new)">
-        <input type="text" id="anTit" placeholder="Title">
-        <input type="text" id="anGenre" placeholder="Genre (e.g. Action)">
-        <input type="text" id="anAut" placeholder="Author">
-        <input type="text" id="anCov" placeholder="Cover URL">
-        <textarea id="anDes" placeholder="Description"></textarea>
-        <input type="number" id="anVipP" placeholder="Full Lifetime Price">
-        
-        <p style="font-size:0.75rem; color:var(--gold); margin-bottom:5px;">Novel Display Section (Multiple Select):</p>
-        <div style="display:flex; gap:15px; font-size:0.8rem; margin-bottom:10px;">
-            <label><input type="checkbox" class="sec-cb" value="top"> Top List</label>
-            <label><input type="checkbox" class="sec-cb" value="completed"> Complete List</label>
-        </div>
-        <input type="number" id="anTopRank" placeholder="Top Rank Number (1-10) - If Top Section" style="margin-top:5px;">
-        
-        <button class="btn btn-gold" onclick="saveNovel()">SAVE NOVEL DATA</button>
-        
-        <hr style="margin:25px 0; border:0.5px solid #334155;">
-        
+        <div id="adminNovelEditList" style="margin-bottom: 20px;"></div>
+        <input type="text" id="anID" placeholder="ID"><input type="text" id="anTit" placeholder="Title">
+        <input type="text" id="anGenre" placeholder="Genre"><input type="text" id="anAut" placeholder="Author">
+        <input type="text" id="anCov" placeholder="Cover"><textarea id="anDes" placeholder="Desc"></textarea>
+        <input type="number" id="anVipP" placeholder="Full Price">
+        <div style="display:flex; gap:15px; font-size:0.8rem;"><label><input type="checkbox" class="sec-cb" value="top"> Top</label><label><input type="checkbox" class="sec-cb" value="completed"> Complete</label></div>
+        <input type="number" id="anTopRank" placeholder="Rank (1-10)">
+        <button class="btn btn-gold" onclick="saveNovel()">SAVE</button>
+        <hr>
         <h4>Chapter Manager</h4>
         <select id="anSelector" onchange="loadAdminChapters()"></select>
-        <div id="adminChapterEditList" style="margin-bottom: 20px;"></div>
-        
-        <input type="text" id="acID" placeholder="Chapter ID (Leave empty for new)">
-        <input type="number" id="acNum" placeholder="Chapter Number">
-        <input type="text" id="acTit" placeholder="Chapter Title">
-        <textarea id="acCon" rows="6" placeholder="Chapter Content / Bulk Text (Title | Content || Title | Content)"></textarea>
-        <input type="number" id="acCost" placeholder="Coin Cost">
-        
-        <div style="display:flex; gap:10px;">
-            <button class="btn btn-gold" onclick="saveChapter()" style="flex:1;">PUBLISH SINGLE</button>
-            <button class="btn" style="background:var(--purple); color:white; flex:1;" onclick="bulkUploadChapters()">BULK UPLOAD</button>
-        </div>
-        <p style="font-size: 0.65rem; color: var(--text-dim); margin-top: 5px;">* Bulk Format: Title | Content || Title | Content</p>
+        <div id="adminChapterEditList"></div>
+        <input type="text" id="acID" placeholder="CID"><input type="number" id="acNum" placeholder="Num"><input type="text" id="acTit" placeholder="Title"><textarea id="acCon" rows="6" placeholder="Content"></textarea><input type="number" id="acCost" placeholder="Cost">
+        <div style="display:flex; gap:10px;"><button class="btn btn-gold" onclick="saveChapter()">SINGLE</button><button class="btn" style="background:var(--purple); color:white;" onclick="bulkUploadChapters()">BULK</button></div>
     </div>
-
     <div id="tab-gifts" class="admin-tab card" style="display:none;">
-        <h4>Gift Code Generator</h4>
-        <input type="number" id="agAmt" placeholder="Coin Amount">
-        <button class="btn btn-gold" onclick="generateGiftCode()">GENERATE GIFT</button>
-        <div id="adminGiftLog" style="margin-top:20px; font-size:0.75rem;"></div>
+        <h4>Gift Code</h4>
+        <input type="number" id="agAmt" placeholder="Amt"><button class="btn btn-gold" onclick="generateGiftCode()">GENERATE</button>
+        <div id="adminGiftLog" style="margin-top:20px;"></div>
     </div>
 </div>
 
@@ -654,54 +473,27 @@
     const config = { apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0", authDomain: "fantinal-publishing-5b960.firebaseapp.com", projectId: "fantinal-publishing-5b960", storageBucket: "fantinal-publishing-5b960.firebasestorage.app", messagingSenderId: "961612304854", appId: "1:961612304854:web:6bf7b03072ed83b58b9477" };
     const app = initializeApp(config);
     const db = getFirestore(app);
-    
     try { enableIndexedDbPersistence(db); } catch(e) {}
-
     window.auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
     const ADMIN_EMAIL = "xztka49@gmail.com";
     let currentUser = null, userData = null, selectedTopupAmt = 0, currentNid = null;
-    let allNovels = [];
-    let novelCache = {}; 
-    let userListLastVisible = null;
-    let chosenNovels = []; // New Global State for Author Selection
+    let allNovels = [], novelCache = {}, userListLastVisible = null, chosenNovels = [];
 
-    // NEW: THEME TOGGLE LOGIC
     window.toggleTheme = () => {
         const body = document.getElementById('mainBody');
-        const themeBtn = document.getElementById('themeBtn');
         body.classList.toggle('light-mode');
         const isLight = body.classList.contains('light-mode');
-        themeBtn.innerText = isLight ? '☀️' : '🌙';
+        document.getElementById('themeBtn').innerText = isLight ? '☀️' : '🌙';
         localStorage.setItem('fantinal_theme', isLight ? 'light' : 'dark');
     };
+    if(localStorage.getItem('fantinal_theme') === 'light') { document.getElementById('mainBody').classList.add('light-mode'); document.getElementById('themeBtn').innerText = '☀️'; }
 
-    // LOAD SAVED THEME
-    if(localStorage.getItem('fantinal_theme') === 'light') {
-        document.getElementById('mainBody').classList.add('light-mode');
-        document.getElementById('themeBtn').innerText = '☀️';
-    }
-
-    // NEW: VIP BADGE INFO MODAL
     window.showVipBadgeList = () => {
-        Swal.fire({
-            title: 'VIP IMMORTAL RANKS',
-            background: 'var(--card)', color: 'var(--gold)',
-            html: `
-                <div style="text-align:left; font-size:0.8rem; line-height:2;">
-                    <span class="vip-tag t1">WARRIOR</span> : Spent 10,000+<br>
-                    <span class="vip-tag t2">BRONZE</span> : Spent 50,000+<br>
-                    <span class="vip-tag t3">SILVER</span> : Spent 120,000+<br>
-                    <span class="vip-tag t4">MASTER</span> : Spent 400,000+<br>
-                    <span class="vip-tag t5">KING</span> : Spent 1,000,000+<br>
-                    <span class="vip-tag t6">EMPEROR</span> : Spent 3,000,000+
-                </div>`,
-            confirmButtonColor: '#d4af37'
-        });
+        Swal.fire({ title: 'VIP IMMORTAL RANKS', background: 'var(--card)', color: 'var(--gold)', html: `<div style="text-align:left; font-size:0.8rem; line-height:2;"><span class="vip-tag t1">WARRIOR</span> : Spent 10,000+<br><span class="vip-tag t2">BRONZE</span> : Spent 50,000+<br><span class="vip-tag t3">SILVER</span> : Spent 120,000+<br><span class="vip-tag t4">MASTER</span> : Spent 400,000+<br><span class="vip-tag t5">KING</span> : Spent 1,000,000+<br><span class="vip-tag t6">EMPEROR</span> : Spent 3,000,000+</div>`, confirmButtonColor: '#d4af37' });
     };
 
-    // NEW: CALENDAR FIX (Flatpickr Init)
     flatpickr(".datepicker", { dateFormat: "Y-m-d" });
 
     window.toggleAuth = (mode) => {
@@ -711,20 +503,10 @@
 
     window.handleAuth = async (type) => {
         try {
-            if(type === 'login') {
-                const e = document.getElementById('authEmail').value;
-                const p = document.getElementById('authPass').value;
-                await signInWithEmailAndPassword(auth, e, p);
-            } else {
-                const n = document.getElementById('regName').value;
-                const e = document.getElementById('regEmail').value;
-                const p = document.getElementById('regPass').value;
-                const res = await createUserWithEmailAndPassword(auth, e, p);
-                await setDoc(doc(db, "users", res.user.uid), { name: n, email: e, coins: 0, spent: 0, claimCount: 0, lastClaim: 0 });
-            }
+            if(type === 'login') { await signInWithEmailAndPassword(auth, document.getElementById('authEmail').value, document.getElementById('authPass').value); }
+            else { const res = await createUserWithEmailAndPassword(auth, document.getElementById('regEmail').value, document.getElementById('regPass').value); await setDoc(doc(db, "users", res.user.uid), { name: document.getElementById('regName').value, email: document.getElementById('regEmail').value, coins: 0, spent: 0, claimCount: 0, lastClaim: 0 }); }
         } catch (err) { alert(err.message); }
     };
-
     window.handleGoogle = () => signInWithPopup(auth, provider);
 
     function getVipInfo(spent) {
@@ -738,752 +520,234 @@
         return {lv:0, name:"Newbie", cls:"t0", nCls:"name-white", fCls:""};
     }
 
-    const claimTable = {
-        2: [25, 50, 75, 100, 125, 150, 175], 3: [50, 100, 150, 200, 250, 300, 350],
-        4: [75, 150, 325, 400, 475, 550, 625], 5: [100, 200, 300, 400, 500, 600, 700],
-        6: [200, 400, 600, 800, 1000, 1200, 1400]
-    };
+    const claimTable = { 2:[25,50,75,100,125,150,175], 3:[50,100,150,200,250,300,350], 4:[75,150,325,400,475,550,625], 5:[100,200,300,400,500,600,700], 6:[200,400,600,800,1000,1200,1400] };
 
     onAuthStateChanged(auth, async (user) => {
         if(user) {
-            currentUser = user;
-            document.getElementById('authOverlay').style.display = 'none';
-            const userRef = doc(db, "users", user.uid);
-            onSnapshot(userRef, (snap) => {
-                if(snap.exists()) { userData = snap.data(); updateMasterUI(); }
-                else { setDoc(userRef, { name: user.displayName || "User", email: user.email, coins: 0, spent: 0, claimCount: 0, lastClaim: 0 }); }
-            });
-            if(user.email === ADMIN_EMAIL) {
-                document.getElementById('adminPanelBtn').style.display = 'block';
-                loadAdminGlobalStats(); autoCleanOldChats();
-            }
-            loadCoinHistory();
-            loadBookmarks();
-        } else {
-            document.getElementById('authOverlay').style.display = 'flex';
-        }
+            currentUser = user; document.getElementById('authOverlay').style.display = 'none';
+            onSnapshot(doc(db, "users", user.uid), (snap) => { if(snap.exists()) { userData = snap.data(); updateMasterUI(); } else { setDoc(doc(db,"users",user.uid),{name:user.displayName||"User",email:user.email,coins:0,spent:0,claimCount:0,lastClaim:0}); }});
+            if(user.email === ADMIN_EMAIL) { document.getElementById('adminPanelBtn').style.display='block'; loadAdminGlobalStats(); autoCleanOldChats(); loadPendingTopups(); }
+            loadCoinHistory(); loadBookmarks();
+        } else { document.getElementById('authOverlay').style.display = 'flex'; }
     });
 
     function updateMasterUI() {
         const vip = getVipInfo(userData.spent);
-        const userCoins = Number(userData.coins) || 0;
         document.getElementById('userHeader').style.display = 'block';
-        document.getElementById('hCoins').innerText = userCoins.toLocaleString();
-        document.getElementById('sCoins').innerText = userCoins.toLocaleString();
+        document.getElementById('hCoins').innerText = (userData.coins||0).toLocaleString();
+        document.getElementById('sCoins').innerText = (userData.coins||0).toLocaleString();
         document.getElementById('hVip').innerHTML = `<span class="vip-tag ${vip.cls}">${vip.name}</span>`;
         document.getElementById('pName').innerText = userData.name;
         document.getElementById('pVip').innerHTML = `<span class="vip-tag ${vip.cls}" style="font-size:1rem">${vip.name}</span>`;
-        
-        // Update Specialized Badge Display (Mod/Author)
-        const badgeDisplay = document.getElementById('user-badge-display');
-        if(userData.role === 'mod') {
-            badgeDisplay.innerHTML = '<a href="mod.html" class="mod-badge">MOD</a>';
-        } else if(userData.role === 'author') {
-            badgeDisplay.innerHTML = '<a href="author_page.html" class="author-badge">AUTHOR</a>';
-        }
-
+        const bDisp = document.getElementById('user-badge-display');
+        if(userData.role==='mod') bDisp.innerHTML='<a href="#" class="mod-badge">MOD</a>';
+        else if(userData.role==='author') bDisp.innerHTML='<a href="#" class="author-badge">AUTHOR</a>';
         if(vip.lv >= 2) {
             document.getElementById('dailyClaimSection').style.display = 'block';
             const grid = document.getElementById('claimGrid'); grid.innerHTML = "";
-            const dayIdx = (Number(userData.claimCount) || 0) % 7;
-            claimTable[vip.lv].forEach((amt, i) => {
-                grid.innerHTML += `<div class="day-box ${i === dayIdx ? 'active' : ''}">Day ${i+1}<br>🪙${amt}</div>`;
-            });
+            const dayIdx = (userData.claimCount || 0) % 7;
+            claimTable[vip.lv].forEach((amt, i) => { grid.innerHTML += `<div class="day-box ${i===dayIdx?'active':''}">Day ${i+1}<br>🪙${amt}</div>`; });
             startDailyTimer();
         }
     }
 
-    // -------------------------------------------------------------------------
-    // NEW: INTEGRATED MOD/AUTHOR HANDLERS (FROM SECOND CODE)
-    // -------------------------------------------------------------------------
-    window.handleModClick = () => {
-        document.getElementById('mod-frame').style.display = 'block';
-        document.getElementById('author-main-ui').style.display = 'none';
-    };
-
-    window.confirmModAssignment = async () => {
-        // Note: In real production, you'd target a specific UID. 
-        // Here we apply it to the currentUser for demonstration.
-        await updateDoc(doc(db, "users", currentUser.uid), { role: 'mod' });
-        alert("Moderator Badge assigned to User Profile.");
-    };
-
-    window.handleAuthorClick = () => {
-        document.getElementById('author-main-ui').style.display = 'block';
-        document.getElementById('mod-frame').style.display = 'none';
-        
-        // Fill novel dropdown from current loaded novels
-        const dropdown = document.getElementById('novel-dropdown');
-        dropdown.innerHTML = '<option value="">-- Choose a Novel --</option>';
-        allNovels.forEach(n => {
-            dropdown.innerHTML += `<option value="${n.title}">${n.title}</option>`;
-        });
-    };
-
-    window.selectNovelForAuthor = () => {
-        const select = document.getElementById('novel-dropdown');
-        const val = select.value;
-        if(val && !chosenNovels.includes(val)) {
-            chosenNovels.push(val);
-            updateNovelCards();
-        }
-        select.value = "";
-    };
-
-    window.removeNovelCard = (name) => {
-        chosenNovels = chosenNovels.filter(n => n !== name);
-        updateNovelCards();
-    };
-
-    function updateNovelCards() {
-        const list = document.getElementById('selected-novels-list');
-        const btn = document.getElementById('approved-btn');
-        list.innerHTML = "";
-        
-        chosenNovels.forEach(novel => {
-            const card = document.createElement('div');
-            card.className = 'novel-card-mini';
-            card.innerHTML = `${novel} <span class="remove-card" onclick="removeNovelCard('${novel}')">×</span>`;
-            list.appendChild(card);
-        });
-        btn.style.display = chosenNovels.length > 0 ? 'block' : 'none';
-    }
-
-    window.confirmAuthorAssignment = async () => {
-        await updateDoc(doc(db, "users", currentUser.uid), { 
-            role: 'author',
-            assignedNovels: chosenNovels 
-        });
-        alert("Author status approved and linked to author page.");
-    };
-
-    // -------------------------------------------------------------------------
-    // BACK TO ORIGINAL FIREBASE LOGIC
-    // -------------------------------------------------------------------------
+    window.handleModClick = () => { document.getElementById('mod-frame').style.display='block'; document.getElementById('author-main-ui').style.display='none'; };
+    window.confirmModAssignment = async () => { await updateDoc(doc(db,"users",currentUser.uid),{role:'mod'}); alert("Mod Assigned!"); };
+    window.handleAuthorClick = () => { document.getElementById('author-main-ui').style.display='block'; document.getElementById('mod-frame').style.display='none'; const d=document.getElementById('novel-dropdown'); d.innerHTML='<option value="">-- Choose --</option>'; allNovels.forEach(n=>d.innerHTML+=`<option value="${n.title}">${n.title}</option>`); };
+    window.selectNovelForAuthor = () => { const v=document.getElementById('novel-dropdown').value; if(v && !chosenNovels.includes(v)) { chosenNovels.push(v); updateNovelCards(); } document.getElementById('novel-dropdown').value=""; };
+    window.removeNovelCard = (n) => { chosenNovels = chosenNovels.filter(x=>x!==n); updateNovelCards(); };
+    function updateNovelCards() { const l=document.getElementById('selected-novels-list'); l.innerHTML=""; chosenNovels.forEach(n=>l.innerHTML+=`<div class="novel-card-mini">${n} <span class="remove-card" onclick="removeNovelCard('${n}')">×</span></div>`); document.getElementById('approved-btn').style.display=chosenNovels.length>0?'block':'none'; }
+    window.confirmAuthorAssignment = async () => { await updateDoc(doc(db,"users",currentUser.uid),{role:'author',assignedNovels:chosenNovels}); alert("Author Approved!"); };
 
     function startDailyTimer() {
-        const claimBtn = document.getElementById('claimBtn');
-        const timerTxt = document.getElementById('claimTimer');
         if(window.claimTimerInt) clearInterval(window.claimTimerInt);
         window.claimTimerInt = setInterval(() => {
-            if(!userData) return;
-            const nextClaimTime = (Number(userData.lastClaim) || 0) + 86400000;
-            const now = Date.now();
-            const diff = nextClaimTime - now;
-            if (diff <= 0) {
-                claimBtn.disabled = false; claimBtn.innerText = "CLAIM REWARD"; timerTxt.innerText = "Reward Ready!";
-            } else {
-                claimBtn.disabled = true;
-                const h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
-                claimBtn.innerText = `LOCKED (${h}h ${m}m ${s}s)`;
-                timerTxt.innerText = `Next claim in: ${h}:${m}:${s}`;
-            }
+            const next = (userData.lastClaim || 0) + 86400000, now = Date.now(), diff = next - now;
+            const btn = document.getElementById('claimBtn'), txt = document.getElementById('claimTimer');
+            if(diff<=0) { btn.disabled=false; btn.innerText="CLAIM REWARD"; txt.innerText="Ready!"; }
+            else { btn.disabled=true; const h=Math.floor(diff/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000); btn.innerText=`LOCKED (${h}h)`; txt.innerText=`Next: ${h}:${m}:${s}`; }
         }, 1000);
     }
 
-    window.toggleEditName = () => {
-        const div = document.getElementById('editNameDiv');
-        div.style.display = div.style.display === 'none' ? 'block' : 'none';
-    };
-    
-    window.updateUsername = async () => {
-        const newName = document.getElementById('newName').value;
-        if(newName) {
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { name: newName });
-            alert("Name updated!"); toggleEditName();
-        }
-    };
-    
-    window.handleClaim = async () => {
-        const vip = getVipInfo(userData.spent);
-        const amt = claimTable[vip.lv][(Number(userData.claimCount) || 0) % 7];
-        await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(amt), lastClaim: Date.now(), claimCount: increment(1) });
-    };
+    window.toggleEditName = () => { const d=document.getElementById('editNameDiv'); d.style.display=d.style.display==='none'?'block':'none'; };
+    window.updateUsername = async () => { const n=document.getElementById('newName').value; if(n) { await updateDoc(doc(db,"users",currentUser.uid),{name:n}); alert("Updated!"); toggleEditName(); } };
+    window.handleClaim = async () => { const vip=getVipInfo(userData.spent); await updateDoc(doc(db,"users",currentUser.uid),{coins:increment(claimTable[vip.lv][userData.claimCount%7]),lastClaim:Date.now(),claimCount:increment(1)}); };
 
     window.sendChat = async () => {
-        const msg = document.getElementById('chatInput').value;
-        if(!msg) return;
-        const vip = getVipInfo(userData.spent);
-        const isMod = userData.role === 'mod';
-        await addDoc(collection(db, "chat"), {
-            name: userData.name, text: msg, nCls: vip.nCls, fCls: isMod ? "mod-frame" : vip.fCls, vName: vip.name, vCls: vip.cls, date: serverTimestamp()
-        });
-        document.getElementById('chatInput').value = "";
+        const txt=document.getElementById('chatInput').value; if(!txt) return;
+        const vip=getVipInfo(userData.spent);
+        await addDoc(collection(db,"chat"),{name:userData.name,text:txt,nCls:vip.nCls,fCls:userData.role==='mod'?"mod-frame":vip.fCls,vName:vip.name,vCls:vip.cls,date:serverTimestamp()});
+        document.getElementById('chatInput').value="";
     };
-
-    onSnapshot(query(collection(db, "chat"), orderBy("date", "desc"), limit(40)), (snap) => {
-        const box = document.getElementById('chatBox'); box.innerHTML = "";
-        snap.forEach(d => {
-            const m = d.data();
-            box.innerHTML += `<div class="chat-msg ${m.fCls}">
-                <span class="vip-tag ${m.vCls || 't0'}">${m.vName || 'Newbie'}</span>
-                <span class="${m.nCls}">${m.name || 'Null'}</span>: ${m.text}
-            </div>`;
-        });
+    onSnapshot(query(collection(db,"chat"),orderBy("date","desc"),limit(40)),(snap)=>{
+        const b=document.getElementById('chatBox'); b.innerHTML="";
+        snap.forEach(d=>{const m=d.data(); b.innerHTML+=`<div class="chat-msg ${m.fCls}"><span class="vip-tag ${m.vCls}">${m.vName}</span><span class="${m.nCls}">${m.name}</span>: ${m.text}</div>`;});
     });
 
-    async function autoCleanOldChats() {
-        const oneDayAgo = new Date(Date.now() - 86400000);
-        const q = query(collection(db, "chat"), where("date", "<", oneDayAgo));
-        const oldDocs = await getDocs(q);
-        oldDocs.forEach(async (d) => { await deleteDoc(doc(db, "chat", d.id)); });
-    }
+    async function autoCleanOldChats() { const old=await getDocs(query(collection(db,"chat"),where("date","<",new Date(Date.now()-86400000)))); old.forEach(d=>deleteDoc(doc(db,"chat",d.id))); }
 
-    onSnapshot(collection(db, "novels"), (snap) => {
-        allNovels = [];
-        const genres = new Set();
-        snap.forEach(docSnap => { 
-            const d = { id: docSnap.id, ...docSnap.data() };
-            allNovels.push(d); 
-            novelCache[d.id] = d; 
-            if(d.genre) genres.add(d.genre);
-        });
-        updateGenreBar(genres);
-        renderNovels(allNovels); 
-        renderHomeSections();
-        updateAdminNovelLists();
+    onSnapshot(collection(db,"novels"),(snap)=>{
+        allNovels=[]; const gs=new Set();
+        snap.forEach(d=>{const n={id:d.id,...d.data()}; allNovels.push(n); novelCache[n.id]=n; if(n.genre) gs.add(n.genre);});
+        updateGenreBar(gs); renderNovels(allNovels); renderHomeSections(); updateAdminNovelLists();
     });
 
     function renderHomeSections() {
-        const topScroll = document.getElementById('topNovelScroll');
-        const completeScroll = document.getElementById('completedNovelScroll');
-        const completeGrid = document.getElementById('completedGrid');
-        const compGenreBar = document.getElementById('completedGenreBar');
-        
-        topScroll.innerHTML = ""; completeScroll.innerHTML = ""; completeGrid.innerHTML = "";
-        const compGenres = new Set();
-
-        allNovels.forEach(n => {
-            const sections = n.sections || (n.section ? [n.section] : []);
-            let badges = "";
-            let isTop = sections.includes('top');
-            let isComp = sections.includes('completed');
-
-            if(isTop) badges += `<div class="novel-tag tag-top">TOP ${n.topRank}</div>`;
-            if(isComp) badges += `<div class="novel-tag tag-complete" style="${isTop ? 'top:40px' : ''}">COMPLETE</div>`;
-
-            const cardHtml = (isH) => `
-                <div class="n-card ${isH ? 'h-card' : ''}" onclick="openNovel('${n.id}')">
-                    ${badges}
-                    <div class="view-count">👁️ ${n.views || 0}</div>
-                    <img src="${n.cover}">
-                    <div class="n-card-title">${n.title}</div>
-                </div>`;
-
-            if(isTop) topScroll.innerHTML += cardHtml(true);
-            if(isComp) {
-                completeScroll.innerHTML += cardHtml(true);
-                completeGrid.innerHTML += cardHtml(false);
-                if(n.genre) compGenres.add(n.genre);
-            }
+        const ts=document.getElementById('topNovelScroll'), cs=document.getElementById('completedNovelScroll'), cg=document.getElementById('completedGrid'), cgb=document.getElementById('completedGenreBar');
+        ts.innerHTML=""; cs.innerHTML=""; cg.innerHTML=""; const cgs=new Set();
+        allNovels.forEach(n=>{
+            const sc=n.sections||[]; const isT=sc.includes('top'), isC=sc.includes('completed');
+            let b=isT?`<div class="novel-tag tag-top">TOP ${n.topRank}</div>`:"";
+            if(isC) b+=`<div class="novel-tag tag-complete" style="${isT?'top:40px':''}">COMPLETE</div>`;
+            const h=(isH)=>`<div class="n-card ${isH?'h-card':''}" onclick="openNovel('${n.id}')">${b}<div class="view-count">👁️ ${n.views||0}</div><img src="${n.cover}"><div class="n-card-title">${n.title}</div></div>`;
+            if(isT) ts.innerHTML+=h(true); if(isC) { cs.innerHTML+=h(true); cg.innerHTML+=h(false); if(n.genre) cgs.add(n.genre); }
         });
-
-        compGenreBar.innerHTML = `<div class="genre-tab active" onclick="filterCompletedByGenre('All')">ALL</div>`;
-        compGenres.forEach(g => {
-            compGenreBar.innerHTML += `<div class="genre-tab" onclick="filterCompletedByGenre('${g}')">${g.toUpperCase()}</div>`;
-        });
+        cgb.innerHTML='<div class="genre-tab active" onclick="filterCompletedByGenre(\'All\')">ALL</div>';
+        cgs.forEach(g=>cgb.innerHTML+=`<div class="genre-tab" onclick="filterCompletedByGenre('${g}')">${g.toUpperCase()}</div>`);
     }
 
     window.filterCompletedByGenre = (g) => {
-        const grid = document.getElementById('completedGrid'); grid.innerHTML = "";
-        const filtered = g === 'All' ? allNovels.filter(n => (n.sections || []).includes('completed')) : allNovels.filter(n => (n.sections || []).includes('completed') && n.genre === g);
-        
-        filtered.forEach(n => {
-            const sections = n.sections || [];
-            let isTop = sections.includes('top');
-            let badges = `<div class="novel-tag tag-complete">COMPLETE</div>`;
-            if(isTop) badges += `<div class="novel-tag tag-top" style="top:40px">TOP ${n.topRank}</div>`;
-
-            grid.innerHTML += `
-                <div class="n-card" onclick="openNovel('${n.id}')">
-                    ${badges}
-                    <div class="view-count">👁️ ${n.views || 0}</div>
-                    <img src="${n.cover}">
-                    <div class="n-card-title">${n.title}</div>
-                </div>`;
+        const cg=document.getElementById('completedGrid'); cg.innerHTML="";
+        allNovels.filter(n=>(n.sections||[]).includes('completed') && (g==='All'||n.genre===g)).forEach(n=>{
+            cg.innerHTML+=`<div class="n-card" onclick="openNovel('${n.id}')"><div class="novel-tag tag-complete">COMPLETE</div><img src="${n.cover}"><div class="n-card-title">${n.title}</div></div>`;
         });
     };
-
     window.showCompletedPage = () => showView('completed-view');
-
-    function updateGenreBar(genres) {
-        const bar = document.getElementById('genreFilterBar');
-        bar.innerHTML = `<div class="genre-tab active" onclick="filterByGenre('All')">ALL SAGAS</div>`;
-        genres.forEach(g => {
-            bar.innerHTML += `<div class="genre-tab" onclick="filterByGenre('${g}')">${g.toUpperCase()}</div>`;
-        });
-    }
-
-    window.filterByGenre = (g) => {
-        document.querySelectorAll('.genre-tab').forEach(t => t.classList.remove('active'));
-        if(event) event.target.classList.add('active');
-        const filtered = g === 'All' ? allNovels : allNovels.filter(n => n.genre === g);
-        renderNovels(filtered);
-    };
-
-    function renderNovels(list) {
-        const grid = document.getElementById('novelGrid'); grid.innerHTML = "";
-        list.forEach(n => {
-            const sections = n.sections || (n.section ? [n.section] : []);
-            let badges = "";
-            let isTop = sections.includes('top');
-            let isComp = sections.includes('completed');
-            if(isTop) badges += `<div class="novel-tag tag-top">TOP ${n.topRank}</div>`;
-            if(isComp) badges += `<div class="novel-tag tag-complete" style="${isTop ? 'top:40px' : ''}">COMPLETE</div>`;
-            
-            grid.innerHTML += `
-                <div class="n-card" onclick="openNovel('${n.id}')">
-                    ${badges}
-                    <div class="view-count">👁️ ${n.views || 0}</div>
-                    <img src="${n.cover}">
-                    <div class="n-card-title">${n.title}</div>
-                </div>`;
-        });
-    }
-
-    window.search = () => {
-        const q = document.getElementById('searchBar').value.toLowerCase();
-        const filtered = allNovels.filter(n => n.title.toLowerCase().includes(q) || n.author.toLowerCase().includes(q));
-        renderNovels(filtered);
-    };
+    function updateGenreBar(gs) { const b=document.getElementById('genreFilterBar'); b.innerHTML='<div class="genre-tab active" onclick="filterByGenre(\'All\')">ALL SAGAS</div>'; gs.forEach(g=>b.innerHTML+=`<div class="genre-tab" onclick="filterByGenre('${g}')">${g.toUpperCase()}</div>`); }
+    window.filterByGenre = (g) => { renderNovels(g==='All'?allNovels:allNovels.filter(n=>n.genre===g)); };
+    function renderNovels(l) { const g=document.getElementById('novelGrid'); g.innerHTML=""; l.forEach(n=>g.innerHTML+=`<div class="n-card" onclick="openNovel('${n.id}')"><img src="${n.cover}"><div class="n-card-title">${n.title}</div></div>`); }
+    window.search = () => { const q=document.getElementById('searchBar').value.toLowerCase(); renderNovels(allNovels.filter(n=>n.title.toLowerCase().includes(q))); };
 
     function updateAdminNovelLists() {
-        const sel = document.getElementById('anSelector'); if(sel) sel.innerHTML = "";
-        const vs = document.getElementById('vsAnalyticsContent'); if(vs) vs.innerHTML = `<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; font-weight:bold; margin-bottom:10px; font-size:0.7rem;"><span>Novel</span><span>Views</span><span>Sales/Life</span></div>`;
-        const admNovelEdit = document.getElementById('adminNovelEditList'); if(admNovelEdit) admNovelEdit.innerHTML = "";
-        allNovels.forEach(n => {
-            if(sel) sel.innerHTML += `<option value="${n.id}">${n.title}</option>`;
-            if(vs) vs.innerHTML += `<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; font-size:0.75rem; border-bottom:1px solid #161b22; padding:5px 0;"><span style="color:var(--gold)">${n.title}</span><span>${n.views || 0}</span><span>🪙${n.sales || 0} / L:${n.lifetimeSales || 0}</span></div>`;
-            if(admNovelEdit) admNovelEdit.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px; font-size:0.8rem;"><span>${n.title}</span><div><button onclick="editNovelData('${n.id}')" style="color:var(--gold); background:none; border:none; cursor:pointer;">Edit</button> | <button onclick="deleteNovelData('${n.id}')" style="color:var(--red); background:none; border:none; cursor:pointer;">Del</button></div></div>`;
+        const s=document.getElementById('anSelector'), v=document.getElementById('vsAnalyticsContent'), e=document.getElementById('adminNovelEditList');
+        if(s) s.innerHTML=""; if(v) v.innerHTML=""; if(e) e.innerHTML="";
+        allNovels.forEach(n=>{
+            if(s) s.innerHTML+=`<option value="${n.id}">${n.title}</option>`;
+            if(v) v.innerHTML+=`<div style="font-size:0.7rem;">${n.title}: 👁️${n.views||0} | 🪙${n.sales||0}</div>`;
+            if(e) e.innerHTML+=`<div style="font-size:0.8rem;">${n.title} <button onclick="editNovelData('${n.id}')">Edit</button></div>`;
         });
     }
 
     window.openNovel = async (id) => {
-        currentNid = id;
-        showView('detail-view'); 
-        const n = novelCache[id];
-        if(!n) return;
-        
-        const isBookmarked = userData.bookmarks && userData.bookmarks.includes(id);
-
-        document.getElementById('novelInfo').innerHTML = `
-            <div style="position:relative">
-                <img src="${n.cover}" style="width:100%; height:280px; object-fit:cover; border-radius:20px; border: 1px solid var(--gold);">
-                <button onclick="toggleBookmark('${id}')" style="position:absolute; top:15px; right:15px; background:rgba(0,0,0,0.6); border:1px solid var(--gold); color:var(--gold); padding:8px; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:1.2rem;">
-                    🔖
-                </button>
-            </div>
-            <h1 style="color:var(--gold); margin-top:20px;">${n.title}</h1>
-            <div style="display:flex; gap:15px; color:var(--text-dim); font-size:0.8rem; margin-bottom:15px;">
-                <span>👤 ${n.author}</span>
-                <span>👁️ ${n.views || 0} Views</span>
-            </div>
-            <p style="line-height:1.6;">${n.desc}</p>
-            <div id="unlockActionBtn">...</div>
-        `;
-        const lifeRef = doc(db, "users", currentUser.uid, "unlocked_novels", id);
-        const lifeSnap = await getDoc(lifeRef);
-        const isLife = lifeSnap.exists();
-        document.getElementById('unlockActionBtn').innerHTML = isLife 
-            ? `<button class="btn" style="width:100%; background:var(--green); color:white;">LIFETIME UNLOCKED ✅</button>` 
-            : `<button class="btn btn-gold" style="width:100%;" onclick="buyFullAccess('${id}', ${Number(n.vipPrice)})">UNLOCK ALL (🪙${n.vipPrice})</button>`;
-        loadChapters(id, isLife); 
-        loadReviews(id);
-        updateDoc(doc(db, "novels", id), { views: increment(1) });
+        currentNid=id; showView('detail-view'); const n=novelCache[id];
+        document.getElementById('novelInfo').innerHTML=`<div style="position:relative"><img src="${n.cover}" style="width:100%;height:280px;object-fit:cover;border-radius:20px;border:1px solid var(--gold);"><button onclick="toggleBookmark('${id}')" style="position:absolute;top:15px;right:15px;background:rgba(0,0,0,0.6);border:1px solid var(--gold);color:var(--gold);padding:8px;border-radius:50%;width:40px;height:40px;">🔖</button></div><h1 style="color:var(--gold)">${n.title}</h1><p>${n.desc}</p><div id="unlockActionBtn"></div>`;
+        const lSnap=await getDoc(doc(db,"users",currentUser.uid,"unlocked_novels",id));
+        document.getElementById('unlockActionBtn').innerHTML=lSnap.exists()?'<button class="btn" style="background:var(--green);color:white;width:100%;">LIFETIME ✅</button>':`<button class="btn btn-gold" style="width:100%;" onclick="buyFullAccess('${id}',${n.vipPrice})">UNLOCK ALL (🪙${n.vipPrice})</button>`;
+        loadChapters(id,lSnap.exists()); loadReviews(id); updateDoc(doc(db,"novels",id),{views:increment(1)});
     };
 
-    window.toggleBookmark = async (id) => {
-        let list = userData.bookmarks || [];
-        if(list.includes(id)) { list = list.filter(item => item !== id); alert("Removed!"); }
-        else { list.push(id); alert("Added!"); }
-        await updateDoc(doc(db, "users", currentUser.uid), { bookmarks: list });
-        loadBookmarks();
-    };
+    window.toggleBookmark = async (id) => { let b=userData.bookmarks||[]; if(b.includes(id)) b=b.filter(x=>x!==id); else b.push(id); await updateDoc(doc(db,"users",currentUser.uid),{bookmarks:b}); loadBookmarks(); };
+    async function loadBookmarks() { const g=document.getElementById('bookmarkGrid'); g.innerHTML=""; (userData.bookmarks||[]).forEach(id=>{ const n=novelCache[id]; if(n) g.innerHTML+=`<div class="n-card" onclick="openNovel('${n.id}')"><img src="${n.cover}" style="height:150px;"><div class="n-card-title">${n.title}</div></div>`; }); }
 
-    async function loadBookmarks() {
-        const grid = document.getElementById('bookmarkGrid'); 
-        if(!grid) return; grid.innerHTML = "";
-        if(!userData.bookmarks || userData.bookmarks.length === 0) return;
-        userData.bookmarks.forEach(id => {
-            const n = novelCache[id];
-            if(n) grid.innerHTML += `<div class="n-card" onclick="openNovel('${n.id}')"><img src="${n.cover}" style="height:150px;"><div class="n-card-title" style="font-size:0.7rem;">${n.title}</div></div>`;
-        });
+    async function loadChapters(nid,isL,start=1) {
+        const l=document.getElementById('chapterList'), b=document.getElementById('chapterRangeBar'); l.innerHTML="Loading...";
+        const last=await getDocs(query(collection(db,"novels",nid,"chapters"),orderBy("num","desc"),limit(1)));
+        const total=last.empty?0:last.docs[0].data().num; b.innerHTML="";
+        for(let i=1;i<=total;i+=100){ b.innerHTML+=`<div class="page-btn ${start===i?'active':''}" onclick="loadChapters('${nid}',${isL},${i})">${i}-${Math.min(i+99,total)}</div>`; }
+        const snap=await getDocs(query(collection(db,"novels",nid,"chapters"),where("num",">=",start),where("num","<",start+100),orderBy("num","asc")));
+        const unl=await getDocs(collection(db,"users",currentUser.uid,"unlocked_chapters"));
+        const uIds=unl.docs.map(d=>d.id); l.innerHTML="";
+        snap.forEach(cd=>{ const c=cd.data(); const isU=uIds.includes(cd.id)||isL||c.cost===0; l.innerHTML+=`<div class="card" style="display:flex;justify-content:space-between" onclick="readChapter('${nid}','${cd.id}',${c.cost},${c.num})"><span>Ch ${c.num}: ${c.title}</span><span style="color:${isU?'var(--green)':'var(--gold)'}">${isU?'READ':'🪙 '+c.cost}</span></div>`; });
     }
 
-    async function loadChapters(nid, isLife, rangeStart = 1) {
-        const list = document.getElementById('chapterList'); 
-        const rBar = document.getElementById('chapterRangeBar');
-        list.innerHTML = `<p id="chLoading">Loading Sagacity...</p>`;
-        
-        const lastSnap = await getDocs(query(collection(db, "novels", nid, "chapters"), orderBy("num", "desc"), limit(1)));
-        const total = lastSnap.empty ? 0 : lastSnap.docs[0].data().num;
-
-        rBar.innerHTML = "";
-        for(let i=1; i<=total; i+=100) {
-            let end = (i+99 > total) ? total : i+99;
-            rBar.innerHTML += `<div class="page-btn ${rangeStart === i ? 'active' : ''}" onclick="loadChapters('${nid}',${isLife},${i})">${i}-${end}</div>`;
-        }
-
-        const snap = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", ">=", rangeStart), where("num", "<", rangeStart + 100), orderBy("num", "asc")));
-        const chUnlockedSnap = await getDocs(collection(db, "users", currentUser.uid, "unlocked_chapters"));
-        const unlockedIds = chUnlockedSnap.docs.map(d => d.id);
-        
-        if(document.getElementById('chLoading')) document.getElementById('chLoading').remove();
-
-        snap.forEach(cd => {
-            const c = cd.data();
-            const isChUnlocked = unlockedIds.includes(cd.id);
-            let label = `<span style="color:var(--gold)">🪙 ${c.cost === 0 ? 'FREE' : c.cost}</span>`;
-            if (isLife || isChUnlocked || c.cost === 0) label = `<span style="color:var(--green)">READ</span>`;
-            
-            const div = document.createElement('div');
-            div.className = "card"; div.style.display = "flex"; div.style.justifyContent = "space-between";
-            div.innerHTML = `<span>Ch ${c.num}: ${c.title}</span>${label}`;
-            div.onclick = () => readChapter(nid, cd.id, Number(c.cost), Number(c.num));
-            list.appendChild(div);
-        });
-    }
-
-    window.readChapter = async (nid, cid, cost, num) => {
-        const uSnap = await getDoc(doc(db, "users", currentUser.uid, "unlocked_chapters", cid));
-        const lSnap = await getDoc(doc(db, "users", currentUser.uid, "unlocked_novels", nid));
-        const alreadyPurchased = uSnap.exists() || lSnap.exists();
-
-        if(alreadyPurchased || cost === 0) {
-            showView('reader-view');
-            const cSnap = await getDoc(doc(db, "novels", nid, "chapters", cid));
-            renderReader(cSnap.data(), num, nid);
-        } else {
-            if(Number(userData.coins) < cost) return alert("Low coins!");
-            if(confirm(`Unlock Ch ${num} for 🪙${cost}?`)) {
-                await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(-cost), spent: increment(cost) });
-                await setDoc(doc(db, "users", currentUser.uid, "unlocked_chapters", cid), { date: serverTimestamp() });
-                readChapter(nid, cid, cost, num);
-            }
-        }
+    window.readChapter = async (nid,cid,cost,num) => {
+        const u=await getDoc(doc(db,"users",currentUser.uid,"unlocked_chapters",cid)), l=await getDoc(doc(db,"users",currentUser.uid,"unlocked_novels",nid));
+        if(u.exists()||l.exists()||cost===0) { showView('reader-view'); const c=await getDoc(doc(db,"novels",nid,"chapters",cid)); renderReader(c.data(),num,nid); }
+        else { if(userData.coins<cost) return alert("Low coins!"); if(confirm(`Unlock Ch ${num}?`)) { await updateDoc(doc(db,"users",currentUser.uid),{coins:increment(-cost),spent:increment(cost)}); await setDoc(doc(db,"users",currentUser.uid,"unlocked_chapters",cid),{date:serverTimestamp()}); readChapter(nid,cid,cost,num); } }
     };
 
-    function renderReader(c, num, nid) {
-        document.getElementById('rChNum').innerText = "CHAPTER " + num;
-        document.getElementById('rChTitle').innerText = c.title;
-        document.getElementById('rContent').innerText = c.content;
-        window.scrollTo(0,0); 
-        updateReaderNav(nid, num);
+    function renderReader(c,num,nid) { document.getElementById('rChNum').innerText="CHAPTER "+num; document.getElementById('rChTitle').innerText=c.title; document.getElementById('rContent').innerText=c.content; window.scrollTo(0,0); updateReaderNav(nid,num); }
+    async function updateReaderNav(nid,num) {
+        const nxt=await getDocs(query(collection(db,"novels",nid,"chapters"),where("num","==",num+1),limit(1)));
+        const prv=await getDocs(query(collection(db,"novels",nid,"chapters"),where("num","==",num-1),limit(1)));
+        document.getElementById('nextBtn').onclick=()=>nxt.empty?alert("Last"):readChapter(nid,nxt.docs[0].id,nxt.docs[0].data().cost,num+1);
+        document.getElementById('prevBtn').onclick=()=>prv.empty?alert("First"):readChapter(nid,prv.docs[0].id,prv.docs[0].data().cost,num-1);
     }
 
-    async function updateReaderNav(nid, num) {
-        const next = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", "==", Number(num) + 1), limit(1)));
-        const prev = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", "==", Number(num) - 1), limit(1)));
-        document.getElementById('nextBtn').onclick = () => next.empty ? alert("Last Chapter") : readChapter(nid, next.docs[0].id, next.docs[0].data().cost, Number(num) + 1);
-        document.getElementById('prevBtn').onclick = () => prev.empty ? alert("First Chapter") : readChapter(nid, prev.docs[0].id, prev.docs[0].data().cost, Number(num) - 1);
-    }
+    window.buyFullAccess = async (nid,p) => { if(userData.coins<p) return alert("Low coins!"); if(confirm("Unlock All?")) { await updateDoc(doc(db,"users",currentUser.uid),{coins:increment(-p),spent:increment(p)}); await setDoc(doc(db,"users",currentUser.uid,"unlocked_novels",nid),{date:serverTimestamp()}); openNovel(nid); } };
+    async function loadReviews(nid) { const s=await getDocs(collection(db,"novels",nid,"reviews")), b=document.getElementById('reviewList'); b.innerHTML=""; s.forEach(d=>{ const r=d.data(); b.innerHTML+=`<div style="font-size:0.8rem;"><b>${r.name}</b>: ${r.text}</div>`; }); }
+    window.postReview = async () => { const t=document.getElementById('revText').value; if(t) { await addDoc(collection(db,"novels",currentNid,"reviews"),{name:userData.name,text:t,rate:document.getElementById('revRate').value,date:serverTimestamp()}); document.getElementById('revText').value=""; loadReviews(currentNid); } };
 
-    window.buyFullAccess = async (nid, price) => {
-        if(Number(userData.coins) < price) return alert("Low coins!");
-        if(confirm(`Unlock All for 🪙${price}?`)) {
-            await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(-price), spent: increment(price) });
-            await updateDoc(doc(db, "novels", nid), { lifetimeSales: increment(price) });
-            await setDoc(doc(db, "users", currentUser.uid, "unlocked_novels", nid), { date: serverTimestamp() });
-            openNovel(nid);
-        }
-    };
-
-    async function loadReviews(nid) {
-        const snap = await getDocs(collection(db, "novels", nid, "reviews"));
-        const box = document.getElementById('reviewList'); box.innerHTML = "";
-        snap.forEach(d => {
-            const r = d.data();
-            box.innerHTML += `<div style="padding:10px; border-bottom:1px solid #161b22; font-size:0.8rem;"><b style="color:var(--gold)">${r.name}</b> (${r.rate}⭐): ${r.text}</div>`;
-        });
-    }
-
-    window.postReview = async () => {
-        const text = document.getElementById('revText').value;
-        const rate = document.getElementById('revRate').value;
-        if(!text) return;
-        await addDoc(collection(db, "novels", currentNid, "reviews"), { name: userData.name, text, rate, date: serverTimestamp() });
-        document.getElementById('revText').value = ""; loadReviews(currentNid);
-    };
-
-    const coinPackages = [
-        {amt: 1000, bonus: 10}, {amt: 2000, bonus: 50}, {amt: 5000, bonus: 150},
-        {amt: 10000, bonus: 350}, {amt: 30000, bonus: 1000}, {amt: 50000, bonus: 2500}
-    ];
-
-    const packageGrid = document.getElementById('packageGrid');
-    coinPackages.forEach(p => { 
-        packageGrid.innerHTML += `<div class="card" onclick="openTopup(${p.amt})" style="text-align:center; cursor:pointer; background:#161b22; border:1px solid var(--gold);">🪙 ${p.amt.toLocaleString()}<br><small style="color:var(--green)">+${p.bonus} Bonus</small></div>`; 
-    });
-
-    window.openTopup = (amt) => { selectedTopupAmt = Number(amt); document.getElementById('topupForm').style.display = 'block'; };
-
-    window.submitTopup = async () => {
-        const tid = document.getElementById('tpID').value;
-        if(tid.length < 6) return alert("Valid TID needed");
-        await addDoc(collection(db, "transactions"), { uid: currentUser.uid, userName: userData.name, amount: Number(selectedTopupAmt), tid, sender: document.getElementById('tpName').value, status: "Pending", type: "Topup", date: serverTimestamp() });
-        alert("Submitted!"); document.getElementById('topupForm').style.display = 'none';
-    };
+    const coinPackages = [{amt:1000,bonus:10},{amt:2000,bonus:50},{amt:5000,bonus:150},{amt:10000,bonus:350},{amt:30000,bonus:1000},{amt:50000,bonus:2500}];
+    coinPackages.forEach(p=>document.getElementById('packageGrid').innerHTML+=`<div class="card" onclick="openTopup(${p.amt})" style="text-align:center;">🪙 ${p.amt}<br><small>+${p.bonus} Bonus</small></div>`);
+    window.openTopup = (a) => { selectedTopupAmt=a; document.getElementById('topupForm').style.display='block'; };
+    window.submitTopup = async () => { const tid=document.getElementById('tpID').value; if(tid.length<6) return alert("Invalid TID"); await addDoc(collection(db,"transactions"),{uid:currentUser.uid,userName:userData.name,amount:selectedTopupAmt,tid,sender:document.getElementById('tpName').value,status:"Pending",type:"Topup",date:serverTimestamp()}); alert("Submitted!"); document.getElementById('topupForm').style.display='none'; };
 
     window.processTransfer = async () => {
-        const email = document.getElementById('tfEmail').value, amt = Number(document.getElementById('tfAmt').value) || 0;
-        if(Number(userData.coins) < amt) return alert("Not enough coins!");
-        const q = query(collection(db, "users"), where("email", "==", email), limit(1));
-        const s = await getDocs(q); if(s.empty) return alert("User not found!");
-        await runTransaction(db, async (tx) => {
-            const sR = doc(db, "users", currentUser.uid), rR = doc(db, "users", s.docs[0].id);
-            tx.update(sR, { coins: increment(-amt) }); tx.update(rR, { coins: increment(amt) });
-        });
-        await addDoc(collection(db, "transactions"), { uid: currentUser.uid, type: "Transfer Out", amount: amt, status: "Approved", date: serverTimestamp() });
-        alert("Success!");
+        const e=document.getElementById('tfEmail').value, a=Number(document.getElementById('tfAmt').value); if(userData.coins<a) return alert("Low coins!");
+        const s=await getDocs(query(collection(db,"users"),where("email","==",e),limit(1))); if(s.empty) return alert("Not found");
+        await runTransaction(db,async(tx)=>{ tx.update(doc(db,"users",currentUser.uid),{coins:increment(-a)}); tx.update(doc(db,"users",s.docs[0].id),{coins:increment(a)}); });
+        await addDoc(collection(db,"transactions"),{uid:currentUser.uid,type:"Transfer Out",amount:a,status:"Approved",date:serverTimestamp()}); alert("Success!");
     };
 
-    window.redeemGift = async () => {
-        const code = document.getElementById('giftCodeInput').value.trim();
-        const q = query(collection(db, "gifts"), where("code", "==", code), where("used", "==", false), limit(1));
-        const s = await getDocs(q); if(s.empty) return alert("Invalid Code!");
-        const giftAmt = Number(s.docs[0].data().amount) || 0;
-        await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(giftAmt) });
-        await updateDoc(doc(db, "gifts", s.docs[0].id), { used: true, usedBy: userData.email });
-        alert("Redေemေd!");
-    };
+    window.redeemGift = async () => { const c=document.getElementById('giftCodeInput').value.trim(); const s=await getDocs(query(collection(db,"gifts"),where("code","==",c),where("used","==",false),limit(1))); if(s.empty) return alert("Invalid"); await updateDoc(doc(db,"users",currentUser.uid),{coins:increment(s.docs[0].data().amount)}); await updateDoc(doc(db,"gifts",s.docs[0].id),{used:true,usedBy:userData.email}); alert("Redeemed!"); };
 
-    window.openAdminTab = (id) => {
-        document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
-        document.getElementById(id).style.display = 'block';
-        if(id === 'tab-users') { userListLastVisible = null; loadAdminUserList(); }
-    };
-
+    window.openAdminTab = (id) => { document.querySelectorAll('.admin-tab').forEach(t=>t.style.display='none'); document.getElementById(id).style.display='block'; if(id==='tab-users') { userListLastVisible=null; loadAdminUserList(); } };
     async function loadAdminUserList() {
-        const searchVal = document.getElementById('admUserSearch').value.trim();
-        let q;
-        if(searchVal) {
-            q = query(collection(db, "users"), where("email", "==", searchVal), limit(300));
-        } else {
-            q = userListLastVisible ? query(collection(db, "users"), orderBy("email"), startAfter(userListLastVisible), limit(300)) : query(collection(db, "users"), orderBy("email"), limit(300));
-        }
-        
-        const snap = await getDocs(q);
-        const body = document.getElementById('admUserListBody');
-        if(!userListLastVisible || searchVal) body.innerHTML = "";
-        
-        snap.forEach(d => {
-            const u = d.data();
-            body.innerHTML += `<tr>
-                <td>${u.email}<br><button onclick="toggleHideUser('${d.id}', ${u.isHidden || false})" style="font-size:0.6rem; background:none; border:1px solid #444; color:#888; border-radius:3px; cursor:pointer;">${u.isHidden ? 'Unhide' : 'Hide'}</button></td>
-                <td>
-                    <select onchange="updateProfitRate('${d.id}', this.value)" style="padding:2px; font-size:0.7rem; background:#161b22; color:white; border:1px solid #30363d;">
-                        <option value="0.5" ${u.profitRate == 0.5 ? 'selected' : ''}>50%</option>
-                        <option value="0.6" ${u.profitRate == 0.6 ? 'selected' : ''}>60%</option>
-                        <option value="0.7" ${u.profitRate == 0.7 ? 'selected' : ''}>70%</option>
-                    </select>
-                </td>
-                <td>
-                    <button onclick="openExternal('Author.html')" style="background:var(--purple); font-size:0.6rem; padding:4px; border:none; border-radius:4px; color:white; cursor:pointer;">Author</button>
-                    <button onclick="openExternal('Mod.html')" style="background:var(--red); font-size:0.6rem; padding:4px; border:none; border-radius:4px; color:white; cursor:pointer;">Mod</button>
-                </td></tr>`;
-        });
-        
-        userListLastVisible = snap.docs[snap.docs.length - 1];
-        const pag = document.getElementById('admUserPagination');
-        pag.innerHTML = snap.size === 300 ? `<button class="btn-gold" onclick="loadAdminUserList()">Load Next 300</button>` : "";
+        const q=userListLastVisible?query(collection(db,"users"),orderBy("email"),startAfter(userListLastVisible),limit(300)):query(collection(db,"users"),orderBy("email"),limit(300));
+        const s=await getDocs(q); const b=document.getElementById('admUserListBody'); if(!userListLastVisible) b.innerHTML="";
+        s.forEach(d=>{ const u=d.data(); b.innerHTML+=`<tr><td>${u.email}</td><td><select onchange="updateProfitRate('${d.id}',this.value)"><option value="0.5" ${u.profitRate==0.5?'selected':''}>50%</option><option value="0.7" ${u.profitRate==0.7?'selected':''}>70%</option></select></td><td><button onclick="toggleHideUser('${d.id}',${u.isHidden})">${u.isHidden?'Unhide':'Hide'}</button></td></tr>`; });
+        userListLastVisible=s.docs[s.docs.length-1]; document.getElementById('admUserPagination').innerHTML=s.size===300?'<button onclick="loadAdminUserList()">Next</button>':"";
     }
-
-    window.updateProfitRate = async (uid, rate) => { await updateDoc(doc(db, "users", uid), { profitRate: Number(rate) }); alert("Profit Updated!"); };
-    window.toggleHideUser = async (uid, current) => { await updateDoc(doc(db, "users", uid), { isHidden: !current }); loadAdminUserList(); };
-
-    window.openExternal = (url) => window.open(url, '_blank');
+    window.updateProfitRate=async(id,r)=>{await updateDoc(doc(db,"users",id),{profitRate:Number(r)});};
+    window.toggleHideUser=async(id,c)=>{await updateDoc(doc(db,"users",id),{isHidden:!c});loadAdminUserList();};
 
     async function loadAdminGlobalStats() {
-        onSnapshot(query(collection(db, "transactions"), where("status", "==", "Approved"), where("type", "==", "Topup")), (snap) => {
-            let total = 0; snap.forEach(d => total += (Number(d.data().amount) || 0));
-            document.getElementById('admTotalIncome').innerText = "🪙 " + total.toLocaleString();
-        });
-        onSnapshot(query(collection(db, "gifts"), where("used", "==", true)), (snap) => {
-            let total = 0; snap.forEach(d => total += (Number(d.data().amount) || 0));
-            document.getElementById('admTotalGiftUsed').innerText = "🪙 " + total.toLocaleString();
-        });
-        const uSnap = await getDocs(collection(db, "users"));
-        document.getElementById('totalUserCount').innerText = uSnap.size;
+        onSnapshot(query(collection(db,"transactions"),where("status","==","Approved"),where("type","==","Topup")),(snap)=>{let t=0;snap.forEach(d=>t+=d.data().amount);document.getElementById('admTotalIncome').innerText="🪙 "+t;});
+        const uS=await getDocs(collection(db,"users")); document.getElementById('totalUserCount').innerText=uS.size;
     }
 
     window.saveNovel = async () => {
-        const id = document.getElementById('anID').value;
-        const secs = Array.from(document.querySelectorAll('.sec-cb:checked')).map(c => c.value);
-        const data = { 
-            title: document.getElementById('anTit').value, 
-            genre: document.getElementById('anGenre').value, 
-            author: document.getElementById('anAut').value, 
-            cover: document.getElementById('anCov').value, 
-            desc: document.getElementById('anDes').value, 
-            vipPrice: Number(document.getElementById('anVipP').value) || 0,
-            sections: secs,
-            topRank: Number(document.getElementById('anTopRank').value) || 0
-        };
-        id ? await updateDoc(doc(db, "novels", id), data) : await addDoc(collection(db, "novels"), { ...data, views: 0, sales: 0, lifetimeSales: 0 });
-        alert("Saved!");
+        const id=document.getElementById('anID').value, sc=Array.from(document.querySelectorAll('.sec-cb:checked')).map(c=>c.value);
+        const d={title:document.getElementById('anTit').value,genre:document.getElementById('anGenre').value,author:document.getElementById('anAut').value,cover:document.getElementById('anCov').value,desc:document.getElementById('anDes').value,vipPrice:Number(document.getElementById('anVipP').value),sections:sc,topRank:Number(document.getElementById('anTopRank').value)};
+        id?await updateDoc(doc(db,"novels",id),d):await addDoc(collection(db,"novels"),{...d,views:0,sales:0,lifetimeSales:0}); alert("Saved!");
     };
-
-    window.editNovelData = async (id) => {
-        const snap = await getDoc(doc(db, "novels", id)), n = snap.data();
-        document.getElementById('anID').value = id; document.getElementById('anTit').value = n.title;
-        document.getElementById('anGenre').value = n.genre || "";
-        document.getElementById('anAut').value = n.author; document.getElementById('anCov').value = n.cover;
-        document.getElementById('anDes').value = n.desc; document.getElementById('anVipP').value = n.vipPrice;
-        document.getElementById('anTopRank').value = n.topRank || "";
-        const secs = n.sections || (n.section ? [n.section] : []);
-        document.querySelectorAll('.sec-cb').forEach(c => c.checked = secs.includes(c.value));
-    };
-
-    window.deleteNovelData = async (id) => { if(confirm("Delete?")) await deleteDoc(doc(db, "novels", id)); };
+    window.editNovelData=async(id)=>{const s=await getDoc(doc(db,"novels",id)),n=s.data();document.getElementById('anID').value=id;document.getElementById('anTit').value=n.title;document.getElementById('anAut').value=n.author;document.getElementById('anCov').value=n.cover;document.getElementById('anDes').value=n.desc;document.getElementById('anVipP').value=n.vipPrice;};
 
     window.loadAdminChapters = async () => {
-        const nid = document.getElementById('anSelector').value;
-        const snap = await getDocs(query(collection(db, "novels", nid, "chapters"), orderBy("num", "asc")));
-        const list = document.getElementById('adminChapterEditList'); list.innerHTML = "";
-        snap.forEach(cd => {
-            const c = cd.data();
-            list.innerHTML += `<div style="font-size:0.75rem; display:flex; justify-content:space-between; margin-bottom:5px;"><span>Ch ${c.num}: ${c.title}</span><div><button onclick="editChapterData('${cd.id}','${c.num}','${c.title}','${c.cost}')" style="color:var(--gold); background:none; border:none;">Edit</button> | <button onclick="deleteChapterData('${nid}','${cd.id}')" style="color:var(--red); background:none; border:none;">Del</button></div></div>`;
-        });
+        const nid=document.getElementById('anSelector').value, s=await getDocs(query(collection(db,"novels",nid,"chapters"),orderBy("num","asc")));
+        const l=document.getElementById('adminChapterEditList'); l.innerHTML="";
+        s.forEach(cd=>{ const c=cd.data(); l.innerHTML+=`<div>Ch ${c.num} <button onclick="editChapterData('${cd.id}',${c.num},'${c.title}','${c.cost}')">Edit</button></div>`; });
     };
-
-    window.editChapterData = async (cid, num, title, cost) => {
-        const nid = document.getElementById('anSelector').value;
-        document.getElementById('acID').value = cid; document.getElementById('acNum').value = num;
-        document.getElementById('acTit').value = title; document.getElementById('acCost').value = cost;
-        const cSnap = await getDoc(doc(db, "novels", nid, "chapters", cid));
-        if(cSnap.exists()) document.getElementById('acCon').value = cSnap.data().content;
-    };
-
-    window.saveChapter = async () => {
-        const nid = document.getElementById('anSelector').value, cid = document.getElementById('acID').value;
-        const data = { num: Number(document.getElementById('acNum').value) || 0, title: document.getElementById('acTit').value, content: document.getElementById('acCon').value, cost: Number(document.getElementById('acCost').value) || 0 };
-        cid ? await updateDoc(doc(db, "novels", nid, "chapters", cid), data) : await addDoc(collection(db, "novels", nid, "chapters"), data);
-        alert("Done!"); loadAdminChapters();
-    };
+    window.editChapterData=(cid,num,tit,cost)=>{document.getElementById('acID').value=cid;document.getElementById('acNum').value=num;document.getElementById('acTit').value=tit;document.getElementById('acCost').value=cost;};
+    window.saveChapter=async()=>{const nid=document.getElementById('anSelector').value,cid=document.getElementById('acID').value;const d={num:Number(document.getElementById('acNum').value),title:document.getElementById('acTit').value,content:document.getElementById('acCon').value,cost:Number(document.getElementById('acCost').value)};cid?await updateDoc(doc(db,"novels",nid,"chapters",cid),d):await addDoc(collection(db,"novels",nid,"chapters"),d);alert("Done!");loadAdminChapters();};
 
     window.bulkUploadChapters = async () => {
-        const nid = document.getElementById('anSelector').value, raw = document.getElementById('acCon').value, cost = Number(document.getElementById('acCost').value) || 0;
-        const blocks = raw.split('||'); let num = Number(document.getElementById('acNum').value) || 1;
-        if(!confirm(`Upload ${blocks.length} chapters?`)) return;
-        for(let b of blocks) {
-            const p = b.split('|');
-            if(p[0] && p[1]) {
-                await addDoc(collection(db, "novels", nid, "chapters"), { num: Number(num), title: p[0].trim(), content: p[1].trim(), cost: Number(cost), date: serverTimestamp() });
-                num++;
-            }
-        }
+        const nid=document.getElementById('anSelector').value, raw=document.getElementById('acCon').value, cost=Number(document.getElementById('acCost').value);
+        const blks=raw.split('||'); let n=Number(document.getElementById('acNum').value)||1;
+        for(let b of blks){ const p=b.split('|'); if(p[0]&&p[1]){ await addDoc(collection(db,"novels",nid,"chapters"),{num:n,title:p[0].trim(),content:p[1].trim(),cost,date:serverTimestamp()}); n++; }}
         alert("Bulk Done!"); loadAdminChapters();
     };
 
-    window.generateGiftCode = async () => {
-        const amt = Number(document.getElementById('agAmt').value) || 0;
-        const code = "FANT-" + Math.random().toString(36).substr(2, 7).toUpperCase();
-        await addDoc(collection(db, "gifts"), { code, amount: amt, used: false, date: serverTimestamp() });
-        loadGiftHistory();
-    };
+    window.generateGiftCode=async()=>{const a=Number(document.getElementById('agAmt').value),c="FANT-"+Math.random().toString(36).substr(2,7).toUpperCase();await addDoc(collection(db,"gifts"),{code:c,amount:a,used:false,date:serverTimestamp()});loadGiftHistory();};
+    async function loadGiftHistory(){const s=await getDocs(query(collection(db,"gifts"),orderBy("date","desc"))),l=document.getElementById('adminGiftLog');l.innerHTML="";s.forEach(d=>l.innerHTML+=`<div>${d.data().code} - 🪙${d.data().amount}</div>`);}
 
-    async function loadGiftHistory() {
-        const snap = await getDocs(query(collection(db, "gifts"), orderBy("date", "desc")));
-        const log = document.getElementById('adminGiftLog'); log.innerHTML = "";
-        snap.forEach(d => { const g = d.data(); log.innerHTML += `<div>${g.code} - 🪙${g.amount}</div>`; });
-    }
-
-    // -------------------------------------------------------------------------
-    // INTEGRATED TOP 100 RANKING ERROR FIX (FROM SECOND CODE)
-    // -------------------------------------------------------------------------
     async function loadLeaderboard() {
-        const list = document.getElementById('leaderboardList');
-        list.innerHTML = `<p style="text-align:center;">Initializing Rankings...</p>`;
-        
-        const q = query(collection(db, "users"), where("isHidden", "==", false), orderBy("spent", "desc"), limit(100));
-        const snap = await getDocs(q);
-        
-        list.innerHTML = ""; // Clear fresh load
-        let rank = 1;
-        
-        if(snap.empty) {
-            list.innerHTML = `<p style="text-align:center; color:var(--text-dim);">No immortals found in rankings yet.</p>`;
-            return;
-        }
-
-        snap.forEach(d => {
-            const u = d.data();
-            let frame = "", txt = "";
-            if(rank === 1) { frame = "rank-1-frame"; txt = "gold-txt"; }
-            else if(rank === 2) { frame = "rank-2-frame"; txt = "silver-txt"; }
-            else if(rank === 3) { frame = "rank-3-frame"; txt = "bronze-txt"; }
-            
-            list.innerHTML += `
-                <div class="rank-card ${frame}">
-                    <div class="rank-number ${txt}">${rank}</div>
-                    <div style="flex:1">
-                        <div style="font-weight:bold" class="${txt}">${u.name}</div>
-                        <div style="font-size:0.6rem; color:var(--text-dim)">${u.email}</div>
-                    </div>
-                    <div style="text-align:right">
-                        <div style="color:var(--gold); font-size:0.8rem">🪙 ${(u.spent || 0).toLocaleString()}</div>
-                    </div>
-                </div>`;
-            rank++;
+        const l=document.getElementById('leaderboardList'); l.innerHTML="Loading...";
+        const s=await getDocs(query(collection(db,"users"),where("isHidden","==",false),orderBy("spent","desc"),limit(100)));
+        l.innerHTML=""; let r=1;
+        s.forEach(d=>{
+            const u=d.data(); let f="", t=""; if(r===1){f="rank-1-frame";t="gold-txt";}else if(r===2){f="rank-2-frame";t="silver-txt";}else if(r===3){f="rank-3-frame";t="bronze-txt";}
+            l.innerHTML+=`<div class="rank-card ${f}"><div class="rank-number ${t}">${r}</div><div style="flex:1"><div class="${t}">${u.name}</div><div style="font-size:0.6rem">${u.email}</div></div><div>🪙 ${(u.spent||0).toLocaleString()}</div></div>`; r++;
         });
-        console.log("Ranking System Synchronized Successfully");
-    }
-
-    function updateRankTimers() {
-        const now = new Date();
-        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0); lastDay.setHours(23, 59, 59);
-        const diff = lastDay - now; const timer = document.getElementById('reward-timer');
-        if (diff > 0) {
-            const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000);
-            timer.innerText = `Season Ends In: ${d}d ${h}h`;
-            document.getElementById('claimRankRewardBtn').disabled = true;
-        } else {
-            timer.innerText = "Season Ended! Claim Rewards Now.";
-            document.getElementById('claimRankRewardBtn').disabled = false;
-        }
     }
 
     window.showView = (id) => {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
         document.getElementById(id).classList.add('active-view');
-        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-        if(id === 'home-view') document.querySelectorAll('.nav-item')[0].classList.add('active');
-        if(id === 'shop-view') document.querySelectorAll('.nav-item')[1].classList.add('active');
-        if(id === 'chat-view') document.querySelectorAll('.nav-item')[2].classList.add('active');
-        if(id === 'profile-view') document.querySelectorAll('.nav-item')[3].classList.add('active');
-        if(id === 'leaderboard-view') { loadLeaderboard(); updateRankTimers(); }
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        if(id==='home-view')document.querySelectorAll('.nav-item')[0].classList.add('active');
+        if(id==='shop-view')document.querySelectorAll('.nav-item')[1].classList.add('active');
+        if(id==='chat-view')document.querySelectorAll('.nav-item')[2].classList.add('active');
+        if(id==='profile-view')document.querySelectorAll('.nav-item')[3].classList.add('active');
+        if(id==='leaderboard-view') { loadLeaderboard(); }
     };
 
-    async function loadCoinHistory() {
-        onSnapshot(query(collection(db, "transactions"), where("uid", "==", currentUser.uid), orderBy("date", "desc")), (snap) => {
-            const body = document.getElementById('historyBody'); body.innerHTML = "";
-            snap.forEach(d => {
-                const h = d.data(); const dt = h.date ? h.date.toDate().toLocaleDateString() : '---';
-                body.innerHTML += `<tr><td style="padding:10px;">${dt}</td><td>${h.type}</td><td>${h.amount}</td><td>${h.status}</td></tr>`;
-            });
-        });
-    }
+    async function loadCoinHistory() { onSnapshot(query(collection(db,"transactions"),where("uid","==",currentUser.uid),orderBy("date","desc")),(snap)=>{const b=document.getElementById('historyBody');b.innerHTML="";snap.forEach(d=>{const h=d.data();b.innerHTML+=`<tr><td>${h.date?h.date.toDate().toLocaleDateString():'-'}</td><td>${h.type}</td><td>${h.amount}</td><td>${h.status}</td></tr>`;});}); }
+    async function loadPendingTopups() { onSnapshot(query(collection(db,"transactions"),where("status","==","Pending")),(snap)=>{const l=document.getElementById('pendingReqList');l.innerHTML="";snap.forEach(d=>{const r=d.data();l.innerHTML+=`<div class="card">${r.userName} (🪙${r.amount})<br>TID:${r.tid} <button onclick="approveT('${d.id}','${r.uid}',${r.amount})">Approve</button></div>`;});}); }
+    window.approveT=async(id,uid,amt)=>{ const p=coinPackages.find(x=>x.amt===amt); await updateDoc(doc(db,"transactions",id),{status:"Approved"}); await updateDoc(doc(db,"users",uid),{coins:increment(amt+(p?p.bonus:0))}); };
 
-    async function loadPendingTopups() {
-        onSnapshot(query(collection(db, "transactions"), where("status", "==", "Pending")), (snap) => {
-            const list = document.getElementById('pendingReqList'); list.innerHTML = "";
-            snap.forEach(d => {
-                const r = d.data();
-                list.innerHTML += `<div class="card"><b>${r.userName}</b> (🪙${r.amount})<br>TID: ${r.tid}<br><button onclick="approveT('${d.id}','${r.uid}',${Number(r.amount)})" class="btn-gold" style="width:auto; padding:5px 15px;">APPROVE</button></div>`;
-            });
-        });
-    }
-
-    window.approveT = async (id, uid, amt) => {
-        const pack = coinPackages.find(p => p.amt === amt);
-        await updateDoc(doc(db, "transactions", id), { status: "Approved" });
-        await updateDoc(doc(db, "users", uid), { coins: increment(Number(amt) + (pack ? pack.bonus : 0)) });
-    };
-
-    // Final Initialization
-    window.onload = () => {
-        console.log("FANTINAL System Ready for Public Release");
-    };
+    window.onload=()=>{ console.log("FANTINAL Ready"); };
 </script>
 </body>
 </html>
