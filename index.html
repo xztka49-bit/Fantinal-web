@@ -212,6 +212,83 @@
         .pagination-bar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; margin-bottom: 15px; }
         .page-btn { padding: 6px 12px; background: #0d1117; border: 1px solid var(--gold); color: var(--gold); border-radius: 8px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; }
         .page-btn.active { background: var(--gold); color: black; }
+
+        /* -------------------------------------------------------------------------
+           NEW: ADDED BADGE & UI ANIMATION CSS (FROM SECOND CODE)
+        -------------------------------------------------------------------------- */
+        .mod-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #fff;
+            text-decoration: none;
+            background: linear-gradient(-45deg, #000000, #ffffff, #8b00ff, #000000);
+            background-size: 400% 400%;
+            animation: modShimmer 3s ease infinite;
+            border: 1px solid #8b00ff;
+            font-size: 0.7rem;
+        }
+
+        @keyframes modShimmer {
+            0% { background-position: 0% 50%; box-shadow: 0 0 5px #8b00ff; }
+            50% { background-position: 100% 50%; box-shadow: 0 0 15px #ffffff; }
+            100% { background-position: 0% 50%; box-shadow: 0 0 5px #8b00ff; }
+        }
+
+        .author-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            background: linear-gradient(90deg, #000 0%, #fff 50%, #000 100%);
+            background-size: 200% auto;
+            color: #555;
+            animation: authorRotate 1.5s linear infinite;
+            border: 1px solid #000;
+            font-size: 0.7rem;
+        }
+
+        @keyframes authorRotate {
+            to { background-position: 200% center; }
+        }
+
+        .novel-card-mini {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #333;
+            padding: 8px 12px;
+            margin: 5px;
+            border-radius: 6px;
+            position: relative;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .remove-card {
+            margin-left: 10px;
+            color: #ff4d4d;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .approve-gold-btn {
+            background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%);
+            color: black;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 4px 10px rgba(218, 165, 32, 0.4);
+            display: none;
+        }
     </style>
 </head>
 <body id="mainBody">
@@ -378,6 +455,9 @@
 <div id="profile-view" class="view">
     <div class="card" style="text-align:center;">
         <h2 id="pName" style="margin-bottom:5px;">User Name</h2>
+        <div id="user-badge-display" style="height: 30px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+            <span style="color: #666; font-size: 0.7rem;">No specialized badge</span>
+        </div>
         <div id="pVip" onclick="showVipBadgeList()"></div>
         <button onclick="toggleEditName()" style="background:none; border:none; color:var(--gold); cursor:pointer; font-size: 0.7rem; margin-top:10px;">[ EDIT PROFILE NAME ]</button>
         <div id="editNameDiv" style="display:none; margin-top:15px;">
@@ -436,7 +516,29 @@
 <div id="admin-view" class="view">
     <button class="btn" onclick="showView('profile-view')" style="background:none; color:var(--red); padding:0; margin-bottom:20px;">← CLOSE ADMIN</button>
     
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 20px;">
+    <div class="card" style="border: 2px solid var(--gold);">
+        <h3 style="color:var(--gold)">Badge & Role Management</h3>
+        <div style="display:flex; gap:10px;">
+            <button onclick="handleModClick()" class="btn" style="background:#8b00ff; color:white; flex:1;">Mod Tools</button>
+            <button onclick="handleAuthorClick()" class="btn" style="background:#333; color:white; flex:1;">Author Tools</button>
+        </div>
+
+        <div id="mod-frame" style="display:none; margin-top:20px; padding:15px; border:1px solid #8b00ff; border-radius:10px; background:rgba(139,0,255,0.05);">
+            <h4 style="color:#8b00ff">Moderator Control Frame</h4>
+            <p style="font-size:0.8rem;">Assigning Moderator privileges to the current targeted profile...</p>
+            <button onclick="confirmModAssignment()" class="btn-gold" style="width:100%;">Grant Mod Badge</button>
+        </div>
+
+        <div id="author-main-ui" style="display:none; margin-top:20px; padding:15px; border:1px solid #555; border-radius:10px; background:rgba(255,255,255,0.02);">
+            <h4 style="color:white">Author Assignment</h4>
+            <label style="font-size:0.7rem; color:var(--text-dim);">Select Novel Series to Assign:</label>
+            <select id="novel-dropdown" onchange="selectNovelForAuthor()"></select>
+            <div id="selected-novels-list" style="margin-top: 15px; min-height: 40px; border-top: 1px solid #333; padding-top: 10px;"></div>
+            <button id="approved-btn" class="approve-gold-btn" onclick="confirmAuthorAssignment()">Approved</button>
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 20px; margin-top:20px;">
         <div class="card" style="margin:0; background: var(--green); color: white; padding: 15px;">
             <small>Total Income</small><br><b id="admTotalIncome">0</b>
         </div>
@@ -563,6 +665,7 @@
     let allNovels = [];
     let novelCache = {}; 
     let userListLastVisible = null;
+    let chosenNovels = []; // New Global State for Author Selection
 
     // NEW: THEME TOGGLE LOGIC
     window.toggleTheme = () => {
@@ -670,6 +773,15 @@
         document.getElementById('hVip').innerHTML = `<span class="vip-tag ${vip.cls}">${vip.name}</span>`;
         document.getElementById('pName').innerText = userData.name;
         document.getElementById('pVip').innerHTML = `<span class="vip-tag ${vip.cls}" style="font-size:1rem">${vip.name}</span>`;
+        
+        // Update Specialized Badge Display (Mod/Author)
+        const badgeDisplay = document.getElementById('user-badge-display');
+        if(userData.role === 'mod') {
+            badgeDisplay.innerHTML = '<a href="mod.html" class="mod-badge">MOD</a>';
+        } else if(userData.role === 'author') {
+            badgeDisplay.innerHTML = '<a href="author_page.html" class="author-badge">AUTHOR</a>';
+        }
+
         if(vip.lv >= 2) {
             document.getElementById('dailyClaimSection').style.display = 'block';
             const grid = document.getElementById('claimGrid'); grid.innerHTML = "";
@@ -680,6 +792,74 @@
             startDailyTimer();
         }
     }
+
+    // -------------------------------------------------------------------------
+    // NEW: INTEGRATED MOD/AUTHOR HANDLERS (FROM SECOND CODE)
+    // -------------------------------------------------------------------------
+    window.handleModClick = () => {
+        document.getElementById('mod-frame').style.display = 'block';
+        document.getElementById('author-main-ui').style.display = 'none';
+    };
+
+    window.confirmModAssignment = async () => {
+        // Note: In real production, you'd target a specific UID. 
+        // Here we apply it to the currentUser for demonstration.
+        await updateDoc(doc(db, "users", currentUser.uid), { role: 'mod' });
+        alert("Moderator Badge assigned to User Profile.");
+    };
+
+    window.handleAuthorClick = () => {
+        document.getElementById('author-main-ui').style.display = 'block';
+        document.getElementById('mod-frame').style.display = 'none';
+        
+        // Fill novel dropdown from current loaded novels
+        const dropdown = document.getElementById('novel-dropdown');
+        dropdown.innerHTML = '<option value="">-- Choose a Novel --</option>';
+        allNovels.forEach(n => {
+            dropdown.innerHTML += `<option value="${n.title}">${n.title}</option>`;
+        });
+    };
+
+    window.selectNovelForAuthor = () => {
+        const select = document.getElementById('novel-dropdown');
+        const val = select.value;
+        if(val && !chosenNovels.includes(val)) {
+            chosenNovels.push(val);
+            updateNovelCards();
+        }
+        select.value = "";
+    };
+
+    window.removeNovelCard = (name) => {
+        chosenNovels = chosenNovels.filter(n => n !== name);
+        updateNovelCards();
+    };
+
+    function updateNovelCards() {
+        const list = document.getElementById('selected-novels-list');
+        const btn = document.getElementById('approved-btn');
+        list.innerHTML = "";
+        
+        chosenNovels.forEach(novel => {
+            const card = document.createElement('div');
+            card.className = 'novel-card-mini';
+            card.innerHTML = `${novel} <span class="remove-card" onclick="removeNovelCard('${novel}')">×</span>`;
+            list.appendChild(card);
+        });
+        btn.style.display = chosenNovels.length > 0 ? 'block' : 'none';
+    }
+
+    window.confirmAuthorAssignment = async () => {
+        await updateDoc(doc(db, "users", currentUser.uid), { 
+            role: 'author',
+            assignedNovels: chosenNovels 
+        });
+        alert("Author status approved and linked to author page.");
+    };
+
+    // -------------------------------------------------------------------------
+    // BACK TO ORIGINAL FIREBASE LOGIC
+    // -------------------------------------------------------------------------
 
     function startDailyTimer() {
         const claimBtn = document.getElementById('claimBtn');
@@ -1064,7 +1244,7 @@
         const giftAmt = Number(s.docs[0].data().amount) || 0;
         await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(giftAmt) });
         await updateDoc(doc(db, "gifts", s.docs[0].id), { used: true, usedBy: userData.email });
-        alert("Redeemed!");
+        alert("Redေemေd!");
     };
 
     window.openAdminTab = (id) => {
@@ -1208,20 +1388,45 @@
         snap.forEach(d => { const g = d.data(); log.innerHTML += `<div>${g.code} - 🪙${g.amount}</div>`; });
     }
 
+    // -------------------------------------------------------------------------
+    // INTEGRATED TOP 100 RANKING ERROR FIX (FROM SECOND CODE)
+    // -------------------------------------------------------------------------
     async function loadLeaderboard() {
+        const list = document.getElementById('leaderboardList');
+        list.innerHTML = `<p style="text-align:center;">Initializing Rankings...</p>`;
+        
         const q = query(collection(db, "users"), where("isHidden", "==", false), orderBy("spent", "desc"), limit(100));
         const snap = await getDocs(q);
-        const list = document.getElementById('leaderboardList');
-        list.innerHTML = ""; let rank = 1;
+        
+        list.innerHTML = ""; // Clear fresh load
+        let rank = 1;
+        
+        if(snap.empty) {
+            list.innerHTML = `<p style="text-align:center; color:var(--text-dim);">No immortals found in rankings yet.</p>`;
+            return;
+        }
+
         snap.forEach(d => {
             const u = d.data();
             let frame = "", txt = "";
             if(rank === 1) { frame = "rank-1-frame"; txt = "gold-txt"; }
             else if(rank === 2) { frame = "rank-2-frame"; txt = "silver-txt"; }
             else if(rank === 3) { frame = "rank-3-frame"; txt = "bronze-txt"; }
-            list.innerHTML += `<div class="rank-card ${frame}"><div class="rank-number ${txt}">${rank}</div><div style="flex:1"><div style="font-weight:bold" class="${txt}">${u.name}</div><div style="font-size:0.6rem; color:var(--text-dim)">${u.email}</div></div><div style="text-align:right"><div style="color:var(--gold); font-size:0.8rem">🪙 ${(u.spent || 0).toLocaleString()}</div></div></div>`;
+            
+            list.innerHTML += `
+                <div class="rank-card ${frame}">
+                    <div class="rank-number ${txt}">${rank}</div>
+                    <div style="flex:1">
+                        <div style="font-weight:bold" class="${txt}">${u.name}</div>
+                        <div style="font-size:0.6rem; color:var(--text-dim)">${u.email}</div>
+                    </div>
+                    <div style="text-align:right">
+                        <div style="color:var(--gold); font-size:0.8rem">🪙 ${(u.spent || 0).toLocaleString()}</div>
+                    </div>
+                </div>`;
             rank++;
         });
+        console.log("Ranking System Synchronized Successfully");
     }
 
     function updateRankTimers() {
@@ -1268,10 +1473,16 @@
             });
         });
     }
+
     window.approveT = async (id, uid, amt) => {
         const pack = coinPackages.find(p => p.amt === amt);
         await updateDoc(doc(db, "transactions", id), { status: "Approved" });
         await updateDoc(doc(db, "users", uid), { coins: increment(Number(amt) + (pack ? pack.bonus : 0)) });
+    };
+
+    // Final Initialization
+    window.onload = () => {
+        console.log("FANTINAL System Ready for Public Release");
     };
 </script>
 </body>
