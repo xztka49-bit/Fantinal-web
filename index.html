@@ -25,6 +25,7 @@
             --v0: #8b949e; --v1: #22c55e; --v2: #cd7f32; --v3: #c0c0c0; --v4: #d4af37; --v5: #a855f7; --v6: #ff3e3e;
         }
 
+        /* NEW: LIGHT MODE PALETTE */
         body.light-mode {
             --bg: #f0f2f5;
             --card: #ffffff;
@@ -41,11 +42,12 @@
             padding-bottom: 90px; 
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
-            transition: background 0.3s, color 0.3s;
+            transition: background 0.3s, color 0.3s; /* Smooth Theme Transition */
         }
 
         h1, h2, h3, .logo { font-family: 'Cinzel', serif; letter-spacing: 2px; }
 
+        /* NEW: MOD RGB FRAME ANIMATION */
         @keyframes modRGB {
             0% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
             33% { border-color: #00ff00; box-shadow: 0 0 10px #00ff00; }
@@ -54,6 +56,7 @@
         }
         .mod-frame { border: 2px solid transparent; animation: modRGB 3s linear infinite !important; }
 
+        /* LUXURY ANIMATIONS & EFFECTS */
         @keyframes glowGold { 0% { box-shadow: 0 0 5px var(--gold); } 50% { box-shadow: 0 0 20px var(--gold); } 100% { box-shadow: 0 0 5px var(--gold); } }
         @keyframes glowPurple { 0% { box-shadow: 0 0 5px var(--purple); } 50% { box-shadow: 0 0 15px var(--purple); } 100% { box-shadow: 0 0 5px var(--purple); } }
         @keyframes glowRed { 0% { border-color: #ff3e3e; box-shadow: 0 0 5px #ff3e3e; } 50% { border-color: #fff; box-shadow: 0 0 25px #ff3e3e; } 100% { border-color: #ff3e3e; box-shadow: 0 0 5px #ff3e3e; } }
@@ -62,6 +65,7 @@
         .view { display: none; padding: 20px; animation: slide 0.2s ease-out; }
         .active-view { display: block; }
 
+        /* FULL SCREEN READER STYLE */
         #reader-view.active-view {
             display: block;
             position: fixed;
@@ -75,6 +79,7 @@
             overflow-y: auto;
         }
 
+        /* UI COMPONENTS */
         .card { 
             background: var(--card); 
             border-radius: 20px; 
@@ -94,9 +99,6 @@
             transition: all 0.3s ease;
             text-transform: uppercase;
             font-size: 0.8rem;
-            display: inline-block;
-            text-decoration: none;
-            text-align: center;
         }
         .btn:active { transform: scale(0.95); }
         .btn-gold { 
@@ -117,20 +119,24 @@
             box-sizing: border-box;
         }
 
+        /* CHAT MESSAGE BUBBLES & FRAMES */
         .chat-msg { padding: 12px; border-radius: 15px; margin-bottom: 12px; font-size: 0.9rem; position: relative; border: 1px solid transparent; }
         .v5-frame { border: 2px solid var(--purple); background: rgba(168, 85, 247, 0.1); animation: glowPurple 2.5s infinite; }
         .v6-frame { border: 2px solid var(--gold); background: rgba(0,0,0,0.6); animation: glowRed 2s infinite; }
         
+        /* CHAT NAME COLORS */
         .name-white { color: white; font-weight: 600; }
         .name-gold { color: var(--gold); font-weight: 800; text-shadow: 0 0 5px rgba(212,175,55,0.5); }
         .name-purple { color: #d946ef; font-weight: 800; text-shadow: 0 0 8px rgba(217,70,239,0.6); }
         .name-red { color: #ff3e3e; font-weight: 900; text-shadow: 0 0 10px rgba(255,62,62,0.8); }
 
+        /* VIP TAGS */
         .vip-tag { padding: 3px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 900; margin-right: 8px; text-transform: uppercase; display: inline-block; vertical-align: middle; cursor: pointer; }
         .t0 { background: var(--v0); } .t1 { background: var(--v1); } .t2 { background: var(--v2); }
         .t3 { background: var(--v3); color: #000; } .t4 { background: var(--v4); color: #000; }
         .t5 { background: var(--v5); } .t6 { background: var(--v6); border: 1px solid #fff; }
 
+        /* RANKING & REWARD STYLES */
         .rank-card { position: relative; display: flex; align-items: center; padding: 15px; margin-bottom: 12px; border-radius: 15px; background: var(--card); border: 1px solid #30363d; }
         .rank-1-frame { border: 3px solid gold !important; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); background: linear-gradient(90deg, #0d1117 0%, rgba(212,175,55,0.1) 100%); }
         .rank-2-frame { border: 3px solid silver !important; box-shadow: 0 0 15px rgba(192, 192, 192, 0.3); }
@@ -140,6 +146,7 @@
         .silver-txt { color: silver !important; }
         .bronze-txt { color: #cd7f32 !important; }
 
+        /* DAILY CLAIM GRID */
         .claim-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
         .day-box { 
             background: #161b22; 
@@ -152,17 +159,20 @@
         }
         .day-box.active { border-color: var(--gold); background: rgba(212,175,55,0.15); color: var(--gold); transform: scale(1.05); }
 
+        /* NOVEL DISPLAY */
         .novel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 18px; }
         .n-card { border-radius: 15px; overflow: hidden; background: var(--card); cursor: pointer; transition: 0.3s; position: relative; border: 1px solid rgba(255,255,255,0.05); }
         .n-card:hover { transform: translateY(-8px); border: 1px solid var(--gold); }
         .n-card img { width: 100%; height: 230px; object-fit: cover; }
         .n-card-title { padding: 10px; font-size: 0.85rem; font-weight: 600; text-align: center; color: var(--gold); }
         
+        /* NOVEL TAGS */
         .novel-tag { position: absolute; top: 10px; left: 10px; padding: 4px 10px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; text-transform: uppercase; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .tag-top { background: linear-gradient(45deg, #d4af37, #fef08a); color: black; border: 1px solid gold; }
         .tag-complete { background: var(--green); color: white; }
         .view-count { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.6rem; z-index: 10; }
 
+        /* HORIZONTAL SCROLL */
         .horizontal-scroll { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
         .horizontal-scroll::-webkit-scrollbar { display: none; }
         .h-card { min-width: 140px; max-width: 140px; }
@@ -171,6 +181,7 @@
         .section-header h2 { font-size: 1.1rem; color: var(--gold); margin: 0; }
         .view-all { font-size: 0.75rem; color: var(--text-dim); cursor: pointer; }
 
+        /* BOTTOM NAV */
         .bottom-nav { 
             position: fixed; 
             bottom: 0; 
@@ -186,13 +197,16 @@
         .nav-item { color: var(--text-dim); font-size: 0.7rem; text-align: center; cursor: pointer; flex: 1; transition: 0.3s; }
         .nav-item.active { color: var(--gold); font-weight: bold; }
 
+        /* AUTH UI STYLES */
         .auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
         .auth-container { width: 100%; max-width: 400px; text-align: center; }
         
+        /* ADMIN NEW UI TABLES */
         .admin-table { width:100%; border-collapse: collapse; font-size: 0.8rem; margin-top:10px; }
         .admin-table th, .admin-table td { border: 1px solid #30363d; padding: 10px; text-align: left; }
         .admin-table th { background: #161b22; color: var(--gold); }
 
+        /* GENRE & PAGINATION STYLES */
         .genre-bar { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; }
         .genre-tab { padding: 8px 15px; background: #161b22; border-radius: 20px; font-size: 0.75rem; cursor: pointer; border: 1px solid #30363d; white-space: nowrap; }
         .genre-tab.active { background: var(--gold); color: black; border-color: var(--gold); }
@@ -200,6 +214,9 @@
         .page-btn { padding: 6px 12px; background: #0d1117; border: 1px solid var(--gold); color: var(--gold); border-radius: 8px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; }
         .page-btn.active { background: var(--gold); color: black; }
 
+        /* -------------------------------------------------------------------------
+           NEW: ADDED BADGE & UI ANIMATION CSS 
+        -------------------------------------------------------------------------- */
         .mod-badge {
             display: inline-block;
             padding: 6px 12px;
@@ -273,18 +290,6 @@
             box-shadow: 0 4px 10px rgba(218, 165, 32, 0.4);
             display: none;
         }
-
-        /* POLICY MODAL */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 10000; display: none;
-            align-items: center; justify-content: center; padding: 20px;
-        }
-        .modal-content {
-            background: var(--card); border: 1px solid var(--gold);
-            width: 100%; max-width: 600px; max-height: 80vh;
-            border-radius: 20px; padding: 30px; overflow-y: auto; color: var(--text);
-        }
     </style>
 </head>
 <body id="mainBody">
@@ -353,7 +358,6 @@
 
     <input type="text" id="searchBar" placeholder="Search for legendary sagas..." oninput="search()">
     <div class="novel-grid" id="novelGrid"></div>
-    <div id="homePagination" style="display:flex; justify-content:center; gap:10px; margin-top:20px;"></div>
 </div>
 
 <div id="completed-view" class="view">
@@ -361,7 +365,6 @@
     <h2 style="color:var(--gold); margin-bottom:20px;">စဆုံးပြီးစာစဉ်များ အားလုံး</h2>
     <div class="genre-bar" id="completedGenreBar" style="margin-bottom:20px;"></div>
     <div class="novel-grid" id="completedGrid"></div>
-    <div id="compPagination" style="display:flex; justify-content:center; gap:10px; margin-top:20px;"></div>
 </div>
 
 <div id="leaderboard-view" class="view">
@@ -370,11 +373,6 @@
     
     <div class="card" style="border:1px solid gold;">
         <h3 style="color:var(--gold); border-bottom:1px solid #334155; padding-bottom:10px;">Monthly Rewards</h3>
-        <div style="font-size:0.8rem; margin-bottom:10px; line-height:1.6;">
-            🥇 Rank 1: 50,000 Coins + Emperor Badge<br>
-            🥈 Rank 2: 25,000 Coins + King Badge<br>
-            🥉 Rank 3: 10,000 Coins + Master Badge
-        </div>
         <div id="reward-timer" style="text-align:center; color:var(--red); font-weight:bold; margin-bottom:10px;"></div>
         <button id="claimRankRewardBtn" class="btn btn-gold" style="width:100%;" onclick="claimMonthlyRankReward()" disabled>CLAIM RANK REWARD</button>
     </div>
@@ -406,7 +404,7 @@
         <button onclick="showView('detail-view')" style="background:none; color:var(--gold); border:none; cursor:pointer; font-weight: bold;">✕ EXIT READER</button>
         <h4 id="rChNum" style="margin:0; color:var(--gold)"></h4>
     </div>
-    <div id="readerScrollTop" style="padding: 20px;">
+    <div style="padding: 20px;">
         <h2 id="rChTitle" style="text-align:center; margin-bottom:30px;"></h2>
         <div id="rContent" style="line-height:2.4; font-size:1.25rem; white-space:pre-wrap; text-align: justify; padding: 10px; max-width: 800px; margin: auto;"></div>
         
@@ -439,6 +437,7 @@
             <p style="color: white; margin: 0; font-weight: bold;">KBZPay / WavePay</p>
         </div>
         <h4 style="color:var(--gold); margin:0;">Submit Payment Proof</h4>
+        <p style="color:var(--red); font-size: 0.75rem;">* Admin approval takes 5-30 mins.</p>
         <input type="text" id="tpName" placeholder="Payer Name">
         <input type="text" id="tpID" placeholder="Transaction Last 6 Digits">
         <button class="btn btn-gold" style="width:100%;" onclick="submitTopup()">SEND FOR APPROVAL</button>
@@ -446,15 +445,9 @@
 </div>
 
 <div id="chat-view" class="view">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <h3 style="color:var(--gold); margin:0;">Global Chat</h3>
-        <div id="modChatControls" style="display:none; gap:5px;">
-            <button onclick="showMuteList()" class="page-btn">Mute List</button>
-            <button onclick="toggleMuteMode()" id="muteModeBtn" class="page-btn" style="border-color:var(--red); color:var(--red);">Mute</button>
-        </div>
-    </div>
+    <h3 style="color:var(--gold)">Global Chat</h3>
     <div id="chatBox" class="card" style="height:450px; overflow-y:auto; display:flex; flex-direction:column-reverse; background: rgba(0,0,0,0.3);"></div>
-    <div style="display:flex; gap:10px; margin-top:15px;" id="chatInputArea">
+    <div style="display:flex; gap:10px; margin-top:15px;">
         <input type="text" id="chatInput" placeholder="Write a message..." style="margin:0;">
         <button onclick="sendChat()" class="btn-gold" style="width:80px; padding:0;">SEND</button>
     </div>
@@ -463,7 +456,9 @@
 <div id="profile-view" class="view">
     <div class="card" style="text-align:center;">
         <h2 id="pName" style="margin-bottom:5px;">User Name</h2>
-        <div id="user-badge-display" style="height: 30px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;"></div>
+        <div id="user-badge-display" style="height: 30px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+            <span style="color: #666; font-size: 0.7rem;">No specialized badge</span>
+        </div>
         <div id="pVip" onclick="showVipBadgeList()"></div>
         <button onclick="toggleEditName()" style="background:none; border:none; color:var(--gold); cursor:pointer; font-size: 0.7rem; margin-top:10px;">[ EDIT PROFILE NAME ]</button>
         <div id="editNameDiv" style="display:none; margin-top:15px;">
@@ -481,6 +476,7 @@
     <div id="dailyClaimSection" class="card" style="display:none; border-color: var(--gold);">
         <h3 style="color:var(--gold); margin:0;">Daily Rewards</h3>
         <p id="claimTimer" style="font-size: 0.9rem; color: var(--gold); font-weight: bold; margin: 10px 0;"></p>
+        <p id="claimStatus" style="font-size: 0.75rem; color: var(--text-dim);"></p>
         <div class="claim-row" id="claimGrid"></div>
         <button id="claimBtn" class="btn btn-gold" style="width:100%; margin-top:20px;" onclick="handleClaim()">CLAIM REWARD</button>
     </div>
@@ -490,41 +486,8 @@
         <button class="btn" style="background:#1e293b; color:white;" onclick="showView('transfer-view')">TRANSFER</button>
     </div>
 
-    <div style="margin-top:20px; text-align:center;">
-        <p style="color:var(--text-dim); font-size:0.8rem; margin-bottom:10px;">Customer Service & Official Media</p>
-        <div style="display:flex; gap:10px; justify-content:center;">
-            <a href="https://t.me/fantinal_offical" target="_blank" class="btn" style="background:#0088cc; color:white; flex:1;">Telegram</a>
-            <a href="https://www.facebook.com/share/1BfCQkNERu/?mibextid=wwXIfr" target="_blank" class="btn" style="background:#1877f2; color:white; flex:1;">Facebook</a>
-        </div>
-    </div>
-
-    <button onclick="showPolicy()" style="display:block; width:100%; margin-top:30px; background:none; border:1px solid #30363d; color:var(--text-dim); padding:10px; border-radius:10px;">Private Policy</button>
-
     <div id="adminPanelBtn" style="display:none; margin-top:30px;">
-        <button class="btn-gold" onclick="showView('admin-view')" style="background: linear-gradient(45deg, #7f1d1d, #ff3e3e); color: white; width:100%;">MASTER ADMIN PANEL</button>
-    </div>
-</div>
-
-<div id="policyModal" class="modal-overlay">
-    <div class="modal-content">
-        <button onclick="togglePolicyLang()" id="policyLangBtn" class="page-btn" style="float:right;">English Version</button>
-        <div id="policyTextMM">
-            <h2 style="color:var(--gold)">စာပေဝိညာဉ်နှင့် တန်ဖိုးထားမှုဆိုင်ရာ ပဋိညာဉ်</h2>
-            <p>၁။ ကလောင်ရှင်တို့၏ အခွင့်အာဏာ (Copyright)<br>နှလုံးသားမှ မြစ်ဖျားခံ၍ ကလောင်ဖျားမှ စီးဆင်းလာသော စာသားတိုင်းသည် ဖန်တီးသူ၏ ဝိညာဉ်ဖြစ်သတ္တု။ ကျွန်ုပ်တို့၏ နန်းတော်အတွင်းဝယ် ခိုလှုံသမျှသော စာပေအနုပညာဟန်အပေါင်းသည် ဖန်တီးသူ၏ သီးသန့်ပိုင်ဆိုင်မှုသာ ဖြစ်စေရမည်။</p>
-            <p>၂။ စာပေဂုဏ်သိက္ခာနှင့် အဆင်အခြင် (Content Policy)<br>အက္ခရာဟူသည် လူသားတို့၏ စိတ်နှလုံးကို ပြုပြင်နိုင်စွမ်းရှိသော နတ်ဆေးတစ်ခွက်သဖွယ် ဖြစ်ရမည်။ အမုန်းတရားကို မျိုးစေ့ချခြင်း၊ လူသားမျိုးနွယ်ကို နှိမ့်ချခြင်းနှင့် ရုန့်ရင်းကြမ်းတမ်းသော ပုံရိပ်လွှာများဖြင့် စာပေဥယျာဉ်ကို ညှိုးနွမ်းစေခြင်းကို ရှောင်ကြဉ်ရပါမည်။</p>
-            <p>၃။ စာဖတ်သူနှင့် ဖန်တီးသူတို့၏ ရေစက် (Community Policy)<br>ဝေဖန်မှုဟူသည် စာပေကို ပိုမိုတောက်ပစေသော အရောင်တင်ကျောက် ဖြစ်သင့်သော်လည်း၊ ပုဂ္ဂိုလ်ရေးတိုက်ခိုက်မှုဟူသော ဓားသွားများ မဖြစ်စေရ။</p>
-            <p>၄။ လုံခြုံမှုနှင့် ယုံကြည်ခြင်း ကတိကဝတ် (Privacy Policy)<br>သင်၏ လျှို့ဝှက်ချက်နှင့် ကိုယ်ရေးအချက်အလက်တို့သည် ကျွန်ုပ်တို့၏ သိမ်းဆည်းရာ တိုက်နန်းအတွင်းဝယ် လုံခြုံစွာ ကိန်းဝပ်စေရမည်။</p>
-            <p style="text-align:center; margin-top:20px; color:var(--gold)">Fantinal Publishing</p>
-        </div>
-        <div id="policyTextEN" style="display:none;">
-            <h2 style="color:var(--gold)">A Covenant of Literary Spirit and Values</h2>
-            <p>1. The Rights of the Creator (Copyright)<br>Every word that flows from the heart and spills from the tip of the pen is a fragment of the creator’s soul.</p>
-            <p>2. Literary Integrity and Discernment (Content Policy)<br>Letters are a sacred elixir, capable of shaping the human heart. We stand devoted solely to pure creation.</p>
-            <p>3. The Bond Between Reader and Creator (Community Policy)<br>Criticism should be a polishing gem that brings brilliance to literature, not a blade wielded for personal attack.</p>
-            <p>4. A Pledge of Trust and Protection (Privacy Policy)<br>Your secrets and personal information shall rest securely within our guarded chambers.</p>
-            <p style="text-align:center; margin-top:20px; color:var(--gold)">Fantinal Publishing</p>
-        </div>
-        <button onclick="closePolicy()" class="btn btn-gold" style="width:100%; margin-top:20px;">CLOSE</button>
+        <button class="btn-gold" onclick="showView('admin-view')" style="background: linear-gradient(45deg, #7f1d1d, #ff3e3e); color: white;">MASTER ADMIN PANEL</button>
     </div>
 </div>
 
@@ -555,7 +518,7 @@
     <button class="btn" onclick="showView('profile-view')" style="background:none; color:var(--red); padding:0; margin-bottom:20px;">← CLOSE ADMIN</button>
     
     <div class="card" style="border: 2px solid var(--gold);">
-        <h3 style="color:var(--gold)">Role Management</h3>
+        <h3 style="color:var(--gold)">Role Management (Gmail Search)</h3>
         <div style="display:flex; gap:10px; margin-bottom:15px;">
             <input type="text" id="roleAssignGmail" placeholder="User Gmail Address" style="margin:0;">
             <select id="roleToAssign" style="margin:0; width:120px;">
@@ -565,32 +528,45 @@
             <button onclick="searchAndAssignRole()" class="btn-gold" style="padding:0 15px;">ASSIGN</button>
         </div>
 
-        <div id="mod-frame" style="display:none; margin-top:20px; padding:15px; border:1px solid #8b00ff; border-radius:10px;">
-            <h4 style="color:#8b00ff">Grant Mod Status</h4>
-            <p id="targetModEmail" style="font-size:0.8rem;"></p>
-            <button onclick="confirmModAssignment()" class="btn-gold" style="width:100%;">APPROVE MOD</button>
+        <div id="mod-frame" style="display:none; margin-top:20px; padding:15px; border:1px solid #8b00ff; border-radius:10px; background:rgba(139,0,255,0.05);">
+            <h4 style="color:#8b00ff">Moderator Control Frame</h4>
+            <p style="font-size:0.8rem;">Target: <span id="targetModEmail" style="color:white"></span></p>
+            <button onclick="confirmModAssignment()" class="btn-gold" style="width:100%;">Grant Mod Badge</button>
         </div>
 
-        <div id="author-main-ui" style="display:none; margin-top:20px; padding:15px; border:1px solid #555; border-radius:10px;">
-            <h4 style="color:white">Author Setup</h4>
-            <p id="targetAuthorEmail" style="font-size:0.8rem;"></p>
-            <label style="font-size:0.7rem;">Profit Share:</label>
-            <select id="authorProfit" style="margin:5px 0;">
-                <option value="50">50%</option>
-                <option value="55">55%</option>
-                <option value="60">60%</option>
-                <option value="65">65%</option>
-                <option value="70">70%</option>
-            </select>
-            <label style="font-size:0.7rem;">Select Novels:</label>
+        <div id="author-main-ui" style="display:none; margin-top:20px; padding:15px; border:1px solid #555; border-radius:10px; background:rgba(255,255,255,0.02);">
+            <h4 style="color:white">Author Assignment</h4>
+            <p style="font-size:0.8rem;">Target: <span id="targetAuthorEmail" style="color:white"></span></p>
+            <label style="font-size:0.7rem; color:var(--text-dim);">Select Novel Series to Assign:</label>
             <select id="novel-dropdown" onchange="selectNovelForAuthor()"></select>
-            <div id="selected-novels-list" style="margin-top: 10px;"></div>
+            <div id="selected-novels-list" style="margin-top: 15px; min-height: 40px; border-top: 1px solid #333; padding-top: 10px;"></div>
             <button id="approved-btn" class="approve-gold-btn" onclick="confirmAuthorAssignment()">Approved</button>
         </div>
     </div>
 
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px;">
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 20px; margin-top:20px;">
+        <div class="card" style="margin:0; background: var(--green); color: white; padding: 15px;">
+            <small>Total Income</small><br><b id="admTotalIncome">0</b>
+        </div>
+        <div class="card" style="margin:0; background: var(--purple); color: white; padding: 15px;">
+            <small>Gift Coins Used</small><br><b id="admTotalGiftUsed">0</b>
+        </div>
+    </div>
+
+    <div class="card" style="border:1px solid var(--gold);">
+        <h4 style="color:var(--gold)">Income Analytics By Date</h4>
+        <div style="display:flex; gap:10px; margin-bottom:10px;">
+            <input type="text" id="statsStart" class="datepicker" placeholder="Start Date" style="font-size:0.7rem;">
+            <input type="text" id="statsEnd" class="datepicker" placeholder="End Date" style="font-size:0.7rem;">
+            <button class="btn-gold" onclick="filterAdminStats()" style="padding:5px 10px; font-size:0.7rem;">Filter</button>
+        </div>
+        <p style="font-size:0.8rem;">Filtered Range Total: <b id="filteredIncomeText" style="color:var(--green);">0</b></p>
+    </div>
+    <p style="color:var(--text-dim); padding-left:10px;">Total Registered Immortals: <b id="totalUserCount" style="color:white;">0</b></p>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:25px;">
         <button class="btn" style="background:#334155; color:white; font-size: 0.7rem;" onclick="openAdminTab('tab-approvals')">Approvals</button>
+        <button class="btn" style="background:#334155; color:white; font-size: 0.7rem;" onclick="openAdminTab('tab-vs')">V & S (Analytics)</button>
         <button class="btn" style="background:#334155; color:white; font-size: 0.7rem;" onclick="openAdminTab('tab-users')">User List</button>
         <button class="btn" style="background:#334155; color:white; font-size: 0.7rem;" onclick="openAdminTab('tab-novels')">Novels</button>
         <button class="btn" style="background:#334155; color:white; font-size: 0.7rem;" onclick="openAdminTab('tab-gifts')">Gifts</button>
@@ -601,15 +577,24 @@
         <div id="pendingReqList"></div>
     </div>
 
+    <div id="tab-vs" class="admin-tab card" style="display:none;">
+        <h4 style="color:var(--gold)">Novel Analytics</h4>
+        <div id="vsAnalyticsContent"></div>
+    </div>
+
     <div id="tab-users" class="admin-tab card" style="display:none;">
         <h4 style="color:var(--gold)">User Database</h4>
-        <input type="text" id="admUserSearch" placeholder="Search Email..." style="margin-bottom:10px;">
+        <div style="display:flex; gap:10px; margin-bottom:10px;">
+            <input type="text" id="admUserSearch" placeholder="Search Email..." style="margin:0;">
+            <button class="btn-gold" onclick="loadAdminUserList()" style="width:80px; padding:0;">SEARCH</button>
+        </div>
         <div style="overflow-x:auto;">
             <table class="admin-table">
-                <thead><tr><th>Gmail</th><th>Data</th><th>Action</th></tr></thead>
+                <thead><tr><th>Gmail</th><th>Balance / Spent</th><th>Action</th></tr></thead>
                 <tbody id="admUserListBody"></tbody>
             </table>
         </div>
+        <div id="admUserPagination" style="margin-top:15px; display:flex; gap:5px; flex-wrap:wrap;"></div>
     </div>
 
     <div id="tab-novels" class="admin-tab card" style="display:none;">
@@ -618,19 +603,20 @@
         
         <input type="text" id="anID" placeholder="Novel ID (Leave empty for new)">
         <input type="text" id="anTit" placeholder="Title">
-        <input type="text" id="anGenre" placeholder="Genre">
+        <input type="text" id="anGenre" placeholder="Genre (e.g. Action)">
         <input type="text" id="anAut" placeholder="Author">
         <input type="text" id="anCov" placeholder="Cover URL">
         <textarea id="anDes" placeholder="Description"></textarea>
         <input type="number" id="anVipP" placeholder="Full Lifetime Price">
         
+        <p style="font-size:0.75rem; color:var(--gold); margin-bottom:5px;">Novel Display Section (Multiple Select):</p>
         <div style="display:flex; gap:15px; font-size:0.8rem; margin-bottom:10px;">
             <label><input type="checkbox" class="sec-cb" value="top"> Top List</label>
             <label><input type="checkbox" class="sec-cb" value="completed"> Complete List</label>
         </div>
-        <input type="number" id="anTopRank" placeholder="Top Rank (1-10)">
+        <input type="number" id="anTopRank" placeholder="Top Rank Number (1-10) - If Top Section" style="margin-top:5px;">
         
-        <button class="btn btn-gold" onclick="saveNovel()">SAVE NOVEL</button>
+        <button class="btn btn-gold" onclick="saveNovel()">SAVE NOVEL DATA</button>
         
         <hr style="margin:25px 0; border:0.5px solid #334155;">
         
@@ -638,22 +624,24 @@
         <select id="anSelector" onchange="loadAdminChapters()"></select>
         <div id="adminChapterEditList" style="margin-bottom: 20px;"></div>
         
-        <input type="text" id="acID" placeholder="Chapter ID">
-        <input type="number" id="acNum" placeholder="Ch Number">
-        <input type="text" id="acTit" placeholder="Ch Title">
-        <textarea id="acCon" rows="6" placeholder="Content"></textarea>
-        <input type="number" id="acCost" placeholder="Cost">
+        <input type="text" id="acID" placeholder="Chapter ID (Leave empty for new)">
+        <input type="number" id="acNum" placeholder="Chapter Number">
+        <input type="text" id="acTit" placeholder="Chapter Title">
+        <textarea id="acCon" rows="6" placeholder="Chapter Content / Bulk Text (Title | Content || Title | Content)"></textarea>
+        <input type="number" id="acCost" placeholder="Coin Cost">
         
         <div style="display:flex; gap:10px;">
-            <button class="btn btn-gold" onclick="saveChapter()" style="flex:1;">PUBLISH</button>
-            <button class="btn" style="background:var(--purple); color:white; flex:1;" onclick="bulkUploadChapters()">BULK</button>
+            <button class="btn btn-gold" onclick="saveChapter()" style="flex:1;">PUBLISH SINGLE</button>
+            <button class="btn" style="background:var(--purple); color:white; flex:1;" onclick="bulkUploadChapters()">BULK UPLOAD</button>
         </div>
+        <p style="font-size: 0.65rem; color: var(--text-dim); margin-top: 5px;">* Bulk Format: Title | Content || Title | Content</p>
     </div>
 
     <div id="tab-gifts" class="admin-tab card" style="display:none;">
-        <h4>Gift Code</h4>
+        <h4>Gift Code Generator</h4>
         <input type="number" id="agAmt" placeholder="Coin Amount">
-        <button class="btn btn-gold" onclick="generateGiftCode()">GENERATE</button>
+        <button class="btn btn-gold" onclick="generateGiftCode()">GENERATE GIFT</button>
+        <div id="adminGiftLog" style="margin-top:20px; font-size:0.75rem;"></div>
     </div>
 </div>
 
@@ -672,274 +660,77 @@
     const config = { apiKey: "AIzaSyBxh92A7E6Egtk4kYB23Wmlelq13YYh1J0", authDomain: "fantinal-publishing-5b960.firebaseapp.com", projectId: "fantinal-publishing-5b960", storageBucket: "fantinal-publishing-5b960.firebasestorage.app", messagingSenderId: "961612304854", appId: "1:961612304854:web:6bf7b03072ed83b58b9477" };
     const app = initializeApp(config);
     const db = getFirestore(app);
-    const auth = getAuth(app);
+    
+    try { enableIndexedDbPersistence(db); } catch(e) {}
+
+    window.auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
     const ADMIN_EMAIL = "xztka49@gmail.com";
     let currentUser = null, userData = null, selectedTopupAmt = 0, currentNid = null;
-    let allNovels = [], novelCache = {};
-    let chosenNovels = [], targetedUid = null;
-    let isMuteMode = false;
+    let allNovels = [];
+    let novelCache = {}; 
+    let userListLastVisible = null;
+    let chosenNovels = []; 
+    let targetedUid = null; // Target for role assignment
 
-    // Novel Pagination
-    let homePage = 0, compPage = 0;
-    const PAGE_SIZE = 24;
+    // THEME TOGGLE
+    window.toggleTheme = () => {
+        const body = document.getElementById('mainBody');
+        const themeBtn = document.getElementById('themeBtn');
+        body.classList.toggle('light-mode');
+        const isLight = body.classList.contains('light-mode');
+        themeBtn.innerText = isLight ? '☀️' : '🌙';
+        localStorage.setItem('fantinal_theme', isLight ? 'light' : 'dark');
+    };
 
-    onAuthStateChanged(auth, async (user) => {
-        if(user) {
-            currentUser = user;
-            document.getElementById('authOverlay').style.display = 'none';
-            onSnapshot(doc(db, "users", user.uid), (snap) => {
-                if(snap.exists()) { 
-                    userData = snap.data(); 
-                    updateMasterUI();
-                    checkMuteStatus();
-                }
-                else { setDoc(doc(db, "users", user.uid), { name: user.displayName || "User", email: user.email, coins: 0, spent: 0, claimCount: 0, lastClaim: 0, role: 'none' }); }
-            });
-            if(user.email === ADMIN_EMAIL) document.getElementById('adminPanelBtn').style.display = 'block';
-            loadCoinHistory();
-            loadBookmarks();
-        } else {
-            document.getElementById('authOverlay').style.display = 'flex';
-        }
-    });
-
-    function updateMasterUI() {
-        const vip = getVipInfo(userData.spent);
-        document.getElementById('userHeader').style.display = 'block';
-        document.getElementById('hCoins').innerText = (userData.coins || 0).toLocaleString();
-        document.getElementById('sCoins').innerText = (userData.coins || 0).toLocaleString();
-        document.getElementById('hVip').innerHTML = `<span class="vip-tag ${vip.cls}">${vip.name}</span>`;
-        document.getElementById('pName').innerText = userData.name;
-        document.getElementById('pVip').innerHTML = `<span class="vip-tag ${vip.cls}" style="font-size:1rem">${vip.name}</span>`;
-        
-        const badgeDisplay = document.getElementById('user-badge-display');
-        if(userData.role === 'mod') {
-            badgeDisplay.innerHTML = '<a href="mod.html" class="mod-badge">MOD</a>';
-            document.getElementById('modChatControls').style.display = 'flex';
-        } else if(userData.role === 'author') {
-            badgeDisplay.innerHTML = '<a href="author_page.html" class="author-badge">AUTHOR</a>';
-        } else { badgeDisplay.innerHTML = ''; }
-
-        if(vip.lv >= 2) {
-            document.getElementById('dailyClaimSection').style.display = 'block';
-            startDailyTimer();
-        }
+    if(localStorage.getItem('fantinal_theme') === 'light') {
+        document.getElementById('mainBody').classList.add('light-mode');
+        document.getElementById('themeBtn').innerText = '☀️';
     }
 
-    // Role Assignments
-    window.searchAndAssignRole = async () => {
-        const gmail = document.getElementById('roleAssignGmail').value.trim();
-        const role = document.getElementById('roleToAssign').value;
-        const q = query(collection(db, "users"), where("email", "==", gmail), limit(1));
-        const snap = await getDocs(q);
-        if(snap.empty) return alert("Not found");
-        targetedUid = snap.docs[0].id;
-        if(role === 'mod') {
-            document.getElementById('mod-frame').style.display = 'block';
-            document.getElementById('author-main-ui').style.display = 'none';
-            document.getElementById('targetModEmail').innerText = gmail;
-        } else {
-            document.getElementById('author-main-ui').style.display = 'block';
-            document.getElementById('mod-frame').style.display = 'none';
-            document.getElementById('targetAuthorEmail').innerText = gmail;
-            const dropdown = document.getElementById('novel-dropdown');
-            dropdown.innerHTML = '<option value="">-- Select --</option>';
-            allNovels.forEach(n => dropdown.innerHTML += `<option value="${n.title}">${n.title}</option>`);
-        }
-    };
-
-    window.confirmModAssignment = async () => {
-        await updateDoc(doc(db, "users", targetedUid), { role: 'mod' });
-        alert("Mod Assigned");
-    };
-
-    window.confirmAuthorAssignment = async () => {
-        const profit = document.getElementById('authorProfit').value;
-        await updateDoc(doc(db, "users", targetedUid), { 
-            role: 'author', 
-            assignedNovels: chosenNovels, 
-            profitRate: Number(profit)/100,
-            lastUpdate: Date.now() 
+    window.showVipBadgeList = () => {
+        Swal.fire({
+            title: 'VIP IMMORTAL RANKS',
+            background: 'var(--card)', color: 'var(--gold)',
+            html: `
+                <div style="text-align:left; font-size:0.8rem; line-height:2;">
+                    <span class="vip-tag t1">WARRIOR</span> : Spent 10,000+<br>
+                    <span class="vip-tag t2">BRONZE</span> : Spent 50,000+<br>
+                    <span class="vip-tag t3">SILVER</span> : Spent 120,000+<br>
+                    <span class="vip-tag t4">MASTER</span> : Spent 400,000+<br>
+                    <span class="vip-tag t5">KING</span> : Spent 1,000,000+<br>
+                    <span class="vip-tag t6">EMPEROR</span> : Spent 3,000,000+
+                </div>`,
+            confirmButtonColor: '#d4af37'
         });
-        alert("Author Approved!");
-        document.getElementById('author-main-ui').style.display = 'none';
     };
 
-    window.selectNovelForAuthor = () => {
-        const val = document.getElementById('novel-dropdown').value;
-        if(val && !chosenNovels.includes(val)) {
-            chosenNovels.push(val);
-            const list = document.getElementById('selected-novels-list');
-            list.innerHTML += `<div class="novel-card-mini">${val}</div>`;
-            document.getElementById('approved-btn').style.display = 'block';
-        }
+    flatpickr(".datepicker", { dateFormat: "Y-m-d" });
+
+    window.toggleAuth = (mode) => {
+        document.getElementById('loginForm').style.display = mode === 'reg' ? 'none' : 'block';
+        document.getElementById('regForm').style.display = mode === 'reg' ? 'block' : 'none';
     };
 
-    // Global Chat & Mute Logic
-    async function checkMuteStatus() {
-        if(userData.muteUntil && userData.muteUntil > Date.now()) {
-            const diff = userData.muteUntil - Date.now();
-            const h = Math.floor(diff/3600000);
-            document.getElementById('chatInputArea').innerHTML = `<p style="color:red; font-size:0.8rem;">Muted: ${h}h remaining</p>`;
-        }
-    }
-
-    window.toggleMuteMode = () => {
-        isMuteMode = !isMuteMode;
-        document.getElementById('muteModeBtn').style.background = isMuteMode ? 'red' : 'none';
-        renderChat();
+    window.handleAuth = async (type) => {
+        try {
+            if(type === 'login') {
+                const e = document.getElementById('authEmail').value;
+                const p = document.getElementById('authPass').value;
+                await signInWithEmailAndPassword(auth, e, p);
+            } else {
+                const n = document.getElementById('regName').value;
+                const e = document.getElementById('regEmail').value;
+                const p = document.getElementById('regPass').value;
+                const res = await createUserWithEmailAndPassword(auth, e, p);
+                await setDoc(doc(db, "users", res.user.uid), { name: n, email: e, coins: 0, spent: 0, claimCount: 0, lastClaim: 0, role: 'none' });
+            }
+        } catch (err) { alert(err.message); }
     };
 
-    window.muteUser = async (uid) => {
-        if(!confirm("Mute 24hr?")) return;
-        await updateDoc(doc(db, "users", uid), { muteUntil: Date.now() + 86400000 });
-        alert("User Muted");
-    };
+    window.handleGoogle = () => signInWithPopup(auth, provider);
 
-    window.sendChat = async () => {
-        const msg = document.getElementById('chatInput').value;
-        if(!msg || (userData.muteUntil && userData.muteUntil > Date.now())) return;
-        const vip = getVipInfo(userData.spent);
-        await addDoc(collection(db, "chat"), {
-            uid: currentUser.uid, name: userData.name, text: msg, nCls: vip.nCls, 
-            fCls: userData.role === 'mod' ? "mod-frame" : vip.fCls, 
-            vName: vip.name, vCls: vip.cls, date: serverTimestamp()
-        });
-        document.getElementById('chatInput').value = "";
-    };
-
-    onSnapshot(query(collection(db, "chat"), orderBy("date", "desc"), limit(40)), (snap) => {
-        window.chatData = snap.docs;
-        renderChat();
-    });
-
-    function renderChat() {
-        const box = document.getElementById('chatBox'); box.innerHTML = "";
-        window.chatData.forEach(d => {
-            const m = d.data();
-            const muteBtn = (isMuteMode && userData.role === 'mod') ? `<button onclick="muteUser('${m.uid}')" style="font-size:0.6rem; color:red;">MUTE</button>` : "";
-            box.innerHTML += `<div class="chat-msg ${m.fCls}">
-                <span class="vip-tag ${m.vCls || 't0'}">${m.vName || 'Newbie'}</span>
-                <span class="${m.nCls}">${m.name}</span>: ${m.text} ${muteBtn}
-            </div>`;
-        });
-    }
-
-    // Novel Display & Pagination
-    onSnapshot(collection(db, "novels"), (snap) => {
-        allNovels = [];
-        snap.forEach(d => { allNovels.push({id: d.id, ...d.data()}); novelCache[d.id] = d.data(); });
-        renderHomeSagas();
-        renderHomeSections();
-        updateAdminNovelLists();
-    });
-
-    function renderHomeSagas() {
-        const grid = document.getElementById('novelGrid'); grid.innerHTML = "";
-        const start = homePage * PAGE_SIZE;
-        const slice = allNovels.slice(start, start + PAGE_SIZE);
-        slice.forEach(n => grid.innerHTML += createNovelCard(n));
-        renderPagination('homePagination', allNovels.length, homePage, 'home');
-    }
-
-    function createNovelCard(n) {
-        const sections = n.sections || [];
-        let badges = "";
-        if(sections.includes('top')) badges += `<div class="novel-tag tag-top">TOP ${n.topRank}</div>`;
-        if(sections.includes('completed')) badges += `<div class="novel-tag tag-complete" style="${sections.includes('top')?'top:40px':''}">COMPLETE</div>`;
-        return `<div class="n-card" onclick="openNovel('${n.id}')">${badges}<div class="view-count">👁️ ${n.views || 0}</div><img src="${n.cover}"><div class="n-card-title">${n.title}</div></div>`;
-    }
-
-    function renderPagination(elemId, total, current, type) {
-        const pages = Math.ceil(total / PAGE_SIZE);
-        const div = document.getElementById(elemId); div.innerHTML = "";
-        if(pages <= 1) return;
-        if(current > 0) div.innerHTML += `<button class="page-btn" onclick="changePage('${type}', ${current-1})">Back</button>`;
-        if(current < pages-1) div.innerHTML += `<button class="page-btn" onclick="changePage('${type}', ${current+1})">Next Novels</button>`;
-    }
-
-    window.changePage = (type, page) => {
-        if(type === 'home') homePage = page; else compPage = page;
-        window.scrollTo(0, 0);
-        location.reload(); // Page reload per request
-    };
-
-    window.openNovel = async (id) => {
-        currentNid = id;
-        showView('detail-view');
-        const n = allNovels.find(x => x.id === id);
-        document.getElementById('novelInfo').innerHTML = `
-            <img src="${n.cover}" style="width:100%; border-radius:20px;">
-            <h1 style="color:var(--gold)">${n.title}</h1>
-            <p>${n.desc}</p>
-            <div id="unlockActionBtn"></div>`;
-        loadChapters(id, false);
-    };
-
-    // Chapter Loading (Fixing Delete & Page Top)
-    async function loadChapters(nid, isLife) {
-        const list = document.getElementById('chapterList'); list.innerHTML = "Loading...";
-        const snap = await getDocs(query(collection(db, "novels", nid, "chapters"), orderBy("num", "asc")));
-        list.innerHTML = "";
-        snap.forEach(cd => {
-            const c = cd.data();
-            list.innerHTML += `<div class="card" onclick="readChapter('${nid}','${cd.id}',${c.cost},${c.num})">Ch ${c.num}: ${c.title}</div>`;
-        });
-    }
-
-    window.readChapter = async (nid, cid, cost, num) => {
-        showView('reader-view');
-        const snap = await getDoc(doc(db, "novels", nid, "chapters", cid));
-        const c = snap.data();
-        document.getElementById('rChNum').innerText = "CHAPTER " + num;
-        document.getElementById('rChTitle').innerText = c.title;
-        document.getElementById('rContent').innerText = c.content;
-        document.getElementById('reader-view').scrollTo(0, 0); // Scroll to top
-    };
-
-    // Admin Chapter Delete
-    window.deleteChapterData = async (nid, cid) => {
-        if(confirm("Delete Chapter?")) {
-            await deleteDoc(doc(db, "novels", nid, "chapters", cid));
-            alert("Deleted"); loadAdminChapters();
-        }
-    };
-
-    // Leaderboard Optimization
-    async function loadLeaderboard() {
-        const list = document.getElementById('leaderboardList');
-        list.innerHTML = "Loading Immortals...";
-        const snap = await getDocs(query(collection(db, "users"), orderBy("spent", "desc"), limit(100)));
-        list.innerHTML = "";
-        let r = 1;
-        snap.forEach(d => {
-            const u = d.data();
-            let frame = r<=3 ? `rank-${r}-frame` : "";
-            list.innerHTML += `<div class="rank-card ${frame}"><div class="rank-number">${r}</div><div style="flex:1">${u.name}</div><div style="color:var(--gold)">🪙 ${u.spent || 0}</div></div>`;
-            r++;
-        });
-    }
-
-    // Policy & Media
-    window.showPolicy = () => document.getElementById('policyModal').style.display = 'flex';
-    window.closePolicy = () => document.getElementById('policyModal').style.display = 'none';
-    window.togglePolicyLang = () => {
-        const mm = document.getElementById('policyTextMM'), en = document.getElementById('policyTextEN'), btn = document.getElementById('policyLangBtn');
-        if(mm.style.display === 'none') { mm.style.display='block'; en.style.display='none'; btn.innerText="English Version"; }
-        else { mm.style.display='none'; en.style.display='block'; btn.innerText="Myanmar Version"; }
-    };
-
-    // Generic View Switcher
-    window.showView = (id) => {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
-        document.getElementById(id).classList.add('active-view');
-        if(id === 'leaderboard-view') loadLeaderboard();
-        window.scrollTo(0,0);
-    };
-
-    // Helper functions from original code
     function getVipInfo(spent) {
         const s = Number(spent) || 0;
         if(s >= 3000000) return {lv:6, name:"Emperor", cls:"t6", nCls:"name-red", fCls:"v6-frame"};
@@ -950,22 +741,646 @@
         if(s >= 10000) return {lv:1, name:"Warrior", cls:"t1", nCls:"name-white", fCls:""};
         return {lv:0, name:"Newbie", cls:"t0", nCls:"name-white", fCls:""};
     }
-    
-    // Auth & Other handlers remain the same as your core logic...
-    window.toggleTheme = () => document.body.classList.toggle('light-mode');
-    window.handleAuth = async(t) => { /* logic as provided in your snippet */ };
-    window.handleGoogle = () => signInWithPopup(auth, provider);
-    window.toggleAuth = (m) => { document.getElementById('loginForm').style.display = m==='reg'?'none':'block'; document.getElementById('regForm').style.display = m==='reg'?'block':'none'; };
 
-    // Placeholder for remaining original functions (Coin history, bookmarks, etc.)
-    async function loadCoinHistory() { /* logic */ }
-    async function loadBookmarks() { /* logic */ }
-    function renderHomeSections() { /* logic */ }
-    function updateAdminNovelLists() { /* logic */ }
-    window.saveNovel = async() => { /* logic */ };
-    window.saveChapter = async() => { /* logic */ };
-    window.bulkUploadChapters = async() => { /* logic */ };
-    window.loadAdminChapters = async() => { /* Admin Chapter List with Delete */ };
+    const claimTable = {
+        2: [25, 50, 75, 100, 125, 150, 175], 3: [50, 100, 150, 200, 250, 300, 350],
+        4: [75, 150, 325, 400, 475, 550, 625], 5: [100, 200, 300, 400, 500, 600, 700],
+        6: [200, 400, 600, 800, 1000, 1200, 1400]
+    };
+
+    onAuthStateChanged(auth, async (user) => {
+        if(user) {
+            currentUser = user;
+            document.getElementById('authOverlay').style.display = 'none';
+            const userRef = doc(db, "users", user.uid);
+            onSnapshot(userRef, (snap) => {
+                if(snap.exists()) { userData = snap.data(); updateMasterUI(); }
+                else { setDoc(userRef, { name: user.displayName || "User", email: user.email, coins: 0, spent: 0, claimCount: 0, lastClaim: 0, role: 'none' }); }
+            });
+            if(user.email === ADMIN_EMAIL) {
+                document.getElementById('adminPanelBtn').style.display = 'block';
+                loadAdminGlobalStats(); autoCleanOldChats();
+            }
+            loadCoinHistory();
+            loadBookmarks();
+        } else {
+            document.getElementById('authOverlay').style.display = 'flex';
+        }
+    });
+
+    function updateMasterUI() {
+        const vip = getVipInfo(userData.spent);
+        const userCoins = Number(userData.coins) || 0;
+        document.getElementById('userHeader').style.display = 'block';
+        document.getElementById('hCoins').innerText = userCoins.toLocaleString();
+        document.getElementById('sCoins').innerText = userCoins.toLocaleString();
+        document.getElementById('hVip').innerHTML = `<span class="vip-tag ${vip.cls}">${vip.name}</span>`;
+        document.getElementById('pName').innerText = userData.name;
+        document.getElementById('pVip').innerHTML = `<span class="vip-tag ${vip.cls}" style="font-size:1rem">${vip.name}</span>`;
+        
+        // Feature 5 Integrated: Badge Linking
+        const badgeDisplay = document.getElementById('user-badge-display');
+        if(userData.role === 'mod') {
+            badgeDisplay.innerHTML = '<a href="mod.html" class="mod-badge">MOD</a>';
+        } else if(userData.role === 'author') {
+            badgeDisplay.innerHTML = '<a href="author_page.html" class="author-badge">AUTHOR</a>';
+        } else {
+            badgeDisplay.innerHTML = '<span style="color: #666; font-size: 0.7rem;">No specialized badge</span>';
+        }
+
+        if(vip.lv >= 2) {
+            document.getElementById('dailyClaimSection').style.display = 'block';
+            const grid = document.getElementById('claimGrid'); grid.innerHTML = "";
+            const dayIdx = (Number(userData.claimCount) || 0) % 7;
+            claimTable[vip.lv].forEach((amt, i) => {
+                grid.innerHTML += `<div class="day-box ${i === dayIdx ? 'active' : ''}">Day ${i+1}<br>🪙${amt}</div>`;
+            });
+            startDailyTimer();
+        }
+    }
+
+    // Feature 3: Gmail Search Role Assignment
+    window.searchAndAssignRole = async () => {
+        const gmail = document.getElementById('roleAssignGmail').value.trim();
+        const role = document.getElementById('roleToAssign').value;
+        if(!gmail) return alert("Enter Gmail");
+        
+        const q = query(collection(db, "users"), where("email", "==", gmail), limit(1));
+        const snap = await getDocs(q);
+        if(snap.empty) return alert("User not found!");
+        
+        targetedUid = snap.docs[0].id;
+        const targetData = snap.docs[0].data();
+        
+        if(role === 'mod') {
+            document.getElementById('mod-frame').style.display = 'block';
+            document.getElementById('author-main-ui').style.display = 'none';
+            document.getElementById('targetModEmail').innerText = gmail;
+        } else {
+            document.getElementById('author-main-ui').style.display = 'block';
+            document.getElementById('mod-frame').style.display = 'none';
+            document.getElementById('targetAuthorEmail').innerText = gmail;
+            
+            const dropdown = document.getElementById('novel-dropdown');
+            dropdown.innerHTML = '<option value="">-- Choose a Novel --</option>';
+            allNovels.forEach(n => dropdown.innerHTML += `<option value="${n.title}">${n.title}</option>`);
+        }
+    };
+
+    window.confirmModAssignment = async () => {
+        if(!targetedUid) return;
+        await updateDoc(doc(db, "users", targetedUid), { role: 'mod' });
+        alert("Mod Assigned!");
+    };
+
+    window.selectNovelForAuthor = () => {
+        const val = document.getElementById('novel-dropdown').value;
+        if(val && !chosenNovels.includes(val)) {
+            chosenNovels.push(val);
+            updateNovelCards();
+        }
+    };
+
+    window.removeNovelCard = (name) => {
+        chosenNovels = chosenNovels.filter(n => n !== name);
+        updateNovelCards();
+    };
+
+    function updateNovelCards() {
+        const list = document.getElementById('selected-novels-list');
+        list.innerHTML = "";
+        chosenNovels.forEach(n => {
+            list.innerHTML += `<div class="novel-card-mini">${n} <span class="remove-card" onclick="removeNovelCard('${n}')">×</span></div>`;
+        });
+        document.getElementById('approved-btn').style.display = chosenNovels.length > 0 ? 'block' : 'none';
+    }
+
+    // Feature 4: Author UI/Status Update (Approved Logic)
+    window.confirmAuthorAssignment = async () => {
+        if(!targetedUid) return;
+        await updateDoc(doc(db, "users", targetedUid), { 
+            role: 'author',
+            assignedNovels: chosenNovels,
+            profitRate: 0.5 
+        });
+        alert("Author Status Approved & Novel Series Updated!");
+        chosenNovels = [];
+        document.getElementById('author-main-ui').style.display = 'none';
+    };
+
+    // Feature 2: Role Cancellation
+    window.cancelUserRole = async (uid) => {
+        if(confirm("Role ကို ဖျက်သိမ်းမှာ သေချာပါသလား?")) {
+            await updateDoc(doc(db, "users", uid), { role: 'none', assignedNovels: [] });
+            loadAdminUserList();
+        }
+    };
+
+    function startDailyTimer() {
+        const claimBtn = document.getElementById('claimBtn');
+        const timerTxt = document.getElementById('claimTimer');
+        if(window.claimTimerInt) clearInterval(window.claimTimerInt);
+        window.claimTimerInt = setInterval(() => {
+            if(!userData) return;
+            const nextClaimTime = (Number(userData.lastClaim) || 0) + 86400000;
+            const now = Date.now();
+            const diff = nextClaimTime - now;
+            if (diff <= 0) {
+                claimBtn.disabled = false; claimBtn.innerText = "CLAIM REWARD"; timerTxt.innerText = "Reward Ready!";
+            } else {
+                claimBtn.disabled = true;
+                const h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
+                claimBtn.innerText = `LOCKED (${h}h ${m}m ${s}s)`;
+                timerTxt.innerText = `Next claim in: ${h}:${m}:${s}`;
+            }
+        }, 1000);
+    }
+
+    window.toggleEditName = () => {
+        const div = document.getElementById('editNameDiv');
+        div.style.display = div.style.display === 'none' ? 'block' : 'none';
+    };
+    
+    window.updateUsername = async () => {
+        const newName = document.getElementById('newName').value;
+        if(newName) {
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { name: newName });
+            alert("Name updated!"); toggleEditName();
+        }
+    };
+    
+    window.handleClaim = async () => {
+        const vip = getVipInfo(userData.spent);
+        const amt = claimTable[vip.lv][(Number(userData.claimCount) || 0) % 7];
+        await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(amt), lastClaim: Date.now(), claimCount: increment(1) });
+    };
+
+    window.sendChat = async () => {
+        const msg = document.getElementById('chatInput').value;
+        if(!msg) return;
+        const vip = getVipInfo(userData.spent);
+        const isMod = userData.role === 'mod';
+        await addDoc(collection(db, "chat"), {
+            name: userData.name, text: msg, nCls: vip.nCls, fCls: isMod ? "mod-frame" : vip.fCls, vName: vip.name, vCls: vip.cls, date: serverTimestamp()
+        });
+        document.getElementById('chatInput').value = "";
+    };
+
+    onSnapshot(query(collection(db, "chat"), orderBy("date", "desc"), limit(40)), (snap) => {
+        const box = document.getElementById('chatBox'); box.innerHTML = "";
+        snap.forEach(d => {
+            const m = d.data();
+            box.innerHTML += `<div class="chat-msg ${m.fCls}">
+                <span class="vip-tag ${m.vCls || 't0'}">${m.vName || 'Newbie'}</span>
+                <span class="${m.nCls}">${m.name || 'Null'}</span>: ${m.text}
+            </div>`;
+        });
+    });
+
+    async function autoCleanOldChats() {
+        const oneDayAgo = new Date(Date.now() - 86400000);
+        const q = query(collection(db, "chat"), where("date", "<", oneDayAgo));
+        const oldDocs = await getDocs(q);
+        oldDocs.forEach(async (d) => { await deleteDoc(doc(db, "chat", d.id)); });
+    }
+
+    onSnapshot(collection(db, "novels"), (snap) => {
+        allNovels = [];
+        const genres = new Set();
+        snap.forEach(docSnap => { 
+            const d = { id: docSnap.id, ...docSnap.data() };
+            allNovels.push(d); 
+            novelCache[d.id] = d; 
+            if(d.genre) genres.add(d.genre);
+        });
+        updateGenreBar(genres);
+        renderNovels(allNovels); 
+        renderHomeSections();
+        updateAdminNovelLists();
+    });
+
+    function renderHomeSections() {
+        const topScroll = document.getElementById('topNovelScroll');
+        const completeScroll = document.getElementById('completedNovelScroll');
+        const completeGrid = document.getElementById('completedGrid');
+        const compGenreBar = document.getElementById('completedGenreBar');
+        topScroll.innerHTML = ""; completeScroll.innerHTML = ""; completeGrid.innerHTML = "";
+        const compGenres = new Set();
+        allNovels.forEach(n => {
+            const sections = n.sections || (n.section ? [n.section] : []);
+            let badges = "";
+            let isTop = sections.includes('top');
+            let isComp = sections.includes('completed');
+            if(isTop) badges += `<div class="novel-tag tag-top">TOP ${n.topRank}</div>`;
+            if(isComp) badges += `<div class="novel-tag tag-complete" style="${isTop ? 'top:40px' : ''}">COMPLETE</div>`;
+            const cardHtml = (isH) => `
+                <div class="n-card ${isH ? 'h-card' : ''}" onclick="openNovel('${n.id}')">
+                    ${badges}
+                    <div class="view-count">👁️ ${n.views || 0}</div>
+                    <img src="${n.cover}">
+                    <div class="n-card-title">${n.title}</div>
+                </div>`;
+            if(isTop) topScroll.innerHTML += cardHtml(true);
+            if(isComp) {
+                completeScroll.innerHTML += cardHtml(true);
+                completeGrid.innerHTML += cardHtml(false);
+                if(n.genre) compGenres.add(n.genre);
+            }
+        });
+        compGenreBar.innerHTML = `<div class="genre-tab active" onclick="filterCompletedByGenre('All')">ALL</div>`;
+        compGenres.forEach(g => { compGenreBar.innerHTML += `<div class="genre-tab" onclick="filterCompletedByGenre('${g}')">${g.toUpperCase()}</div>`; });
+    }
+
+    window.filterCompletedByGenre = (g) => {
+        const grid = document.getElementById('completedGrid'); grid.innerHTML = "";
+        const filtered = g === 'All' ? allNovels.filter(n => (n.sections || []).includes('completed')) : allNovels.filter(n => (n.sections || []).includes('completed') && n.genre === g);
+        filtered.forEach(n => {
+            const sections = n.sections || [];
+            let isTop = sections.includes('top');
+            let badges = `<div class="novel-tag tag-complete">COMPLETE</div>`;
+            if(isTop) badges += `<div class="novel-tag tag-top" style="top:40px">TOP ${n.topRank}</div>`;
+            grid.innerHTML += `<div class="n-card" onclick="openNovel('${n.id}')">${badges}<div class="view-count">👁️ ${n.views || 0}</div><img src="${n.cover}"><div class="n-card-title">${n.title}</div></div>`;
+        });
+    };
+
+    window.showCompletedPage = () => showView('completed-view');
+
+    function updateGenreBar(genres) {
+        const bar = document.getElementById('genreFilterBar');
+        bar.innerHTML = `<div class="genre-tab active" onclick="filterByGenre('All')">ALL SAGAS</div>`;
+        genres.forEach(g => { bar.innerHTML += `<div class="genre-tab" onclick="filterByGenre('${g}')">${g.toUpperCase()}</div>`; });
+    }
+
+    window.filterByGenre = (g) => {
+        document.querySelectorAll('.genre-tab').forEach(t => t.classList.remove('active'));
+        if(event) event.target.classList.add('active');
+        const filtered = g === 'All' ? allNovels : allNovels.filter(n => n.genre === g);
+        renderNovels(filtered);
+    };
+
+    function renderNovels(list) {
+        const grid = document.getElementById('novelGrid'); grid.innerHTML = "";
+        list.forEach(n => {
+            const sections = n.sections || (n.section ? [n.section] : []);
+            let badges = "";
+            let isTop = sections.includes('top');
+            let isComp = sections.includes('completed');
+            if(isTop) badges += `<div class="novel-tag tag-top">TOP ${n.topRank}</div>`;
+            if(isComp) badges += `<div class="novel-tag tag-complete" style="${isTop ? 'top:40px' : ''}">COMPLETE</div>`;
+            grid.innerHTML += `<div class="n-card" onclick="openNovel('${n.id}')">${badges}<div class="view-count">👁️ ${n.views || 0}</div><img src="${n.cover}"><div class="n-card-title">${n.title}</div></div>`;
+        });
+    }
+
+    window.search = () => {
+        const q = document.getElementById('searchBar').value.toLowerCase();
+        const filtered = allNovels.filter(n => n.title.toLowerCase().includes(q) || n.author.toLowerCase().includes(q));
+        renderNovels(filtered);
+    };
+
+    function updateAdminNovelLists() {
+        const sel = document.getElementById('anSelector'); if(sel) sel.innerHTML = "";
+        const vs = document.getElementById('vsAnalyticsContent'); if(vs) vs.innerHTML = `<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; font-weight:bold; margin-bottom:10px; font-size:0.7rem;"><span>Novel</span><span>Views</span><span>Sales/Life</span></div>`;
+        const admNovelEdit = document.getElementById('adminNovelEditList'); if(admNovelEdit) admNovelEdit.innerHTML = "";
+        allNovels.forEach(n => {
+            if(sel) sel.innerHTML += `<option value="${n.id}">${n.title}</option>`;
+            if(vs) vs.innerHTML += `<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; font-size:0.75rem; border-bottom:1px solid #161b22; padding:5px 0;"><span style="color:var(--gold)">${n.title}</span><span>${n.views || 0}</span><span>🪙${n.sales || 0} / L:${n.lifetimeSales || 0}</span></div>`;
+            if(admNovelEdit) admNovelEdit.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px; font-size:0.8rem;"><span>${n.title}</span><div><button onclick="editNovelData('${n.id}')" style="color:var(--gold); background:none; border:none; cursor:pointer;">Edit</button> | <button onclick="deleteNovelData('${n.id}')" style="color:var(--red); background:none; border:none; cursor:pointer;">Del</button></div></div>`;
+        });
+    }
+
+    window.openNovel = async (id) => {
+        currentNid = id;
+        showView('detail-view'); 
+        const n = novelCache[id];
+        if(!n) return;
+        const isBookmarked = userData.bookmarks && userData.bookmarks.includes(id);
+        document.getElementById('novelInfo').innerHTML = `
+            <div style="position:relative">
+                <img src="${n.cover}" style="width:100%; height:280px; object-fit:cover; border-radius:20px; border: 1px solid var(--gold);">
+                <button onclick="toggleBookmark('${id}')" style="position:absolute; top:15px; right:15px; background:rgba(0,0,0,0.6); border:1px solid var(--gold); color:var(--gold); padding:8px; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:1.2rem;">🔖</button>
+            </div>
+            <h1 style="color:var(--gold); margin-top:20px;">${n.title}</h1>
+            <div style="display:flex; gap:15px; color:var(--text-dim); font-size:0.8rem; margin-bottom:15px;"><span>👤 ${n.author}</span><span>👁️ ${n.views || 0} Views</span></div>
+            <p style="line-height:1.6;">${n.desc}</p>
+            <div id="unlockActionBtn">...</div>`;
+        const lifeRef = doc(db, "users", currentUser.uid, "unlocked_novels", id);
+        const lifeSnap = await getDoc(lifeRef);
+        const isLife = lifeSnap.exists();
+        document.getElementById('unlockActionBtn').innerHTML = isLife 
+            ? `<button class="btn" style="width:100%; background:var(--green); color:white;">LIFETIME UNLOCKED ✅</button>` 
+            : `<button class="btn btn-gold" style="width:100%;" onclick="buyFullAccess('${id}', ${Number(n.vipPrice)})">UNLOCK ALL (🪙${n.vipPrice})</button>`;
+        loadChapters(id, isLife); loadReviews(id);
+        updateDoc(doc(db, "novels", id), { views: increment(1) });
+    };
+
+    window.toggleBookmark = async (id) => {
+        let list = userData.bookmarks || [];
+        if(list.includes(id)) { list = list.filter(item => item !== id); alert("Removed!"); }
+        else { list.push(id); alert("Added!"); }
+        await updateDoc(doc(db, "users", currentUser.uid), { bookmarks: list });
+        loadBookmarks();
+    };
+
+    async function loadBookmarks() {
+        const grid = document.getElementById('bookmarkGrid'); if(!grid) return; grid.innerHTML = "";
+        if(!userData.bookmarks || userData.bookmarks.length === 0) return;
+        userData.bookmarks.forEach(id => {
+            const n = novelCache[id];
+            if(n) grid.innerHTML += `<div class="n-card" onclick="openNovel('${n.id}')"><img src="${n.cover}" style="height:150px;"><div class="n-card-title" style="font-size:0.7rem;">${n.title}</div></div>`;
+        });
+    }
+
+    async function loadChapters(nid, isLife, rangeStart = 1) {
+        const list = document.getElementById('chapterList'); const rBar = document.getElementById('chapterRangeBar');
+        list.innerHTML = `<p id="chLoading">Loading Sagacity...</p>`;
+        const lastSnap = await getDocs(query(collection(db, "novels", nid, "chapters"), orderBy("num", "desc"), limit(1)));
+        const total = lastSnap.empty ? 0 : lastSnap.docs[0].data().num;
+        rBar.innerHTML = "";
+        for(let i=1; i<=total; i+=100) {
+            let end = (i+99 > total) ? total : i+99;
+            rBar.innerHTML += `<div class="page-btn ${rangeStart === i ? 'active' : ''}" onclick="loadChapters('${nid}',${isLife},${i})">${i}-${end}</div>`;
+        }
+        const snap = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", ">=", rangeStart), where("num", "<", rangeStart + 100), orderBy("num", "asc")));
+        const chUnlockedSnap = await getDocs(collection(db, "users", currentUser.uid, "unlocked_chapters"));
+        const unlockedIds = chUnlockedSnap.docs.map(d => d.id);
+        if(document.getElementById('chLoading')) document.getElementById('chLoading').remove();
+        snap.forEach(cd => {
+            const c = cd.data();
+            const isChUnlocked = unlockedIds.includes(cd.id);
+            let label = `<span style="color:var(--gold)">🪙 ${c.cost === 0 ? 'FREE' : c.cost}</span>`;
+            if (isLife || isChUnlocked || c.cost === 0) label = `<span style="color:var(--green)">READ</span>`;
+            const div = document.createElement('div');
+            div.className = "card"; div.style.display = "flex"; div.style.justifyContent = "space-between";
+            div.innerHTML = `<span>Ch ${c.num}: ${c.title}</span>${label}`;
+            div.onclick = () => readChapter(nid, cd.id, Number(c.cost), Number(c.num));
+            list.appendChild(div);
+        });
+    }
+
+    window.readChapter = async (nid, cid, cost, num) => {
+        const uSnap = await getDoc(doc(db, "users", currentUser.uid, "unlocked_chapters", cid));
+        const lSnap = await getDoc(doc(db, "users", currentUser.uid, "unlocked_novels", nid));
+        const alreadyPurchased = uSnap.exists() || lSnap.exists();
+        if(alreadyPurchased || cost === 0) {
+            showView('reader-view');
+            const cSnap = await getDoc(doc(db, "novels", nid, "chapters", cid));
+            renderReader(cSnap.data(), num, nid);
+        } else {
+            if(Number(userData.coins) < cost) return alert("Low coins!");
+            if(confirm(`Unlock Ch ${num} for 🪙${cost}?`)) {
+                await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(-cost), spent: increment(cost) });
+                await setDoc(doc(db, "users", currentUser.uid, "unlocked_chapters", cid), { date: serverTimestamp() });
+                readChapter(nid, cid, cost, num);
+            }
+        }
+    };
+
+    function renderReader(c, num, nid) {
+        document.getElementById('rChNum').innerText = "CHAPTER " + num;
+        document.getElementById('rChTitle').innerText = c.title;
+        document.getElementById('rContent').innerText = c.content;
+        
+        // Fix Integrated: Next Chapter ရောက်ရင် အပေါ်ဆုံးပြန်ရောက်ဖို့
+        const reader = document.getElementById('reader-view');
+        reader.scrollTo(0, 0); 
+        window.scrollTo(0, 0);
+
+        updateReaderNav(nid, num);
+    }
+
+    async function updateReaderNav(nid, num) {
+        const next = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", "==", Number(num) + 1), limit(1)));
+        const prev = await getDocs(query(collection(db, "novels", nid, "chapters"), where("num", "==", Number(num) - 1), limit(1)));
+        document.getElementById('nextBtn').onclick = () => next.empty ? alert("Last Chapter") : readChapter(nid, next.docs[0].id, next.docs[0].data().cost, Number(num) + 1);
+        document.getElementById('prevBtn').onclick = () => prev.empty ? alert("First Chapter") : readChapter(nid, prev.docs[0].id, prev.docs[0].data().cost, Number(num) - 1);
+    }
+
+    window.buyFullAccess = async (nid, price) => {
+        if(Number(userData.coins) < price) return alert("Low coins!");
+        if(confirm(`Unlock All for 🪙${price}?`)) {
+            await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(-price), spent: increment(price) });
+            await updateDoc(doc(db, "novels", nid), { lifetimeSales: increment(price) });
+            await setDoc(doc(db, "users", currentUser.uid, "unlocked_novels", nid), { date: serverTimestamp() });
+            openNovel(nid);
+        }
+    };
+
+    async function loadReviews(nid) {
+        const snap = await getDocs(collection(db, "novels", nid, "reviews"));
+        const box = document.getElementById('reviewList'); box.innerHTML = "";
+        snap.forEach(d => { const r = d.data(); box.innerHTML += `<div style="padding:10px; border-bottom:1px solid #161b22; font-size:0.8rem;"><b style="color:var(--gold)">${r.name}</b> (${r.rate}⭐): ${r.text}</div>`; });
+    }
+
+    window.postReview = async () => {
+        const text = document.getElementById('revText').value;
+        const rate = document.getElementById('revRate').value;
+        if(!text) return;
+        await addDoc(collection(db, "novels", currentNid, "reviews"), { name: userData.name, text, rate, date: serverTimestamp() });
+        document.getElementById('revText').value = ""; loadReviews(currentNid);
+    };
+
+    const coinPackages = [ {amt: 1000, bonus: 10}, {amt: 2000, bonus: 50}, {amt: 5000, bonus: 150}, {amt: 10000, bonus: 350}, {amt: 30000, bonus: 1000}, {amt: 50000, bonus: 2500} ];
+    const packageGrid = document.getElementById('packageGrid');
+    coinPackages.forEach(p => { packageGrid.innerHTML += `<div class="card" onclick="openTopup(${p.amt})" style="text-align:center; cursor:pointer; background:#161b22; border:1px solid var(--gold);">🪙 ${p.amt.toLocaleString()}<br><small style="color:var(--green)">+${p.bonus} Bonus</small></div>`; });
+
+    window.openTopup = (amt) => { selectedTopupAmt = Number(amt); document.getElementById('topupForm').style.display = 'block'; };
+
+    window.submitTopup = async () => {
+        const tid = document.getElementById('tpID').value;
+        if(tid.length < 6) return alert("Valid TID needed");
+        await addDoc(collection(db, "transactions"), { uid: currentUser.uid, userName: userData.name, amount: Number(selectedTopupAmt), tid, sender: document.getElementById('tpName').value, status: "Pending", type: "Topup", date: serverTimestamp() });
+        alert("Submitted!"); document.getElementById('topupForm').style.display = 'none';
+    };
+
+    window.processTransfer = async () => {
+        const email = document.getElementById('tfEmail').value, amt = Number(document.getElementById('tfAmt').value) || 0;
+        if(Number(userData.coins) < amt) return alert("Not enough coins!");
+        const q = query(collection(db, "users"), where("email", "==", email), limit(1));
+        const s = await getDocs(q); if(s.empty) return alert("User not found!");
+        await runTransaction(db, async (tx) => {
+            const sR = doc(db, "users", currentUser.uid), rR = doc(db, "users", s.docs[0].id);
+            tx.update(sR, { coins: increment(-amt) }); tx.update(rR, { coins: increment(amt) });
+        });
+        await addDoc(collection(db, "transactions"), { uid: currentUser.uid, type: "Transfer Out", amount: amt, status: "Approved", date: serverTimestamp() });
+        alert("Success!");
+    };
+
+    window.redeemGift = async () => {
+        const code = document.getElementById('giftCodeInput').value.trim();
+        const q = query(collection(db, "gifts"), where("code", "==", code), where("used", "==", false), limit(1));
+        const s = await getDocs(q); if(s.empty) return alert("Invalid Code!");
+        const giftAmt = Number(s.docs[0].data().amount) || 0;
+        await updateDoc(doc(db, "users", currentUser.uid), { coins: increment(giftAmt) });
+        await updateDoc(doc(db, "gifts", s.docs[0].id), { used: true, usedBy: userData.email });
+        alert("Redeemed!");
+    };
+
+    window.openAdminTab = (id) => {
+        document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+        if(id === 'tab-users') { userListLastVisible = null; loadAdminUserList(); }
+    };
+
+    async function loadAdminUserList() {
+        const searchVal = document.getElementById('admUserSearch').value.trim();
+        let q;
+        if(searchVal) { q = query(collection(db, "users"), where("email", "==", searchVal), limit(1)); } 
+        else { q = userListLastVisible ? query(collection(db, "users"), orderBy("email"), startAfter(userListLastVisible), limit(50)) : query(collection(db, "users"), orderBy("email"), limit(50)); }
+        const snap = await getDocs(q);
+        const body = document.getElementById('admUserListBody');
+        if(!userListLastVisible || searchVal) body.innerHTML = "";
+        snap.forEach(d => {
+            const u = d.data();
+            // Feature 1: Balance & Spent shown clearly. Feature 2: Cancel button for Roles
+            const cancelBtn = (u.role && u.role !== 'none') ? `<button onclick="cancelUserRole('${d.id}')" style="background:var(--red); font-size:0.6rem; color:white; border:none; border-radius:3px; padding:4px;">[Cancel]</button>` : "";
+            body.innerHTML += `<tr>
+                <td>${u.email}</td>
+                <td>🪙 ${u.coins || 0} / 📉 ${u.spent || 0}</td>
+                <td>${cancelBtn} <button onclick="toggleHideUser('${d.id}', ${u.isHidden || false})" style="font-size:0.6rem;">${u.isHidden ? 'Unhide' : 'Hide'}</button></td>
+            </tr>`;
+        });
+        userListLastVisible = snap.docs[snap.docs.length - 1];
+    }
+
+    window.toggleHideUser = async (uid, current) => { await updateDoc(doc(db, "users", uid), { isHidden: !current }); loadAdminUserList(); };
+
+    async function loadAdminGlobalStats() {
+        onSnapshot(query(collection(db, "transactions"), where("status", "==", "Approved"), where("type", "==", "Topup")), (snap) => {
+            let total = 0; snap.forEach(d => total += (Number(d.data().amount) || 0));
+            document.getElementById('admTotalIncome').innerText = "🪙 " + total.toLocaleString();
+        });
+        onSnapshot(query(collection(db, "gifts"), where("used", "==", true)), (snap) => {
+            let total = 0; snap.forEach(d => total += (Number(d.data().amount) || 0));
+            document.getElementById('admTotalGiftUsed').innerText = "🪙 " + total.toLocaleString();
+        });
+        const uSnap = await getDocs(collection(db, "users"));
+        document.getElementById('totalUserCount').innerText = uSnap.size;
+    }
+
+    window.saveNovel = async () => {
+        const id = document.getElementById('anID').value;
+        const secs = Array.from(document.querySelectorAll('.sec-cb:checked')).map(c => c.value);
+        const data = { title: document.getElementById('anTit').value, genre: document.getElementById('anGenre').value, author: document.getElementById('anAut').value, cover: document.getElementById('anCov').value, desc: document.getElementById('anDes').value, vipPrice: Number(document.getElementById('anVipP').value) || 0, sections: secs, topRank: Number(document.getElementById('anTopRank').value) || 0 };
+        id ? await updateDoc(doc(db, "novels", id), data) : await addDoc(collection(db, "novels"), { ...data, views: 0, sales: 0, lifetimeSales: 0 });
+        alert("Saved!");
+    };
+
+    window.editNovelData = async (id) => {
+        const snap = await getDoc(doc(db, "novels", id)), n = snap.data();
+        document.getElementById('anID').value = id; document.getElementById('anTit').value = n.title; document.getElementById('anGenre').value = n.genre || ""; document.getElementById('anAut').value = n.author; document.getElementById('anCov').value = n.cover; document.getElementById('anDes').value = n.desc; document.getElementById('anVipP').value = n.vipPrice; document.getElementById('anTopRank').value = n.topRank || "";
+        const secs = n.sections || (n.section ? [n.section] : []);
+        document.querySelectorAll('.sec-cb').forEach(c => c.checked = secs.includes(c.value));
+    };
+
+    window.deleteNovelData = async (id) => { if(confirm("Delete?")) await deleteDoc(doc(db, "novels", id)); };
+
+    window.loadAdminChapters = async () => {
+        const nid = document.getElementById('anSelector').value;
+        const snap = await getDocs(query(collection(db, "novels", nid, "chapters"), orderBy("num", "asc")));
+        const list = document.getElementById('adminChapterEditList'); list.innerHTML = "";
+        snap.forEach(cd => { const c = cd.data(); list.innerHTML += `<div style="font-size:0.75rem; display:flex; justify-content:space-between; margin-bottom:5px;"><span>Ch ${c.num}: ${c.title}</span><div><button onclick="editChapterData('${cd.id}','${c.num}','${c.title}','${c.cost}')" style="color:var(--gold); background:none; border:none;">Edit</button> | <button onclick="deleteChapterData('${nid}','${cd.id}')" style="color:var(--red); background:none; border:none;">Del</button></div></div>`; });
+    };
+
+    window.editChapterData = async (cid, num, title, cost) => {
+        const nid = document.getElementById('anSelector').value;
+        document.getElementById('acID').value = cid; document.getElementById('acNum').value = num; document.getElementById('acTit').value = title; document.getElementById('acCost').value = cost;
+        const cSnap = await getDoc(doc(db, "novels", nid, "chapters", cid));
+        if(cSnap.exists()) document.getElementById('acCon').value = cSnap.data().content;
+    };
+
+    window.saveChapter = async () => {
+        const nid = document.getElementById('anSelector').value, cid = document.getElementById('acID').value;
+        const data = { num: Number(document.getElementById('acNum').value) || 0, title: document.getElementById('acTit').value, content: document.getElementById('acCon').value, cost: Number(document.getElementById('acCost').value) || 0 };
+        cid ? await updateDoc(doc(db, "novels", nid, "chapters", cid), data) : await addDoc(collection(db, "novels", nid, "chapters"), data);
+        alert("Done!"); loadAdminChapters();
+    };
+
+    window.bulkUploadChapters = async () => {
+        const nid = document.getElementById('anSelector').value, raw = document.getElementById('acCon').value, cost = Number(document.getElementById('acCost').value) || 0;
+        const blocks = raw.split('||'); let num = Number(document.getElementById('acNum').value) || 1;
+        if(!confirm(`Upload ${blocks.length} chapters?`)) return;
+        for(let b of blocks) { const p = b.split('|'); if(p[0] && p[1]) { await addDoc(collection(db, "novels", nid, "chapters"), { num: Number(num), title: p[0].trim(), content: p[1].trim(), cost: Number(cost), date: serverTimestamp() }); num++; } }
+        alert("Bulk Done!"); loadAdminChapters();
+    };
+
+    window.generateGiftCode = async () => {
+        const amt = Number(document.getElementById('agAmt').value) || 0;
+        const code = "FANT-" + Math.random().toString(36).substr(2, 7).toUpperCase();
+        await addDoc(collection(db, "gifts"), { code, amount: amt, used: false, date: serverTimestamp() });
+        loadGiftHistory();
+    };
+
+    async function loadGiftHistory() {
+        const snap = await getDocs(query(collection(db, "gifts"), orderBy("date", "desc")));
+        const log = document.getElementById('adminGiftLog'); log.innerHTML = "";
+        snap.forEach(d => { const g = d.data(); log.innerHTML += `<div>${g.code} - 🪙${g.amount}</div>`; });
+    }
+
+    // Fix Integrated: Top User Ranking Loading Fast & Correct Order
+    async function loadLeaderboard() {
+        const list = document.getElementById('leaderboardList');
+        list.innerHTML = `<p style="text-align:center;">Initializing Rankings...</p>`;
+        const q = query(collection(db, "users"), where("isHidden", "==", false), orderBy("spent", "desc"), limit(100));
+        const snap = await getDocs(q);
+        list.innerHTML = ""; 
+        let rank = 1;
+        if(snap.empty) { list.innerHTML = `<p style="text-align:center;">No rankings yet.</p>`; return; }
+        snap.forEach(d => {
+            const u = d.data();
+            let frame = "", txt = "";
+            if(rank === 1) { frame = "rank-1-frame"; txt = "gold-txt"; }
+            else if(rank === 2) { frame = "rank-2-frame"; txt = "silver-txt"; }
+            else if(rank === 3) { frame = "rank-3-frame"; txt = "bronze-txt"; }
+            list.innerHTML += `
+                <div class="rank-card ${frame}">
+                    <div class="rank-number ${txt}">${rank}</div>
+                    <div style="flex:1"><div style="font-weight:bold" class="${txt}">${u.name}</div><div style="font-size:0.6rem; color:var(--text-dim)">${u.email}</div></div>
+                    <div style="text-align:right"><div style="color:var(--gold); font-size:0.8rem">🪙 ${(u.spent || 0).toLocaleString()}</div></div>
+                </div>`;
+            rank++;
+        });
+    }
+
+    function updateRankTimers() {
+        const now = new Date();
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0); lastDay.setHours(23, 59, 59);
+        const diff = lastDay - now; const timer = document.getElementById('reward-timer');
+        if (diff > 0) { const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000); timer.innerText = `Season Ends In: ${d}d ${h}h`; document.getElementById('claimRankRewardBtn').disabled = true; } 
+        else { timer.innerText = "Season Ended! Claim Rewards Now."; document.getElementById('claimRankRewardBtn').disabled = false; }
+    }
+
+    window.showView = (id) => {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
+        document.getElementById(id).classList.add('active-view');
+        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        if(id === 'home-view') document.querySelectorAll('.nav-item')[0].classList.add('active');
+        if(id === 'shop-view') document.querySelectorAll('.nav-item')[1].classList.add('active');
+        if(id === 'chat-view') document.querySelectorAll('.nav-item')[2].classList.add('active');
+        if(id === 'profile-view') document.querySelectorAll('.nav-item')[3].classList.add('active');
+        if(id === 'leaderboard-view') { loadLeaderboard(); updateRankTimers(); }
+    };
+
+    async function loadCoinHistory() {
+        onSnapshot(query(collection(db, "transactions"), where("uid", "==", currentUser.uid), orderBy("date", "desc")), (snap) => {
+            const body = document.getElementById('historyBody'); body.innerHTML = "";
+            snap.forEach(d => { const h = d.data(); const dt = h.date ? h.date.toDate().toLocaleDateString() : '---'; body.innerHTML += `<tr><td style="padding:10px;">${dt}</td><td>${h.type}</td><td>${h.amount}</td><td>${h.status}</td></tr>`; });
+        });
+    }
+
+    async function loadPendingTopups() {
+        onSnapshot(query(collection(db, "transactions"), where("status", "==", "Pending")), (snap) => {
+            const list = document.getElementById('pendingReqList'); list.innerHTML = "";
+            snap.forEach(d => { const r = d.data(); list.innerHTML += `<div class="card"><b>${r.userName}</b> (🪙${r.amount})<br>TID: ${r.tid}<br><button onclick="approveT('${d.id}','${r.uid}',${Number(r.amount)})" class="btn-gold" style="width:auto; padding:5px 15px;">APPROVE</button></div>`; });
+        });
+    }
+
+    window.approveT = async (id, uid, amt) => {
+        const pack = coinPackages.find(p => p.amt === amt);
+        await updateDoc(doc(db, "transactions", id), { status: "Approved" });
+        await updateDoc(doc(db, "users", uid), { coins: increment(Number(amt) + (pack ? pack.bonus : 0)) });
+    };
+
+    window.onload = () => { console.log("FANTINAL System Ready"); };
 </script>
 </body>
 </html>
